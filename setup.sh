@@ -1,7 +1,7 @@
 #!/bin/sh
 
-COMPUTERNAME='Mac'
-LOCALHOSTNAME='mac'
+# COMPUTERNAME='Mac'
+# LOCALHOSTNAME='mac'
 
 function set_system_preferences () {
 # System Preferences
@@ -82,7 +82,7 @@ function set_system_preferences () {
   ## System Preferences > Mission Control
 
     ### Show Dashboard as a space
-    /usr/bin/defaults write com.apple.dock 'dashboard-in-overlay' bool true
+    /usr/bin/defaults write com.apple.dock 'dashboard-in-overlay' -bool true
 
 
   ## System Preferences > Security & Privacy > General
@@ -127,8 +127,8 @@ function set_system_preferences () {
 
 
   ## System Preferences > CDs & DVDs
-    ### When you insert a video DVD: Open VLC
-    /usr/bin/defaults write com.apple.digihub2 'com.apple.digihub.dvd.video.appeared' -dict '<key>action</key><integer>5</integer><key>otherapp</key><dict><key>_CFURLString</key><string>/Applications/VLC.app</string><key>_CFURLStringType</key><integer>0</integer></dict>'
+    ### When you insert a video DVD: Open HandBrake
+    /usr/bin/defaults write com.apple.digihub 'com.apple.digihub.dvd.video.appeared' '<dict><key>action</key><integer>5</integer><key>otherapp</key><dict><key>_CFURLString</key><string>/Applications/Utilities/HandBrake.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict>'
 
 
   ## System Preferences > Displays > Display
@@ -249,7 +249,22 @@ function set_system_preferences () {
     /usr/bin/defaults write -g 'com.apple.sound.beep.feedback' -bool false
 
 
+  ## System Preferences > Network
+
+    ### Ethernet > Advanced… > DNS
+    EN0=$(/usr/sbin/networksetup -listnetworkserviceorder | /usr/bin/awk -F'\\) ' '/Ethernet/ { printf $2 }')
+    /usr/sbin/networksetup -setdnsservers "$EN0" 127.0.0.1
+
+    ### Wi-Fi > Advanced… > DNS
+    EN1=$(/usr/sbin/networksetup -listnetworkserviceorder | /usr/bin/awk -F'\\) ' '/Wi-Fi/ { printf $2 }')
+    /usr/sbin/networksetup -setdnsservers "$EN1" 127.0.0.1
+
+
   ## System Preferences > Sharing
+
+    # IP1=$(/sbin/ifconfig en1 | /usr/bin/grep 'inet ' | /usr/bin/awk '{ print $2 }')
+    # COMPUTERNAME=$(/usr/bin/host "$IP1" | /usr/bin/awk '{ print $5 }' | /usr/bin/awk -F. '{ print $1 }')
+    # LOCALHOSTNAME=$(/usr/bin/host "$IP1" | /usr/bin/awk '{ print $5 }' | /usr/bin/awk -F. '{ print $1 }')
 
     ### Computer Name: $COMPUTERNAME
     if [ ! "$(/usr/sbin/networksetup -getcomputername)" = "$COMPUTERNAME" ]; then
@@ -360,7 +375,7 @@ function set_hidden_preferences () {
   /usr/bin/sudo /bin/chmod 644 /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
 
   # <http://www.macrumors.com/2011/07/25/os-x-lions-hidpi-modes-lay-groundwork-for-retina-monitors/>
-  /usr/bin/sudo /usr/bin/defaults delete /Library/Preferences/com.apple.windowserver 'DisplayResolutionDisabled'
+  /usr/bin/sudo /usr/bin/defaults delete /Library/Preferences/com.apple.windowserver 'DisplayResolutionDisabled' > /dev/null 2>&1
   /usr/bin/sudo /usr/bin/defaults write /Library/Preferences/com.apple.windowserver 'DisplayResolutionEnabled' -bool true
 
   # <http://hints.macworld.com/article.php?story=20110721122558299>
@@ -1146,11 +1161,11 @@ function configure_dock_apps () {
 
   /usr/libexec/PlistBuddy "$HOME/Library/Preferences/com.apple.dock.plist" -c 'Delete :persistent-apps'
 
+  /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTunes.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+  /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Mail.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Safari.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Things.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Skype.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-  /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Mail.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-  /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTunes.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/SketchUp.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Preview.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
   /usr/bin/defaults write com.apple.dock 'persistent-apps' -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/TextMate.app/</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
@@ -1168,3 +1183,20 @@ function configure_dock_apps () {
   /usr/bin/osascript -e 'tell application "Dock" to quit'
 
 }
+
+function setup_help () {
+  /bin/cat <<-EOF
+		Set these environment variables:
+		  COMPUTERNAME='Mac'
+		  LOCALHOSTNAME='mac'
+
+		Then enter any of these functions:
+		  set_system_preferences
+		  set_hidden_preferences
+		  disable_software_update_prefs
+		  set_application_preferences
+		  configure_dock_apps
+	EOF
+}
+
+setup_help
