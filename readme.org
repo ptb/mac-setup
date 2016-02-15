@@ -1,0 +1,1712 @@
+* Complete OS X Setup
+
+From clean install to fully configured.
+
+** Step 1: Init Environment
+:PROPERTIES:
+:tangle: step-1.command
+:shebang: #!/bin/sh
+:END:
+*** Temporarily Disable ~sudo~ Password Timeout
+The ~sudo~ password timeout is re-enabled at the end of this script.
+#+BEGIN_SRC sh
+sudo tee -a /etc/sudoers > /dev/null <<-EOF
+Defaults  timestamp_timeout=-1
+%admin ALL=(ALL) NOPASSWD:SETENV: /usr/sbin/installer
+EOF
+#+END_SRC
+
+*** Disable System and Disk Sleep
+#+BEGIN_SRC sh
+sudo pmset -a sleep 0
+sudo pmset -a disksleep 0
+#+END_SRC
+
+*** Setup Required Paths
+#+BEGIN_SRC sh
+if ! grep -Fq '/usr/local/sbin' /etc/paths; then
+  sudo sed -i -e '/\/usr\/sbin/i\
+\/usr\/local\/sbin\
+' /etc/paths
+fi
+
+sudo mkdir -p '/usr/local/Caskroom' '/Library/Caches/Homebrew/'
+sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' '/Library/Caches/Homebrew/' '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' '/Library/Caches/Homebrew/' '/Library/ColorPickers/' '/Library/Screen Savers/'
+#+END_SRC
+
+*** Set Environment Variables Permanently (after restart)
+Details: http://stackoverflow.com/a/26477515/1959421
+
+**** Create /etc/environment
+#+BEGIN_SRC sh
+sudo tee /etc/environment > /dev/null <<-EOF
+#!/bin/sh
+
+set -e
+
+syslog -s -l warn "Set environment variables for \$(whoami) - start"
+
+CASK_OPTS="--appdir=/Applications"
+CASK_OPTS="\${CASK_OPTS} --caskroom=/usr/local/Caskroom"
+CASK_OPTS="\${CASK_OPTS} --colorpickerdir=/Library/ColorPickers"
+CASK_OPTS="\${CASK_OPTS} --fontdir=/Library/Fonts"
+CASK_OPTS="\${CASK_OPTS} --prefpanedir=/Library/PreferencePanes"
+CASK_OPTS="\${CASK_OPTS} --screen_saverdir='/Library/Screen Savers'"
+export HOMEBREW_CASK_OPTS=\$CASK_OPTS
+launchctl setenv HOMEBREW_CASK_OPTS "\$CASK_OPTS"
+
+if [ -x /usr/libexec/path_helper ]; then
+  export PATH=""
+  eval \`/usr/libexec/path_helper -s\`
+  launchctl setenv PATH \$PATH
+fi
+
+osascript -e 'tell app "Dock" to quit'
+
+syslog -s -l warn "Set environment variables for \$(whoami) - complete"
+EOF
+
+sudo chmod a+x /etc/environment
+#+END_SRC
+
+**** Create /Library/LaunchAgents/environment.user for GUI Applications
+#+BEGIN_SRC sh
+sudo defaults write '/Library/LaunchAgents/environment.user' 'Label' -string 'environment.user'
+sudo defaults write '/Library/LaunchAgents/environment.user' 'ProgramArguments' -array-add '/etc/environment'
+sudo defaults write '/Library/LaunchAgents/environment.user' 'RunAtLoad' -bool true
+sudo defaults write '/Library/LaunchAgents/environment.user' 'WatchPaths' -array-add '/etc/environment'
+sudo defaults write '/Library/LaunchAgents/environment.user' 'WatchPaths' -array-add '/etc/paths'
+sudo defaults write '/Library/LaunchAgents/environment.user' 'WatchPaths' -array-add '/etc/paths.d'
+sudo plutil -convert xml1 '/Library/LaunchAgents/environment.user.plist'
+sudo chmod 644 /Library/LaunchAgents/environment.user.plist
+sudo launchctl load -w /Library/LaunchAgents/environment.user.plist
+#+END_SRC
+
+**** Create /Library/LaunchDaemons/environment for Terminal Applications
+#+BEGIN_SRC sh
+sudo defaults write '/Library/LaunchDaemons/environment' 'Label' -string 'environment'
+sudo defaults write '/Library/LaunchDaemons/environment' 'ProgramArguments' -array-add '/etc/environment'
+sudo defaults write '/Library/LaunchDaemons/environment' 'RunAtLoad' -bool true
+sudo defaults write '/Library/LaunchDaemons/environment' 'WatchPaths' -array-add '/etc/environment'
+sudo defaults write '/Library/LaunchDaemons/environment' 'WatchPaths' -array-add '/etc/paths'
+sudo defaults write '/Library/LaunchDaemons/environment' 'WatchPaths' -array-add '/etc/paths.d'
+sudo plutil -convert xml1 '/Library/LaunchDaemons/environment.plist'
+sudo chmod 644 /Library/LaunchDaemons/environment.plist
+sudo launchctl load -w /Library/LaunchDaemons/environment.plist
+#+END_SRC
+
+*** Restart Before Continuing
+#+BEGIN_SRC sh
+osascript -e 'tell app "loginwindow" to «event aevtrrst»'
+#+END_SRC
+
+
+** Step 2: Install Software
+:PROPERTIES:
+:tangle: step-2.command
+:shebang: #!/bin/sh
+:END:
+*** Open New Terminal
+#+BEGIN_SRC sh
+if [ -z "$1" ]; then
+  osascript > /dev/null <<-END
+    tell app "Terminal" to do script "source ${0} 0"
+END
+  clear
+
+else
+#+END_SRC
+
+*** Initialize Variables
+#+BEGIN_SRC sh
+function init_install_path () {
+  if [ ! -d "/Volumes/Storage" ] \
+    && [ -d "/Volumes/VMware Shared Folders/Storage" ]; then
+    cd "/Volumes" \
+      && sudo ln -s "VMware Shared Folders/Storage" "Storage"
+  fi
+
+  if [ -d "/Volumes/Storage/Software" ]; then
+    INSTALL_PATH="/Volumes/Storage/Software"
+  else
+    INSTALL_PATH="${HOME}/Downloads"
+  fi
+}
+#+END_SRC
+
+*** Install Command Line Tools
+#+BEGIN_SRC sh
+function install_command_line_tools () {
+  init_install_path
+
+  INSTALL_PATH_XCODE="${INSTALL_PATH}/apple.com"
+
+  if [ ! -d "${INSTALL_PATH_XCODE}" ]; then
+    mkdir -p "${INSTALL_PATH_XCODE}"
+  fi
+
+  if [ ! -f "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" ] \
+    || [ ! -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" ]; then
+    cd "${INSTALL_PATH_XCODE}" \
+      && curl --compressed --location --silent \
+      "https://swscan.apple.com/content/catalogs/others/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog.gz" \
+      | sed -n \
+        -e "s/^.*<string>\(.*CLTools_Executables.pkg\).*/\1/p" \
+        -e "s/^.*<string>\(.*DevSDK_OSX1011.pkg\).*/\1/p" \
+      | tail -n 2 \
+      | xargs -L 1 curl --compressed --location --remote-name
+  fi
+
+  if [ -f "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" ] \
+    && [ -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" ]; then
+    sudo installer -pkg "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" -target /
+    sudo installer -pkg "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" -target /
+  fi
+}
+#+END_SRC
+  
+*** Install Homebrew
+Details: http://brew.sh
+
+#+BEGIN_SRC sh
+function install_homebrew () {
+  sudo chown $(whoami) '/usr/local' '/usr/local/Caskroom' '/Library/Caches/Homebrew/'
+
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+  brew update
+  brew doctor
+
+  brew tap "caskroom/cask"
+  brew tap "homebrew/bundle"
+}
+#+END_SRC
+
+*** Create Homebrew Update Script
+#+BEGIN_SRC sh
+function create_brew_update_script () {
+  cat > /usr/local/bin/brew-update.sh <<-EOF
+#!/bin/sh
+
+brew update
+brew doctor
+
+brew cask install "caskroom/fonts/font-inconsolata-lgc" 2> /dev/null
+brew cask install "ptb/custom/blankscreen" 2> /dev/null
+
+# Details: https://github.com/caskroom/homebrew-cask/issues/13201
+# Source: https://github.com/caskroom/homebrew-cask/pull/13966/files?diff=split
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact.rb
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/app.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/app.rb
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/moved.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/moved.rb
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/suite.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/suite.rb
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/dsl/postflight.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/dsl/postflight.rb
+
+curl --compressed --location --show-error --silent \\
+  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/staged.rb \\
+  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/staged.rb
+
+sed -i -e "s/@cask.staged_path/Hbc.appdir/" \\
+  /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/symlinked.rb
+
+cd /usr/local/ && brew bundle
+
+brew upgrade --all
+brew linkapps
+EOF
+
+  chmod +x /usr/local/bin/brew-update.sh
+}
+#+END_SRC
+
+*** Create Brewfile
+Details: https://github.com/Homebrew/homebrew-bundle
+
+#+BEGIN_SRC sh
+function create_brewfile () {
+  cat > /usr/local/Brewfile <<-EOF
+tap "caskroom/cask"
+tap "homebrew/bundle"
+
+cask "java"
+
+brew "aspell", args: ["lang=en"]
+brew "duti"
+brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
+brew "ptb/custom/ffmpeg",
+  args: [
+  'with-dcadec',
+  'with-faac',
+  'with-fdk-aac',
+  'with-ffplay',
+  'with-fontconfig',
+  'with-freetype',
+  'with-frei0r',
+  'with-lame',
+  'with-libass',
+  'with-libbluray',
+  'with-libbs2b',
+  'with-libcaca',
+  'with-libquvi',
+  'with-libsoxr',
+  'with-libssh',
+  'with-libvidstab',
+  'with-libvo-aacenc',
+  'with-libvorbis',
+  'with-libvpx',
+  'with-opencore-amr',
+  'with-openjpeg',
+  'with-openssl',
+  'with-opus',
+  'with-rtmpdump',
+  'with-schroedinger',
+  'with-snappy',
+  'with-speex',
+  'with-theora',
+  'with-tools',
+  'with-webp',
+  'with-x264',
+  'with-x265',
+  'with-xvid',
+  'with-zeromq' ]
+brew "git"
+brew "git-annex"
+brew "gnu-sed", args: ["with-default-names"]
+brew "gnupg"
+brew "imagemagick"
+brew "mercurial"
+brew "mtr"
+brew "nmap"
+brew "node"
+brew "openssl"
+brew "homebrew/dupes/rsync"
+brew "python"
+brew "ruby"
+brew "sqlite"
+brew "stow"
+brew "terminal-notifier"
+brew "trash"
+brew "vim"
+brew "wget"
+brew "youtube-dl"
+brew "zsh"
+
+cask "adium"
+cask "adobe-illustrator-cc"
+cask "adobe-indesign-cc"
+cask "adobe-photoshop-cc"
+cask "airfoil"
+cask "alfred"
+cask "arduino"
+cask "atom"
+cask "autodmg"
+cask "bettertouchtool"
+cask "caffeine"
+cask "charles"
+cask "couchpotato"
+cask "dash"
+cask "deluge"
+cask "dockertoolbox"
+cask "dropbox"
+cask "firefox"
+cask "github-desktop"
+cask "google-chrome"
+cask "handbrake"
+cask "hermes"
+cask "imageoptim"
+cask "integrity"
+cask "istat-menus"
+cask "jubler"
+cask "little-snitch"
+cask "machg"
+cask "makemkv"
+cask "menubar-countdown"
+cask "meteorologist"
+cask "microsoft-office"
+cask "moom"
+cask "mp4tools"
+cask "munki"
+cask "namechanger"
+cask "nvalt"
+cask "nzbget"
+cask "nzbvortex"
+cask "openemu"
+cask "opera"
+cask "pacifist"
+cask "platypus"
+cask "plex-media-server"
+cask "raindrop"
+cask "scrivener"
+cask "sitesucker"
+cask "sizeup"
+cask "sketch"
+cask "sketchup"
+cask "skitch"
+cask "skype"
+cask "slack"
+cask "sonarr"
+cask "sonarr-menu"
+cask "sourcetree"
+cask "steermouse"
+cask "subler"
+cask "caskroom/versions/sublime-text3"
+cask "the-unarchiver"
+cask "torbrowser"
+cask "tower"
+cask "transmit"
+cask "vimr"
+cask "vlc"
+cask "vmware-fusion"
+
+cask "xquartz"
+cask "inkscape"
+cask "wireshark"
+
+cask "ptb/custom/bbedit-10"
+cask "ptb/custom/carbon-copy-cloner"
+cask "ptb/custom/composer"
+cask "ptb/custom/enhanced-dictation"
+cask "ptb/custom/ipmenulet"
+cask "ptb/custom/mas-1password"
+cask "ptb/custom/mas-affinity-photo"
+cask "ptb/custom/mas-autoping"
+cask "ptb/custom/mas-coffitivity"
+cask "ptb/custom/mas-growl"
+cask "ptb/custom/mas-hardwaregrowler"
+cask "ptb/custom/mas-i-love-stars"
+cask "ptb/custom/mas-icon-slate"
+cask "ptb/custom/mas-justnotes"
+cask "ptb/custom/mas-keynote"
+cask "ptb/custom/mas-numbers"
+cask "ptb/custom/mas-pages"
+cask "ptb/custom/mas-wifi-explorer"
+cask "ptb/custom/mas-xcode"
+cask "ptb/custom/pcalc-3"
+cask "ptb/custom/sketchup-pro"
+cask "ptb/custom/synergy"
+cask "ptb/custom/text-to-speech-allison"
+cask "ptb/custom/tune4mac"
+EOF
+}
+#+END_SRC
+
+*** Install OS X Software
+#+BEGIN_SRC sh
+function install_osx_software () {
+  init_install_path
+
+  INSTALL_PATH_HOMEBREW="${INSTALL_PATH}/github.com/Homebrew"
+
+  if [ -d "${INSTALL_PATH_HOMEBREW}" ]; then
+    cd "$(cd "${INSTALL_PATH_HOMEBREW}" && pwd)" \
+      && cp -av * /Library/Caches/Homebrew/
+  fi
+
+  /usr/local/bin/brew-update.sh
+
+  cd $(cd /usr/local/Caskroom/little-snitch/* && pwd) && open "Little Snitch Installer.app"
+}
+#+END_SRC
+
+*** Install Node Software
+#+BEGIN_SRC sh
+function install_node_software () {
+  npm install -g bower polyserve svgo
+}
+#+END_SRC
+
+*** Install Python Software
+#+BEGIN_SRC sh
+function install_python_software () {
+  curl -Ls https://bootstrap.pypa.io/get-pip.py | sudo -H python
+  pip install --upgrade pip setuptools
+
+  pip install psutil bottle zeroconf netifaces influxdb statsd pystache pysnmp pika yapf
+  pip install glances
+  pip install qtfaststart
+  pip install watchdog
+}
+#+END_SRC
+
+*** Install Ruby Software
+#+BEGIN_SRC sh
+function install_ruby_software () {
+  printf "%s\n" \
+    "gem: --no-document" \
+    >> "${HOME}/.gemrc"
+
+  gem update --system
+  gem update
+  gem install nokogiri -- --use-system-libraries
+  gem install web-console --version "~> 2"
+  gem install rails sqlite3 sass-rails uglifier coffee-rails jquery-rails turbolinks jbuilder sdoc byebug spring tzinfo-data
+  gem install em-websocket middleman middleman-autoprefixer middleman-blog middleman-compass middleman-livereload middleman-minify-html middleman-robots mime-types slim
+  gem install bootstrap-sass git-cipher org-ruby thin
+}
+#+END_SRC
+
+*** Create ~/usr/local/bin/vi~ Script
+#+BEGIN_SRC sh
+function create_vi_script () {
+  cat > /usr/local/bin/vi <<-EOF
+#!/bin/sh
+
+if [ -e '/Applications/Emacs.app' ]; then
+  t=()
+
+  if [ \${#@} -ne 0 ]; then
+    while IFS= read -r file; do
+      [ ! -f "\$file" ] && t+=("\$file") && /usr/bin/touch "\$file"
+      file=\$(echo \$(cd \$(dirname "\$file") && pwd -P)/\$(basename "\$file"))
+      \$(/usr/bin/osascript <<-END
+        if application "Emacs.app" is running then
+          tell application id (id of application "Emacs.app") to open POSIX file "\$file"
+        else
+          tell application ((path to applications folder as text) & "Emacs.app")
+            activate
+            open POSIX file "\$file"
+          end tell
+        end if
+END
+        ) &  # Note: END on the previous line may be indented with tabs but not spaces
+      done <<<"\$(printf '%s\n' "\$@")"
+    fi
+
+    if [ ! -z "\$t" ]; then
+      \$(/bin/sleep 10; for file in "\${t[@]}"; do
+        [ ! -s "\$file" ] && /bin/rm "\$file";
+      done) &
+    fi
+  else
+    vim -No "\$@"
+  fi
+EOF
+
+  chmod a+x /usr/local/bin/vi
+}
+#+END_SRC
+
+*** Link Utilities
+#+BEGIN_SRC sh
+function link_utilities () {
+  cd /Applications/Utilities \
+    && for a in /System/Library/CoreServices/Applications/*; do
+      sudo ln -s "../..$a" .
+    done \
+    && for b in /Applications/Xcode.app/Contents/Applications/*; do
+      sudo ln -s "../..$b" .
+    done \
+    && for c in /Applications/Xcode.app/Contents/Developer/Applications/*; do
+      sudo ln -s "../..$c" .
+    done
+}
+#+END_SRC
+
+*** Re-enable ~sudo~ Password Timeout
+#+BEGIN_SRC sh
+function reenable_sudo_timeout () {
+  sudo sed -i -e "/Defaults  timestamp_timeout=-1/d" /etc/sudoers
+  sudo sed -i -e "/%admin ALL=(ALL) NOPASSWD:SETENV: \/usr\/sbin\/installer/d" /etc/sudoers
+}
+#+END_SRC
+
+*** Install All
+#+BEGIN_SRC sh
+function install_all () {
+  install_command_line_tools
+  install_homebrew
+  create_brew_update_script
+  create_brewfile
+  install_osx_software
+  install_node_software
+  install_python_software
+  install_ruby_software
+  create_vi_script
+  link_utilities
+  reenable_sudo_timeout
+}
+#+END_SRC
+
+*** Display Help
+#+BEGIN_SRC sh
+clear
+cat <<-END
+
+Enter any of these commands:
+  install_command_line_tools
+  install_homebrew
+  create_brew_update_script
+  create_brewfile
+  install_osx_software
+  install_node_software
+  install_python_software
+  install_ruby_software
+  create_vi_script
+  link_utilities
+  reenable_sudo_timeout
+
+Or:
+  install_all
+
+END
+fi
+#+END_SRC
+
+
+** Step 3: Configure Prefs
+:PROPERTIES:
+:tangle: step-3.command
+:shebang: #!/bin/sh
+:END:
+*** Open New Terminal
+#+BEGIN_SRC sh
+if [ -z "$1" ]; then
+  osascript > /dev/null <<-END
+    tell app "Terminal" to do script "source ${0} 0"
+END
+  clear
+
+else
+#+END_SRC
+
+*** Configure File Mappings
+#+BEGIN_SRC sh
+function config_file_map () {
+  if [ -x "/usr/local/bin/duti" ]; then
+    duti -s com.VortexApps.NZBVortex3 dyn.ah62d4rv4ge8068xc all
+    duti -s com.apple.DiskImageMounter com.apple.disk-image all
+    duti -s com.apple.DiskImageMounter public.disk-image all
+    duti -s com.apple.DiskImageMounter public.iso-image all
+    duti -s com.apple.QuickTimePlayerX com.apple.coreaudio-format all
+    duti -s com.apple.QuickTimePlayerX com.apple.quicktime-movie all
+    duti -s com.apple.QuickTimePlayerX com.microsoft.waveform-audio all
+    duti -s com.apple.QuickTimePlayerX public.aifc-audio all
+    duti -s com.apple.QuickTimePlayerX public.aiff-audio all
+    duti -s com.apple.QuickTimePlayerX public.audio all
+    duti -s com.apple.QuickTimePlayerX public.mp3 all
+    duti -s com.apple.Safari com.compuserve.gif all
+    duti -s com.apple.Terminal com.apple.terminal.shell-script all
+    duti -s com.apple.iTunes com.apple.iTunes.audible all
+    duti -s com.apple.iTunes com.apple.iTunes.ipg all
+    duti -s com.apple.iTunes com.apple.iTunes.ipsw all
+    duti -s com.apple.iTunes com.apple.iTunes.ite all
+    duti -s com.apple.iTunes com.apple.iTunes.itlp all
+    duti -s com.apple.iTunes com.apple.iTunes.itms all
+    duti -s com.apple.iTunes com.apple.iTunes.podcast all
+    duti -s com.apple.iTunes com.apple.m4a-audio all
+    duti -s com.apple.iTunes com.apple.mpeg-4-ringtone all
+    duti -s com.apple.iTunes com.apple.protected-mpeg-4-audio all
+    duti -s com.apple.iTunes com.apple.protected-mpeg-4-video all
+    duti -s com.apple.iTunes com.audible.aa-audio all
+    duti -s com.apple.iTunes public.mpeg-4-audio all
+    duti -s com.apple.installer com.apple.installer-package-archive all
+    duti -s com.github.atom com.apple.binary-property-list editor
+    duti -s com.github.atom com.apple.crashreport editor
+    duti -s com.github.atom com.apple.dt.document.ascii-property-list editor
+    duti -s com.github.atom com.apple.dt.document.script-suite-property-list editor
+    duti -s com.github.atom com.apple.dt.document.script-terminology-property-list editor
+    duti -s com.github.atom com.apple.log editor
+    duti -s com.github.atom com.apple.property-list editor
+    duti -s com.github.atom com.apple.rez-source editor
+    duti -s com.github.atom com.apple.symbol-export editor
+    duti -s com.github.atom com.apple.xcode.ada-source editor
+    duti -s com.github.atom com.apple.xcode.bash-script editor
+    duti -s com.github.atom com.apple.xcode.configsettings editor
+    duti -s com.github.atom com.apple.xcode.csh-script editor
+    duti -s com.github.atom com.apple.xcode.fortran-source editor
+    duti -s com.github.atom com.apple.xcode.ksh-script editor
+    duti -s com.github.atom com.apple.xcode.lex-source editor
+    duti -s com.github.atom com.apple.xcode.make-script editor
+    duti -s com.github.atom com.apple.xcode.mig-source editor
+    duti -s com.github.atom com.apple.xcode.pascal-source editor
+    duti -s com.github.atom com.apple.xcode.strings-text editor
+    duti -s com.github.atom com.apple.xcode.tcsh-script editor
+    duti -s com.github.atom com.apple.xcode.yacc-source editor
+    duti -s com.github.atom com.apple.xcode.zsh-script editor
+    duti -s com.github.atom com.apple.xml-property-list editor
+    duti -s com.github.atom com.barebones.bbedit.actionscript-source editor
+    duti -s com.github.atom com.barebones.bbedit.erb-source editor
+    duti -s com.github.atom com.barebones.bbedit.ini-configuration editor
+    duti -s com.github.atom com.barebones.bbedit.javascript-source editor
+    duti -s com.github.atom com.barebones.bbedit.json-source editor
+    duti -s com.github.atom com.barebones.bbedit.jsp-source editor
+    duti -s com.github.atom com.barebones.bbedit.lasso-source editor
+    duti -s com.github.atom com.barebones.bbedit.lua-source editor
+    duti -s com.github.atom com.barebones.bbedit.setext-source editor
+    duti -s com.github.atom com.barebones.bbedit.sql-source editor
+    duti -s com.github.atom com.barebones.bbedit.tcl-source editor
+    duti -s com.github.atom com.barebones.bbedit.tex-source editor
+    duti -s com.github.atom com.barebones.bbedit.textile-source editor
+    duti -s com.github.atom com.barebones.bbedit.vbscript-source editor
+    duti -s com.github.atom com.barebones.bbedit.vectorscript-source editor
+    duti -s com.github.atom com.barebones.bbedit.verilog-hdl-source editor
+    duti -s com.github.atom com.barebones.bbedit.vhdl-source editor
+    duti -s com.github.atom com.barebones.bbedit.yaml-source editor
+    duti -s com.github.atom com.netscape.javascript-source editor
+    duti -s com.github.atom com.sun.java-source editor
+    duti -s com.github.atom dyn.ah62d4rv4ge80255drq all
+    duti -s com.github.atom dyn.ah62d4rv4ge80g55gq3w0n all
+    duti -s com.github.atom dyn.ah62d4rv4ge80g55sq2 all
+    duti -s com.github.atom dyn.ah62d4rv4ge80y2xzrf0gk3pw all
+    duti -s com.github.atom dyn.ah62d4rv4ge81e3dtqq all
+    duti -s com.github.atom dyn.ah62d4rv4ge81e7k all
+    duti -s com.github.atom dyn.ah62d4rv4ge81g25xsq all
+    duti -s com.github.atom dyn.ah62d4rv4ge81g2pxsq all
+    duti -s com.github.atom net.daringfireball.markdown editor
+    duti -s com.github.atom public.assembly-source editor
+    duti -s com.github.atom public.c-header editor
+    duti -s com.github.atom public.c-plus-plus-source editor
+    duti -s com.github.atom public.c-source editor
+    duti -s com.github.atom public.csh-script editor
+    duti -s com.github.atom public.json editor
+    duti -s com.github.atom public.lex-source editor
+    duti -s com.github.atom public.log editor
+    duti -s com.github.atom public.mig-source editor
+    duti -s com.github.atom public.nasm-assembly-source editor
+    duti -s com.github.atom public.objective-c-plus-plus-source editor
+    duti -s com.github.atom public.objective-c-source editor
+    duti -s com.github.atom public.patch-file editor
+    duti -s com.github.atom public.perl-script editor
+    duti -s com.github.atom public.php-script editor
+    duti -s com.github.atom public.plain-text editor
+    duti -s com.github.atom public.precompiled-c-header editor
+    duti -s com.github.atom public.precompiled-c-plus-plus-header editor
+    duti -s com.github.atom public.python-script editor
+    duti -s com.github.atom public.ruby-script editor
+    duti -s com.github.atom public.script editor
+    duti -s com.github.atom public.shell-script editor
+    duti -s com.github.atom public.source-code editor
+    duti -s com.github.atom public.text editor
+    duti -s com.github.atom public.utf16-external-plain-text editor
+    duti -s com.github.atom public.utf16-plain-text editor
+    duti -s com.github.atom public.utf8-plain-text editor
+    duti -s com.github.atom public.xml editor
+    duti -s com.kodlian.Icon-Slate com.apple.icns all
+    duti -s com.kodlian.Icon-Slate com.microsoft.ico all
+    duti -s com.microsoft.Word public.rtf all
+    duti -s com.panayotis.jubler dyn.ah62d4rv4ge81g6xy all
+    duti -s com.sketchup.SketchUp.2016 com.sketchup.skp all
+    duti -s com.vmware.fusion com.microsoft.windows-executable all
+    duti -s cx.c3.theunarchiver com.alcohol-soft.mdf-image all
+    duti -s cx.c3.theunarchiver com.allume.stuffit-archive all
+    duti -s cx.c3.theunarchiver com.altools.alz-archive all
+    duti -s cx.c3.theunarchiver com.amiga.adf-archive all
+    duti -s cx.c3.theunarchiver com.amiga.adz-archive all
+    duti -s cx.c3.theunarchiver com.apple.applesingle-archive all
+    duti -s cx.c3.theunarchiver com.apple.binhex-archive all
+    duti -s cx.c3.theunarchiver com.apple.bom-compressed-cpio all
+    duti -s cx.c3.theunarchiver com.apple.itunes.ipa all
+    duti -s cx.c3.theunarchiver com.apple.macbinary-archive all
+    duti -s cx.c3.theunarchiver com.apple.self-extracting-archive all
+    duti -s cx.c3.theunarchiver com.apple.xar-archive all
+    duti -s cx.c3.theunarchiver com.apple.xip-archive all
+    duti -s cx.c3.theunarchiver com.cyclos.cpt-archive all
+    duti -s cx.c3.theunarchiver com.microsoft.cab-archive all
+    duti -s cx.c3.theunarchiver com.microsoft.msi-installer all
+    duti -s cx.c3.theunarchiver com.nero.nrg-image all
+    duti -s cx.c3.theunarchiver com.network172.pit-archive all
+    duti -s cx.c3.theunarchiver com.nowsoftware.now-archive all
+    duti -s cx.c3.theunarchiver com.nscripter.nsa-archive all
+    duti -s cx.c3.theunarchiver com.padus.cdi-image all
+    duti -s cx.c3.theunarchiver com.pkware.zip-archive all
+    duti -s cx.c3.theunarchiver com.rarlab.rar-archive all
+    duti -s cx.c3.theunarchiver com.redhat.rpm-archive all
+    duti -s cx.c3.theunarchiver com.stuffit.archive.sit all
+    duti -s cx.c3.theunarchiver com.stuffit.archive.sitx all
+    duti -s cx.c3.theunarchiver com.sun.java-archive all
+    duti -s cx.c3.theunarchiver com.symantec.dd-archive all
+    duti -s cx.c3.theunarchiver com.winace.ace-archive all
+    duti -s cx.c3.theunarchiver com.winzip.zipx-archive all
+    duti -s cx.c3.theunarchiver cx.c3.arc-archive all
+    duti -s cx.c3.theunarchiver cx.c3.arj-archive all
+    duti -s cx.c3.theunarchiver cx.c3.dcs-archive all
+    duti -s cx.c3.theunarchiver cx.c3.dms-archive all
+    duti -s cx.c3.theunarchiver cx.c3.ha-archive all
+    duti -s cx.c3.theunarchiver cx.c3.lbr-archive all
+    duti -s cx.c3.theunarchiver cx.c3.lha-archive all
+    duti -s cx.c3.theunarchiver cx.c3.lhf-archive all
+    duti -s cx.c3.theunarchiver cx.c3.lzx-archive all
+    duti -s cx.c3.theunarchiver cx.c3.packdev-archive all
+    duti -s cx.c3.theunarchiver cx.c3.pax-archive all
+    duti -s cx.c3.theunarchiver cx.c3.pma-archive all
+    duti -s cx.c3.theunarchiver cx.c3.pp-archive all
+    duti -s cx.c3.theunarchiver cx.c3.xmash-archive all
+    duti -s cx.c3.theunarchiver cx.c3.zoo-archive all
+    duti -s cx.c3.theunarchiver cx.c3.zoom-archive all
+    duti -s cx.c3.theunarchiver org.7-zip.7-zip-archive all
+    duti -s cx.c3.theunarchiver org.archive.warc-archive all
+    duti -s cx.c3.theunarchiver org.debian.deb-archive all
+    duti -s cx.c3.theunarchiver org.gnu.gnu-tar-archive all
+    duti -s cx.c3.theunarchiver org.gnu.gnu-zip-archive all
+    duti -s cx.c3.theunarchiver org.gnu.gnu-zip-tar-archive all
+    duti -s cx.c3.theunarchiver org.tukaani.lzma-archive all
+    duti -s cx.c3.theunarchiver org.tukaani.xz-archive all
+    duti -s cx.c3.theunarchiver public.bzip2-archive all
+    duti -s cx.c3.theunarchiver public.cpio-archive all
+    duti -s cx.c3.theunarchiver public.tar-archive all
+    duti -s cx.c3.theunarchiver public.tar-bzip2-archive all
+    duti -s cx.c3.theunarchiver public.z-archive all
+    duti -s cx.c3.theunarchiver public.zip-archive all
+    duti -s cx.c3.theunarchiver public.zip-archive.first-part all
+    duti -s org.gnu.Emacs dyn.ah62d4rv4ge8086xh all
+    duti -s org.inkscape.Inkscape public.svg-image editor
+    duti -s org.videolan.vlc com.apple.m4v-video all
+    duti -s org.videolan.vlc com.microsoft.windows-media-wmv all
+    duti -s org.videolan.vlc org.perian.matroska all
+    duti -s org.videolan.vlc org.videolan.ac3 all
+    duti -s org.videolan.vlc org.videolan.ogg-audio all
+    duti -s org.videolan.vlc public.ac3-audio all
+    duti -s org.videolan.vlc public.audiovisual-content all
+    duti -s org.videolan.vlc public.avi all
+    duti -s org.videolan.vlc public.movie all
+    duti -s org.videolan.vlc public.mpeg all
+    duti -s org.videolan.vlc public.mpeg-2-video all
+    duti -s org.videolan.vlc public.mpeg-4 all
+
+    sudo mkdir -p /var/db/lsd
+    sudo chown root:admin /var/db/lsd
+    sudo chmod 775 /var/db/lsd
+
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -kill -r -domain local -domain system -domain user
+  fi
+}
+#+END_SRC
+
+*** Configure Finder
+#+BEGIN_SRC sh
+function config_finder () {
+### Finder > Preferences… > General
+
+  # Show these items on the desktop: Hard disks: on
+  defaults write 'com.apple.finder' 'ShowHardDrivesOnDesktop' -bool false
+
+  # Show these items on the desktop: External disks: on
+  defaults write 'com.apple.finder' 'ShowExternalHardDrivesOnDesktop' -bool false
+
+  # Show these items on the desktop: CDs, DVDs, and iPods: on
+  defaults write 'com.apple.finder' 'ShowRemovableMediaOnDesktop' -bool false
+
+  # Show these items on the desktop: Connected servers: on
+  defaults write 'com.apple.finder' 'ShowMountedServersOnDesktop' -bool true
+
+  # New Finder windows show: ${HOME}
+  defaults write 'com.apple.finder' 'NewWindowTarget' -string 'PfHm'
+  defaults write 'com.apple.finder' 'NewWindowTargetPath' -string "file://${HOME}/"
+
+### Finder > Preferences… > Advanced
+
+  # Show all filename extensions: on
+  defaults write -g 'AppleShowAllExtensions' -bool true
+
+  # Show warning before emptying the Trash: on
+  defaults write 'com.apple.finder' 'WarnOnEmptyTrash' -bool false
+
+### View
+
+  # Show Path Bar
+  defaults write 'com.apple.finder' 'ShowPathbar' -bool true
+
+  # Show Status Bar
+  defaults write 'com.apple.finder' 'ShowStatusBar' -bool true
+
+  # Customize Toolbar…
+  defaults write 'com.apple.finder' 'NSToolbar Configuration Browser' '{ "TB Item Identifiers" = ( "com.apple.finder.BACK", "com.apple.finder.PATH", "com.apple.finder.SWCH", "com.apple.finder.ARNG", "NSToolbarFlexibleSpaceItem", "com.apple.finder.SRCH", "com.apple.finder.ACTN" ); "TB Display Mode" = 2; }'
+
+### View > Show View Options: [${HOME}]
+
+  # Show Library Folder: on
+  chflags nohidden "${HOME}/Library"
+
+### Window
+
+  # Copy
+  defaults write 'com.apple.finder' 'CopyProgressWindowLocation' -string '{2160, 23}'
+}
+#+END_SRC
+
+*** Configure Safari
+#+BEGIN_SRC sh
+function config_safari () {
+### Safari > Preferences… > General
+
+  # New windows open with: Empty Page
+  defaults write 'com.apple.Safari' 'NewWindowBehavior' -int 1
+
+  # New tabs open with: Empty Page
+  defaults write 'com.apple.Safari' 'NewTabBehavior' -int 1
+
+  # Homepage: about:blank
+  defaults write 'com.apple.Safari' 'HomePage' -string 'about:blank'
+
+### Safari > Preferences… > Tabs
+
+  # Open pages in tabs instead of windows: Always
+  defaults write 'com.apple.Safari' 'TabCreationPolicy' -int 2
+
+### Safari > Preferences… > AutoFill
+
+  # Using info from my Contacts card: off
+  defaults write 'com.apple.Safari' 'AutoFillFromAddressBook' -bool false
+
+  # Credit cards: off
+  defaults write 'com.apple.Safari' 'AutoFillCreditCardData' -bool false
+
+  # Other forms: off
+  defaults write 'com.apple.Safari' 'AutoFillMiscellaneousForms' -bool false
+
+### Safari > Preferences… > Search
+
+  # Include Spotlight Suggestions: off
+  defaults write 'com.apple.Safari' 'UniversalSearchEnabled' -bool false
+
+  # Show Favorites: off
+  defaults write 'com.apple.Safari' 'ShowFavoritesUnderSmartSearchField' -bool false
+
+### Safari > Preferences… > Privacy
+
+  # Website use of location services: Deny without prompting
+  defaults write 'com.apple.Safari' 'SafariGeolocationPermissionPolicy' -int 0
+
+  # Ask websites not to track me: on
+  defaults write 'com.apple.Safari' 'SendDoNotTrackHTTPHeader' -bool true
+
+### Safari > Preferences… > Notifications
+
+  # Allow websites to ask for permission to send push notifications: off
+  defaults write 'com.apple.Safari' 'CanPromptForPushNotifications' -bool false
+
+### Safari > Preferences… > Advanced
+
+  # Smart Search Field: Show full website address: on
+  defaults write 'com.apple.Safari' 'ShowFullURLInSmartSearchField' -bool true
+
+  # Default encoding: Unicode (UTF-8)
+  defaults write 'com.apple.Safari' 'WebKitDefaultTextEncodingName' -string 'utf-8'
+  defaults write 'com.apple.Safari' 'com.apple.Safari.ContentPageGroupIdentifier.WebKit2DefaultTextEncodingName' -string 'utf-8'
+
+  # Show Develop menu in menu bar: on
+  defaults write 'com.apple.Safari' 'IncludeDevelopMenu' -bool true
+  defaults write 'com.apple.Safari' 'WebKitDeveloperExtrasEnabledPreferenceKey' -bool true
+  defaults write 'com.apple.Safari' 'com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled' -bool true
+
+### View
+
+  # Show Favorites Bar
+  defaults write 'com.apple.Safari' 'ShowFavoritesBar-v2' -bool true
+
+  # Show Status Bar
+  defaults write 'com.apple.Safari' 'ShowStatusBar' -bool true
+  defaults write 'com.apple.Safari' 'ShowStatusBarInFullScreen' -bool true
+}
+#+END_SRC
+
+*** Configure System Preferences
+#+BEGIN_SRC sh
+function config_system_prefs () {
+### General
+
+  # Appearance: Graphite
+  defaults write -g 'AppleAquaColorVariant' -int 6
+
+  # Use dark menu bar and Dock: on
+  defaults write -g 'AppleInterfaceStyle' -string 'Dark'
+
+  # Highlight color: Other… #CC99CC
+  defaults write -g 'AppleHighlightColor' -string '0.600000 0.800000 0.600000'
+
+  # Sidebar icon size: Small
+  defaults write -g 'NSTableViewDefaultSizeMode' -int 1
+
+  # Show scroll bars: Always
+  defaults write -g 'AppleShowScrollBars' -string 'Always'
+
+  # Click in the scroll bar to: Jump to the next page
+  defaults write -g 'AppleScrollerPagingBehavior' -bool false
+
+  # Ask to keep changes when closing documents: on
+  defaults write -g 'NSCloseAlwaysConfirmsChanges' -bool true
+
+  # Close windows when quitting an app: on
+  defaults write -g 'NSQuitAlwaysKeepsWindows' -bool false
+
+  # Recent items: None
+  osascript <<-EOF
+    tell application "System Events"
+      tell appearance preferences
+        set recent documents limit to 0
+        set recent applications limit to 0
+        set recent servers limit to 0
+      end tell
+    end tell
+EOF
+
+  # Use LCD font smoothing when available: on
+  defaults -currentHost delete -g 'AppleFontSmoothing' 2> /dev/null
+
+### Desktop & Screen Saver
+
+  # Desktop: Solid Colors: Custom Color… Solid Black
+  mkdir -m go= -p "${HOME}/Library/Desktop Pictures/Solid Colors/"
+  base64 -D > "${HOME}/Library/Desktop Pictures/Solid Colors/Solid Black.png" <<-EOF
+iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQAAAADrRVxmAAAAGElEQVR4AWOgMxgFo2AUjIJRMApG
+wSgAAAiAAAH3bJXBAAAAAElFTkSuQmCC
+EOF
+  osascript <<-EOF
+    tell application "System Events"
+      set a to POSIX file "${HOME}/Library/Desktop Pictures/Solid Colors/Solid Black.png"
+      set b to a reference to every desktop
+      repeat with c in b
+        set picture of c to a
+      end repeat
+    end tell
+EOF
+
+  # Screen Saver: BlankScreen
+  if [ -e "/Library/Screen Savers/BlankScreen.saver" ]; then
+    defaults -currentHost write 'com.apple.screensaver' 'moduleDict' '{ moduleName = BlankScreen; path = "/Library/Screen Savers/BlankScreen.saver"; type = 0; }'
+  fi
+
+  # Screen Saver: Start after: Never
+  defaults -currentHost write 'com.apple.screensaver' 'idleTime' -int 0
+  
+  # Screen Saver: Hot Corners… Top Left: ⌘ Mission Control
+  defaults write 'com.apple.dock' 'wvous-tl-corner' -int 2
+  defaults write 'com.apple.dock' 'wvous-tl-modifier' -int 1048576
+
+  # Screen Saver: Hot Corners… Bottom Left: Put Display to Sleep
+  defaults write 'com.apple.dock' 'wvous-bl-corner' -int 10
+  defaults write 'com.apple.dock' 'wvous-bl-modifier' -int 0
+
+### Dock
+
+  # Size: 32
+  defaults write 'com.apple.dock' 'tilesize' -int 32
+
+  # Magnification: off
+  defaults write 'com.apple.dock' 'magnification' -bool false
+  defaults write 'com.apple.dock' 'largesize' -int 64
+
+  # Position on screen: Left
+  defaults write 'com.apple.dock' 'orientation' -string 'right'
+
+  # Minimize windows using: Scale effect
+  defaults write 'com.apple.dock' 'mineffect' -string 'scale'
+
+  # Animate opening applications: off
+  defaults write 'com.apple.dock' 'launchanim' -bool false
+
+### Security & Privacy
+
+  # General: Require password: on
+  defaults write 'com.apple.screensaver' 'askForPassword' -int 1
+
+  # General: Require password: 5 seconds after sleep or screen saver begins
+  defaults write 'com.apple.screensaver' 'askForPasswordDelay' -int 5
+
+### Energy Saver
+
+  # Power > Turn display off after: 20 min
+  sudo pmset -c displaysleep 20
+
+  # Power > Prevent computer from sleeping automatically when the display is off: enabled
+  sudo pmset -c sleep 0
+
+  # Power > Put hard disks to sleep when possible: 60 min
+  sudo pmset -c disksleep 60
+
+  # Power > Wake for Ethernet network access: enabled
+  sudo pmset -c womp 1
+
+  # Power > Start up automatically after a power failure: enabled
+  sudo pmset -c autorestart 1
+
+  # Power > Enable Power Nap: enabled
+  sudo pmset -c powernap 1
+  
+### Mouse
+
+  # Scroll direction: natural: off
+  defaults write -g 'com.apple.swipescrolldirection' -bool false
+
+### Trackpad
+
+  # Point & Click: Tap to click: on
+  defaults -currentHost write -g 'com.apple.mouse.tapBehavior' -int 1
+
+### Sound
+
+  # Sound Effects: Select an alert sound: Sosumi
+  defaults write 'com.apple.systemsound' 'com.apple.sound.beep.sound' -string '/System/Library/Sounds/Sosumi.aiff'
+
+  # Sound Effects: Play user interface sound effects: off
+  defaults write 'com.apple.systemsound' 'com.apple.sound.uiaudio.enabled' -int 0
+
+  # Sound Effects: Play feedback when volume is changed: off
+  defaults write -g 'com.apple.sound.beep.feedback' -int 0
+
+### Sharing
+
+  # Computer Name
+  sudo systemsetup -setcomputername $(hostname -s | perl -nE 'say ucfirst' | perl -np -e 'chomp')
+
+  # Local Hostname
+  sudo systemsetup -setlocalsubnetname $(hostname -s) &> /dev/null
+
+### Users & Groups
+
+  # Current User > Advanced Options… > Login shell: /usr/local/bin/zsh
+  sudo sh -c 'printf "%s\n" "/usr/local/bin/zsh" >> /etc/shells'
+  sudo chsh -s /usr/local/bin/zsh
+  chsh -s /usr/local/bin/zsh
+  sudo mkdir -p /private/var/root/Library/Caches/
+  sudo touch "/private/var/root/.zshrc"
+  touch "${HOME}/.zshrc"
+
+### Dictation & Speech
+
+  # Dictation: Dictation: On
+  defaults write 'com.apple.speech.recognition.AppleSpeechRecognition.prefs' 'DictationIMMasterDictationEnabled' -bool true
+  defaults write 'com.apple.speech.recognition.AppleSpeechRecognition.prefs' 'DictationIMIntroMessagePresented' -bool true
+
+  # Dictation: Use Enhanced Dictation: on
+  if [ -d '/System/Library/Speech/Recognizers/SpeechRecognitionCoreLanguages/en_US.SpeechRecognition' ]; then
+    defaults write 'com.apple.speech.recognition.AppleSpeechRecognition.prefs' 'DictationIMPresentedOfflineUpgradeSuggestion' -bool true
+    defaults write 'com.apple.speech.recognition.AppleSpeechRecognition.prefs' 'DictationIMSIFolderWasUpdated' -bool true
+    defaults write 'com.apple.speech.recognition.AppleSpeechRecognition.prefs' 'DictationIMUseOnlyOfflineDictation' -bool true
+  fi
+
+  # Text to Speech: System Voice: Allison
+  if [ -d '/System/Library/Speech/Voices/Allison.SpeechVoice' ]; then
+    defaults write 'com.apple.speech.voice.prefs' 'VisibleIdentifiers' '{ "com.apple.speech.synthesis.voice.allison.premium" = 1; }'
+    defaults write 'com.apple.speech.voice.prefs' 'SelectedVoiceName' -string 'Allison'
+    defaults write 'com.apple.speech.voice.prefs' 'SelectedVoiceCreator' -int 1886745202
+    defaults write 'com.apple.speech.voice.prefs' 'SelectedVoiceID' -int 184555197
+  fi
+
+### Date & Time
+
+  # Clock: Display the time with seconds: on / Show date: on
+  defaults write 'com.apple.menuextra.clock' 'DateFormat' -string 'EEE MMM d  h:mm:ss a'
+
+### Accessibility
+
+  # Display: Reduce transparency: on
+  defaults write 'com.apple.universalaccess' 'reduceTransparency' -bool true
+
+### Restart defaults server
+
+  killall -u "$USER" cfprefsd
+  osascript -e 'tell app "Finder" to quit'
+  osascript -e 'tell app "Dock" to quit'
+}
+#+END_SRC
+
+*** Create /etc/zshrc
+#+BEGIN_SRC sh
+function create_zshrc () {
+  sudo tee /etc/zshrc > /dev/null <<-EOF
+alias -g ...="../.."
+alias -g ....="../../.."
+alias -g .....="../../../.."
+alias l="/bin/ls -lG"
+alias ll="/bin/ls -alG"
+alias lr="/bin/ls -alRG"
+alias screen="/usr/bin/screen -U"
+autoload -U compaudit
+compaudit | xargs -L 1 sudo chown -HR root:wheel {} 2> /dev/null
+compaudit | xargs -L 1 sudo chmod -HR go-w {} 2> /dev/null
+autoload -U compinit
+compinit -d "\${HOME}/Library/Caches/zcompdump"
+bindkey "\e[3~" delete-char
+bindkey "\e[A" up-line-or-search
+bindkey "\e[B" down-line-or-search
+export HISTFILE="\${HOME}/Library/Caches/zsh_history"
+export HISTSIZE=50000
+export SAVEHIST=50000
+setopt APPEND_HISTORY
+setopt AUTO_CD
+setopt EXTENDED_HISTORY
+setopt HIST_FIND_NO_DUPS
+setopt INC_APPEND_HISTORY
+setopt PROMPT_SUBST
+setopt SHARE_HISTORY
+stty erase \b
+# Correctly display UTF-8 with combining characters.
+if [ "\$TERM_PROGRAM" = "Apple_Terminal" ]; then
+  setopt combiningchars
+fi
+EOF
+}
+#+END_SRC
+
+*** Configure All
+#+BEGIN_SRC sh
+function config_all () {
+  config_file_map
+  config_finder
+  config_safari
+  config_system_prefs
+  create_zshrc
+}
+#+END_SRC
+
+*** Display Help
+#+BEGIN_SRC sh
+clear
+cat <<-END
+
+Enter any of these commands:
+  config_file_map
+  config_finder
+  config_safari
+  config_system_prefs
+  create_zshrc
+
+Or:
+  config_all
+
+END
+fi
+#+END_SRC
+
+
+** Step 4: Register Apps
+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
