@@ -132,11 +132,9 @@ brew "ptb/custom/ffmpeg",
   'with-libass',
   'with-libbluray',
   'with-libcaca',
-  'with-libquvi',
   'with-libsoxr',
   'with-libssh',
   'with-libvidstab',
-  'with-libvo-aacenc',
   'with-libvorbis',
   'with-libvpx',
   'with-opencore-amr',
@@ -298,7 +296,8 @@ function install_python_software () {
 
   pip install psutil bottle zeroconf netifaces influxdb statsd pystache pysnmp pika yapf
   pip install glances
-  pip install qtfaststart
+  pip install babelfish 'guessit<2' qtfaststart requests subliminal
+  pip install 'requests[security]'
   pip install watchdog
 }
 
