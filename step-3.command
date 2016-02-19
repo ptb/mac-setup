@@ -395,7 +395,7 @@ EOF
 
   # Screen Saver: Start after: Never
   defaults -currentHost write 'com.apple.screensaver' 'idleTime' -int 0
-  
+
   # Screen Saver: Hot Corners… Top Left: ⌘ Mission Control
   defaults write 'com.apple.dock' 'wvous-tl-corner' -int 2
   defaults write 'com.apple.dock' 'wvous-tl-modifier' -int 1048576
@@ -449,7 +449,7 @@ EOF
 
   # Power > Enable Power Nap: enabled
   sudo pmset -c powernap 1
-  
+
 ### Mouse
 
   # Scroll direction: natural: off
