@@ -158,6 +158,7 @@ brew "gnupg"
 brew "gpac", args: ["HEAD"]
 brew "imagemagick"
 brew "mercurial"
+brew "mp4v2"
 brew "mtr"
 brew "nmap"
 brew "node"
@@ -197,6 +198,7 @@ cask "github-desktop"
 cask "gitup"
 cask "google-chrome"
 cask "handbrake"
+cask "handbrakecli"
 cask "hermes"
 cask "imageoptim"
 cask "integrity"
@@ -242,6 +244,7 @@ cask "transmit"
 cask "vimr"
 cask "vlc"
 cask "vmware-fusion"
+cask "xld"
 
 cask "xquartz"
 cask "inkscape"
@@ -296,12 +299,8 @@ function install_node_software () {
 function install_python_software () {
   curl -Ls https://bootstrap.pypa.io/get-pip.py | sudo -H python
   pip install --upgrade pip setuptools
-
-  pip install psutil bottle zeroconf netifaces influxdb statsd pystache pysnmp pika yapf
-  pip install glances
-  pip install babelfish 'guessit<2' qtfaststart requests subliminal
-  pip install 'requests[security]'
-  pip install watchdog
+  pip install --upgrade babelfish bottle 'guessit<2' influxdb netifaces pika psutil py2app pyobjc-core pysnmp pystache qtfaststart requests statsd subliminal watchdog yapf zeroconf
+  pip install --upgrade glances pyobjc 'requests[security]'
 }
 
 function install_ruby_software () {

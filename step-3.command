@@ -9,195 +9,201 @@ else
 
 function config_file_map () {
   if [ -x "/usr/local/bin/duti" ]; then
-    duti -s com.VortexApps.NZBVortex3 dyn.ah62d4rv4ge8068xc all
-    duti -s com.apple.DiskImageMounter com.apple.disk-image all
-    duti -s com.apple.DiskImageMounter public.disk-image all
-    duti -s com.apple.DiskImageMounter public.iso-image all
-    duti -s com.apple.QuickTimePlayerX com.apple.coreaudio-format all
-    duti -s com.apple.QuickTimePlayerX com.apple.quicktime-movie all
-    duti -s com.apple.QuickTimePlayerX com.microsoft.waveform-audio all
-    duti -s com.apple.QuickTimePlayerX public.aifc-audio all
-    duti -s com.apple.QuickTimePlayerX public.aiff-audio all
-    duti -s com.apple.QuickTimePlayerX public.audio all
-    duti -s com.apple.QuickTimePlayerX public.mp3 all
-    duti -s com.apple.Safari com.compuserve.gif all
-    duti -s com.apple.Terminal com.apple.terminal.shell-script all
-    duti -s com.apple.iTunes com.apple.iTunes.audible all
-    duti -s com.apple.iTunes com.apple.iTunes.ipg all
-    duti -s com.apple.iTunes com.apple.iTunes.ipsw all
-    duti -s com.apple.iTunes com.apple.iTunes.ite all
-    duti -s com.apple.iTunes com.apple.iTunes.itlp all
-    duti -s com.apple.iTunes com.apple.iTunes.itms all
-    duti -s com.apple.iTunes com.apple.iTunes.podcast all
-    duti -s com.apple.iTunes com.apple.m4a-audio all
-    duti -s com.apple.iTunes com.apple.mpeg-4-ringtone all
-    duti -s com.apple.iTunes com.apple.protected-mpeg-4-audio all
-    duti -s com.apple.iTunes com.apple.protected-mpeg-4-video all
-    duti -s com.apple.iTunes com.audible.aa-audio all
-    duti -s com.apple.iTunes public.mpeg-4-audio all
-    duti -s com.apple.installer com.apple.installer-package-archive all
-    duti -s com.github.atom com.apple.binary-property-list editor
-    duti -s com.github.atom com.apple.crashreport editor
-    duti -s com.github.atom com.apple.dt.document.ascii-property-list editor
-    duti -s com.github.atom com.apple.dt.document.script-suite-property-list editor
-    duti -s com.github.atom com.apple.dt.document.script-terminology-property-list editor
-    duti -s com.github.atom com.apple.log editor
-    duti -s com.github.atom com.apple.property-list editor
-    duti -s com.github.atom com.apple.rez-source editor
-    duti -s com.github.atom com.apple.symbol-export editor
-    duti -s com.github.atom com.apple.xcode.ada-source editor
-    duti -s com.github.atom com.apple.xcode.bash-script editor
-    duti -s com.github.atom com.apple.xcode.configsettings editor
-    duti -s com.github.atom com.apple.xcode.csh-script editor
-    duti -s com.github.atom com.apple.xcode.fortran-source editor
-    duti -s com.github.atom com.apple.xcode.ksh-script editor
-    duti -s com.github.atom com.apple.xcode.lex-source editor
-    duti -s com.github.atom com.apple.xcode.make-script editor
-    duti -s com.github.atom com.apple.xcode.mig-source editor
-    duti -s com.github.atom com.apple.xcode.pascal-source editor
-    duti -s com.github.atom com.apple.xcode.strings-text editor
-    duti -s com.github.atom com.apple.xcode.tcsh-script editor
-    duti -s com.github.atom com.apple.xcode.yacc-source editor
-    duti -s com.github.atom com.apple.xcode.zsh-script editor
-    duti -s com.github.atom com.apple.xml-property-list editor
-    duti -s com.github.atom com.barebones.bbedit.actionscript-source editor
-    duti -s com.github.atom com.barebones.bbedit.erb-source editor
-    duti -s com.github.atom com.barebones.bbedit.ini-configuration editor
-    duti -s com.github.atom com.barebones.bbedit.javascript-source editor
-    duti -s com.github.atom com.barebones.bbedit.json-source editor
-    duti -s com.github.atom com.barebones.bbedit.jsp-source editor
-    duti -s com.github.atom com.barebones.bbedit.lasso-source editor
-    duti -s com.github.atom com.barebones.bbedit.lua-source editor
-    duti -s com.github.atom com.barebones.bbedit.setext-source editor
-    duti -s com.github.atom com.barebones.bbedit.sql-source editor
-    duti -s com.github.atom com.barebones.bbedit.tcl-source editor
-    duti -s com.github.atom com.barebones.bbedit.tex-source editor
-    duti -s com.github.atom com.barebones.bbedit.textile-source editor
-    duti -s com.github.atom com.barebones.bbedit.vbscript-source editor
-    duti -s com.github.atom com.barebones.bbedit.vectorscript-source editor
-    duti -s com.github.atom com.barebones.bbedit.verilog-hdl-source editor
-    duti -s com.github.atom com.barebones.bbedit.vhdl-source editor
-    duti -s com.github.atom com.barebones.bbedit.yaml-source editor
-    duti -s com.github.atom com.netscape.javascript-source editor
-    duti -s com.github.atom com.sun.java-source editor
-    duti -s com.github.atom dyn.ah62d4rv4ge80255drq all
-    duti -s com.github.atom dyn.ah62d4rv4ge80g55gq3w0n all
-    duti -s com.github.atom dyn.ah62d4rv4ge80g55sq2 all
-    duti -s com.github.atom dyn.ah62d4rv4ge80y2xzrf0gk3pw all
-    duti -s com.github.atom dyn.ah62d4rv4ge81e3dtqq all
-    duti -s com.github.atom dyn.ah62d4rv4ge81e7k all
-    duti -s com.github.atom dyn.ah62d4rv4ge81g25xsq all
-    duti -s com.github.atom dyn.ah62d4rv4ge81g2pxsq all
-    duti -s com.github.atom net.daringfireball.markdown editor
-    duti -s com.github.atom public.assembly-source editor
-    duti -s com.github.atom public.c-header editor
-    duti -s com.github.atom public.c-plus-plus-source editor
-    duti -s com.github.atom public.c-source editor
-    duti -s com.github.atom public.csh-script editor
-    duti -s com.github.atom public.json editor
-    duti -s com.github.atom public.lex-source editor
-    duti -s com.github.atom public.log editor
-    duti -s com.github.atom public.mig-source editor
-    duti -s com.github.atom public.nasm-assembly-source editor
-    duti -s com.github.atom public.objective-c-plus-plus-source editor
-    duti -s com.github.atom public.objective-c-source editor
-    duti -s com.github.atom public.patch-file editor
-    duti -s com.github.atom public.perl-script editor
-    duti -s com.github.atom public.php-script editor
-    duti -s com.github.atom public.plain-text editor
-    duti -s com.github.atom public.precompiled-c-header editor
-    duti -s com.github.atom public.precompiled-c-plus-plus-header editor
-    duti -s com.github.atom public.python-script editor
-    duti -s com.github.atom public.ruby-script editor
-    duti -s com.github.atom public.script editor
-    duti -s com.github.atom public.shell-script editor
-    duti -s com.github.atom public.source-code editor
-    duti -s com.github.atom public.text editor
-    duti -s com.github.atom public.utf16-external-plain-text editor
-    duti -s com.github.atom public.utf16-plain-text editor
-    duti -s com.github.atom public.utf8-plain-text editor
-    duti -s com.github.atom public.xml editor
-    duti -s com.kodlian.Icon-Slate com.apple.icns all
-    duti -s com.kodlian.Icon-Slate com.microsoft.ico all
-    duti -s com.microsoft.Word public.rtf all
-    duti -s com.panayotis.jubler dyn.ah62d4rv4ge81g6xy all
-    duti -s com.sketchup.SketchUp.2016 com.sketchup.skp all
-    duti -s com.vmware.fusion com.microsoft.windows-executable all
-    duti -s cx.c3.theunarchiver com.alcohol-soft.mdf-image all
-    duti -s cx.c3.theunarchiver com.allume.stuffit-archive all
-    duti -s cx.c3.theunarchiver com.altools.alz-archive all
-    duti -s cx.c3.theunarchiver com.amiga.adf-archive all
-    duti -s cx.c3.theunarchiver com.amiga.adz-archive all
-    duti -s cx.c3.theunarchiver com.apple.applesingle-archive all
-    duti -s cx.c3.theunarchiver com.apple.binhex-archive all
-    duti -s cx.c3.theunarchiver com.apple.bom-compressed-cpio all
-    duti -s cx.c3.theunarchiver com.apple.itunes.ipa all
-    duti -s cx.c3.theunarchiver com.apple.macbinary-archive all
-    duti -s cx.c3.theunarchiver com.apple.self-extracting-archive all
-    duti -s cx.c3.theunarchiver com.apple.xar-archive all
-    duti -s cx.c3.theunarchiver com.apple.xip-archive all
-    duti -s cx.c3.theunarchiver com.cyclos.cpt-archive all
-    duti -s cx.c3.theunarchiver com.microsoft.cab-archive all
-    duti -s cx.c3.theunarchiver com.microsoft.msi-installer all
-    duti -s cx.c3.theunarchiver com.nero.nrg-image all
-    duti -s cx.c3.theunarchiver com.network172.pit-archive all
-    duti -s cx.c3.theunarchiver com.nowsoftware.now-archive all
-    duti -s cx.c3.theunarchiver com.nscripter.nsa-archive all
-    duti -s cx.c3.theunarchiver com.padus.cdi-image all
-    duti -s cx.c3.theunarchiver com.pkware.zip-archive all
-    duti -s cx.c3.theunarchiver com.rarlab.rar-archive all
-    duti -s cx.c3.theunarchiver com.redhat.rpm-archive all
-    duti -s cx.c3.theunarchiver com.stuffit.archive.sit all
-    duti -s cx.c3.theunarchiver com.stuffit.archive.sitx all
-    duti -s cx.c3.theunarchiver com.sun.java-archive all
-    duti -s cx.c3.theunarchiver com.symantec.dd-archive all
-    duti -s cx.c3.theunarchiver com.winace.ace-archive all
-    duti -s cx.c3.theunarchiver com.winzip.zipx-archive all
-    duti -s cx.c3.theunarchiver cx.c3.arc-archive all
-    duti -s cx.c3.theunarchiver cx.c3.arj-archive all
-    duti -s cx.c3.theunarchiver cx.c3.dcs-archive all
-    duti -s cx.c3.theunarchiver cx.c3.dms-archive all
-    duti -s cx.c3.theunarchiver cx.c3.ha-archive all
-    duti -s cx.c3.theunarchiver cx.c3.lbr-archive all
-    duti -s cx.c3.theunarchiver cx.c3.lha-archive all
-    duti -s cx.c3.theunarchiver cx.c3.lhf-archive all
-    duti -s cx.c3.theunarchiver cx.c3.lzx-archive all
-    duti -s cx.c3.theunarchiver cx.c3.packdev-archive all
-    duti -s cx.c3.theunarchiver cx.c3.pax-archive all
-    duti -s cx.c3.theunarchiver cx.c3.pma-archive all
-    duti -s cx.c3.theunarchiver cx.c3.pp-archive all
-    duti -s cx.c3.theunarchiver cx.c3.xmash-archive all
-    duti -s cx.c3.theunarchiver cx.c3.zoo-archive all
-    duti -s cx.c3.theunarchiver cx.c3.zoom-archive all
-    duti -s cx.c3.theunarchiver org.7-zip.7-zip-archive all
-    duti -s cx.c3.theunarchiver org.archive.warc-archive all
-    duti -s cx.c3.theunarchiver org.debian.deb-archive all
-    duti -s cx.c3.theunarchiver org.gnu.gnu-tar-archive all
-    duti -s cx.c3.theunarchiver org.gnu.gnu-zip-archive all
-    duti -s cx.c3.theunarchiver org.gnu.gnu-zip-tar-archive all
-    duti -s cx.c3.theunarchiver org.tukaani.lzma-archive all
-    duti -s cx.c3.theunarchiver org.tukaani.xz-archive all
-    duti -s cx.c3.theunarchiver public.bzip2-archive all
-    duti -s cx.c3.theunarchiver public.cpio-archive all
-    duti -s cx.c3.theunarchiver public.tar-archive all
-    duti -s cx.c3.theunarchiver public.tar-bzip2-archive all
-    duti -s cx.c3.theunarchiver public.z-archive all
-    duti -s cx.c3.theunarchiver public.zip-archive all
-    duti -s cx.c3.theunarchiver public.zip-archive.first-part all
-    duti -s org.gnu.Emacs dyn.ah62d4rv4ge8086xh all
-    duti -s org.inkscape.Inkscape public.svg-image editor
-    duti -s org.videolan.vlc com.apple.m4v-video all
-    duti -s org.videolan.vlc com.microsoft.windows-media-wmv all
-    duti -s org.videolan.vlc org.perian.matroska all
-    duti -s org.videolan.vlc org.videolan.ac3 all
-    duti -s org.videolan.vlc org.videolan.ogg-audio all
-    duti -s org.videolan.vlc public.ac3-audio all
-    duti -s org.videolan.vlc public.audiovisual-content all
-    duti -s org.videolan.vlc public.avi all
-    duti -s org.videolan.vlc public.movie all
-    duti -s org.videolan.vlc public.mpeg all
-    duti -s org.videolan.vlc public.mpeg-2-video all
-    duti -s org.videolan.vlc public.mpeg-4 all
+    printf "%s\t%s\t%s\n" \
+      "org.videolan.vlc" "public.avi" "all" \
+      "com.VortexApps.NZBVortex3" "dyn.ah62d4rv4ge8068xc" "all" \
+      "com.apple.DiskImageMounter" "com.apple.disk-image" "all" \
+      "com.apple.DiskImageMounter" "public.disk-image" "all" \
+      "com.apple.DiskImageMounter" "public.iso-image" "all" \
+      "com.apple.QuickTimePlayerX" "com.apple.coreaudio-format" "all" \
+      "com.apple.QuickTimePlayerX" "com.apple.quicktime-movie" "all" \
+      "com.apple.QuickTimePlayerX" "com.microsoft.waveform-audio" "all" \
+      "com.apple.QuickTimePlayerX" "public.aifc-audio" "all" \
+      "com.apple.QuickTimePlayerX" "public.aiff-audio" "all" \
+      "com.apple.QuickTimePlayerX" "public.audio" "all" \
+      "com.apple.QuickTimePlayerX" "public.mp3" "all" \
+      "com.apple.Safari" "com.compuserve.gif" "all" \
+      "com.apple.Terminal" "com.apple.terminal.shell-script" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.audible" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.ipg" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.ipsw" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.ite" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.itlp" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.itms" "all" \
+      "com.apple.iTunes" "com.apple.iTunes.podcast" "all" \
+      "com.apple.iTunes" "com.apple.m4a-audio" "all" \
+      "com.apple.iTunes" "com.apple.mpeg-4-ringtone" "all" \
+      "com.apple.iTunes" "com.apple.protected-mpeg-4-audio" "all" \
+      "com.apple.iTunes" "com.apple.protected-mpeg-4-video" "all" \
+      "com.apple.iTunes" "com.audible.aa-audio" "all" \
+      "com.apple.iTunes" "public.mpeg-4-audio" "all" \
+      "com.apple.installer" "com.apple.installer-package-archive" "all" \
+      "com.github.atom" "com.apple.binary-property-list" "editor" \
+      "com.github.atom" "com.apple.crashreport" "editor" \
+      "com.github.atom" "com.apple.dt.document.ascii-property-list" "editor" \
+      "com.github.atom" "com.apple.dt.document.script-suite-property-list" "editor" \
+      "com.github.atom" "com.apple.dt.document.script-terminology-property-list" "editor" \
+      "com.github.atom" "com.apple.log" "editor" \
+      "com.github.atom" "com.apple.property-list" "editor" \
+      "com.github.atom" "com.apple.rez-source" "editor" \
+      "com.github.atom" "com.apple.symbol-export" "editor" \
+      "com.github.atom" "com.apple.xcode.ada-source" "editor" \
+      "com.github.atom" "com.apple.xcode.bash-script" "editor" \
+      "com.github.atom" "com.apple.xcode.configsettings" "editor" \
+      "com.github.atom" "com.apple.xcode.csh-script" "editor" \
+      "com.github.atom" "com.apple.xcode.fortran-source" "editor" \
+      "com.github.atom" "com.apple.xcode.ksh-script" "editor" \
+      "com.github.atom" "com.apple.xcode.lex-source" "editor" \
+      "com.github.atom" "com.apple.xcode.make-script" "editor" \
+      "com.github.atom" "com.apple.xcode.mig-source" "editor" \
+      "com.github.atom" "com.apple.xcode.pascal-source" "editor" \
+      "com.github.atom" "com.apple.xcode.strings-text" "editor" \
+      "com.github.atom" "com.apple.xcode.tcsh-script" "editor" \
+      "com.github.atom" "com.apple.xcode.yacc-source" "editor" \
+      "com.github.atom" "com.apple.xcode.zsh-script" "editor" \
+      "com.github.atom" "com.apple.xml-property-list" "editor" \
+      "com.github.atom" "com.barebones.bbedit.actionscript-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.erb-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.ini-configuration" "editor" \
+      "com.github.atom" "com.barebones.bbedit.javascript-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.json-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.jsp-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.lasso-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.lua-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.setext-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.sql-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.tcl-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.tex-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.textile-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.vbscript-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.vectorscript-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.verilog-hdl-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.vhdl-source" "editor" \
+      "com.github.atom" "com.barebones.bbedit.yaml-source" "editor" \
+      "com.github.atom" "com.netscape.javascript-source" "editor" \
+      "com.github.atom" "com.sun.java-source" "editor" \
+      "com.github.atom" "dyn.ah62d4rv4ge80255drq" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge80g55gq3w0n" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge80g55sq2" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge80y2xzrf0gk3pw" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge81e3dtqq" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge81e7k" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge81g25xsq" "all" \
+      "com.github.atom" "dyn.ah62d4rv4ge81g2pxsq" "all" \
+      "com.github.atom" "net.daringfireball.markdown" "editor" \
+      "com.github.atom" "public.assembly-source" "editor" \
+      "com.github.atom" "public.c-header" "editor" \
+      "com.github.atom" "public.c-plus-plus-source" "editor" \
+      "com.github.atom" "public.c-source" "editor" \
+      "com.github.atom" "public.csh-script" "editor" \
+      "com.github.atom" "public.json" "editor" \
+      "com.github.atom" "public.lex-source" "editor" \
+      "com.github.atom" "public.log" "editor" \
+      "com.github.atom" "public.mig-source" "editor" \
+      "com.github.atom" "public.nasm-assembly-source" "editor" \
+      "com.github.atom" "public.objective-c-plus-plus-source" "editor" \
+      "com.github.atom" "public.objective-c-source" "editor" \
+      "com.github.atom" "public.patch-file" "editor" \
+      "com.github.atom" "public.perl-script" "editor" \
+      "com.github.atom" "public.php-script" "editor" \
+      "com.github.atom" "public.plain-text" "editor" \
+      "com.github.atom" "public.precompiled-c-header" "editor" \
+      "com.github.atom" "public.precompiled-c-plus-plus-header" "editor" \
+      "com.github.atom" "public.python-script" "editor" \
+      "com.github.atom" "public.ruby-script" "editor" \
+      "com.github.atom" "public.script" "editor" \
+      "com.github.atom" "public.shell-script" "editor" \
+      "com.github.atom" "public.source-code" "editor" \
+      "com.github.atom" "public.text" "editor" \
+      "com.github.atom" "public.utf16-external-plain-text" "editor" \
+      "com.github.atom" "public.utf16-plain-text" "editor" \
+      "com.github.atom" "public.utf8-plain-text" "editor" \
+      "com.github.atom" "public.xml" "editor" \
+      "com.kodlian.Icon-Slate" "com.apple.icns" "all" \
+      "com.kodlian.Icon-Slate" "com.microsoft.ico" "all" \
+      "com.microsoft.Word" "public.rtf" "all" \
+      "com.panayotis.jubler" "dyn.ah62d4rv4ge81g6xy" "all" \
+      "com.sketchup.SketchUp.2016" "com.sketchup.skp" "all" \
+      "com.vmware.fusion" "com.microsoft.windows-executable" "all" \
+      "cx.c3.theunarchiver" "com.alcohol-soft.mdf-image" "all" \
+      "cx.c3.theunarchiver" "com.allume.stuffit-archive" "all" \
+      "cx.c3.theunarchiver" "com.altools.alz-archive" "all" \
+      "cx.c3.theunarchiver" "com.amiga.adf-archive" "all" \
+      "cx.c3.theunarchiver" "com.amiga.adz-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.applesingle-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.binhex-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.bom-compressed-cpio" "all" \
+      "cx.c3.theunarchiver" "com.apple.itunes.ipa" "all" \
+      "cx.c3.theunarchiver" "com.apple.macbinary-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.self-extracting-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.xar-archive" "all" \
+      "cx.c3.theunarchiver" "com.apple.xip-archive" "all" \
+      "cx.c3.theunarchiver" "com.cyclos.cpt-archive" "all" \
+      "cx.c3.theunarchiver" "com.microsoft.cab-archive" "all" \
+      "cx.c3.theunarchiver" "com.microsoft.msi-installer" "all" \
+      "cx.c3.theunarchiver" "com.nero.nrg-image" "all" \
+      "cx.c3.theunarchiver" "com.network172.pit-archive" "all" \
+      "cx.c3.theunarchiver" "com.nowsoftware.now-archive" "all" \
+      "cx.c3.theunarchiver" "com.nscripter.nsa-archive" "all" \
+      "cx.c3.theunarchiver" "com.padus.cdi-image" "all" \
+      "cx.c3.theunarchiver" "com.pkware.zip-archive" "all" \
+      "cx.c3.theunarchiver" "com.rarlab.rar-archive" "all" \
+      "cx.c3.theunarchiver" "com.redhat.rpm-archive" "all" \
+      "cx.c3.theunarchiver" "com.stuffit.archive.sit" "all" \
+      "cx.c3.theunarchiver" "com.stuffit.archive.sitx" "all" \
+      "cx.c3.theunarchiver" "com.sun.java-archive" "all" \
+      "cx.c3.theunarchiver" "com.symantec.dd-archive" "all" \
+      "cx.c3.theunarchiver" "com.winace.ace-archive" "all" \
+      "cx.c3.theunarchiver" "com.winzip.zipx-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.arc-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.arj-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.dcs-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.dms-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.ha-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.lbr-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.lha-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.lhf-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.lzx-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.packdev-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.pax-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.pma-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.pp-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.xmash-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.zoo-archive" "all" \
+      "cx.c3.theunarchiver" "cx.c3.zoom-archive" "all" \
+      "cx.c3.theunarchiver" "org.7-zip.7-zip-archive" "all" \
+      "cx.c3.theunarchiver" "org.archive.warc-archive" "all" \
+      "cx.c3.theunarchiver" "org.debian.deb-archive" "all" \
+      "cx.c3.theunarchiver" "org.gnu.gnu-tar-archive" "all" \
+      "cx.c3.theunarchiver" "org.gnu.gnu-zip-archive" "all" \
+      "cx.c3.theunarchiver" "org.gnu.gnu-zip-tar-archive" "all" \
+      "cx.c3.theunarchiver" "org.tukaani.lzma-archive" "all" \
+      "cx.c3.theunarchiver" "org.tukaani.xz-archive" "all" \
+      "cx.c3.theunarchiver" "public.bzip2-archive" "all" \
+      "cx.c3.theunarchiver" "public.cpio-archive" "all" \
+      "cx.c3.theunarchiver" "public.tar-archive" "all" \
+      "cx.c3.theunarchiver" "public.tar-bzip2-archive" "all" \
+      "cx.c3.theunarchiver" "public.z-archive" "all" \
+      "cx.c3.theunarchiver" "public.zip-archive" "all" \
+      "cx.c3.theunarchiver" "public.zip-archive.first-part" "all" \
+      "org.gnu.Emacs" "dyn.ah62d4rv4ge8086xh" "all" \
+      "org.inkscape.Inkscape" "public.svg-image" "editor" \
+      "org.videolan.vlc" "com.apple.m4v-video" "all" \
+      "org.videolan.vlc" "com.microsoft.windows-media-wmv" "all" \
+      "org.videolan.vlc" "org.perian.matroska" "all" \
+      "org.videolan.vlc" "org.videolan.ac3" "all" \
+      "org.videolan.vlc" "org.videolan.ogg-audio" "all" \
+      "org.videolan.vlc" "public.ac3-audio" "all" \
+      "org.videolan.vlc" "public.audiovisual-content" "all" \
+      "org.videolan.vlc" "public.avi" "all" \
+      "org.videolan.vlc" "public.movie" "all" \
+      "org.videolan.vlc" "public.mpeg" "all" \
+      "org.videolan.vlc" "public.mpeg-2-video" "all" \
+      "org.videolan.vlc" "public.mpeg-4" "all" \
+      > "${HOME}/.duti"
+
+      /usr/local/bin/duti "${HOME}/.duti"
+    fi
 
     sudo mkdir -p /var/db/lsd
     sudo chown root:admin /var/db/lsd
