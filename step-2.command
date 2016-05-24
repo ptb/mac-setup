@@ -297,13 +297,13 @@ function install_osx_software () {
 }
 
 function install_node_software () {
-  npm install -g bower polyserve svgo
+  npm install -g bower grunt-cli polyserve svgo
 }
 
 function install_python_software () {
   curl -Ls https://bootstrap.pypa.io/get-pip.py | sudo -H python
   pip install --upgrade pip setuptools
-  pip install --upgrade babelfish bottle 'guessit<2' influxdb netifaces pika psutil py2app pyobjc-core pysnmp pystache qtfaststart requests statsd subliminal watchdog yapf zeroconf
+  pip install --upgrade babelfish bottle 'guessit<2' influxdb netifaces pika psutil py2app pyobjc-core pysnmp pystache qtfaststart requests scour statsd subliminal watchdog yapf zeroconf
   pip install --upgrade glances pyobjc 'requests[security]'
 }
 
