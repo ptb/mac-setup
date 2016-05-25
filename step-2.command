@@ -128,7 +128,7 @@ brew "git"
 brew "git-annex"
 brew "gnu-sed", args: ["with-default-names"]
 brew "gnupg"
-brew "gpac", args: ["HEAD"]
+brew "gpac"
 brew "hub"
 brew "imagemagick"
 brew "mercurial"
@@ -165,7 +165,7 @@ cask "adium"
 cask "adobe-illustrator-cc"
 cask "adobe-indesign-cc"
 cask "adobe-photoshop-cc"
-# cask "airfoil"
+cask "airfoil"
 cask "alfred"
 cask "arduino"
 cask "atom"
@@ -212,6 +212,7 @@ cask "nzbget"
 cask "nzbvortex"
 cask "openemu"
 cask "opera"
+cask "caskroom/versions/osxfuse-beta"
 cask "pacifist"
 cask "platypus"
 cask "plex-media-server"
@@ -252,6 +253,8 @@ cask "wireshark"
 
 cask "caskroom/fonts/font-inconsolata-lgc"
 
+cask "infinit/releases/infinit"
+
 cask "ptb/custom/bbedit-10"
 cask "ptb/custom/blankscreen"
 cask "ptb/custom/composer"
@@ -276,10 +279,6 @@ cask "ptb/custom/sketchup-pro"
 cask "ptb/custom/synergy"
 cask "ptb/custom/text-to-speech-allison"
 cask "ptb/custom/tune4mac"
-
-cask "https://raw.githubusercontent.com/ptb/homebrew-cask/e45c9cda9876fc614425bdb67c231c1a303829f6/Casks/airfoil.rb"
-cask "https://raw.githubusercontent.com/ptb/homebrew-versions/8438c02f1bc5d3c1fc7edc2fc98ec111c8f8917f/Casks/osxfuse-beta.rb"
-cask "infinit/releases/infinit"
 EOF
 }
 
