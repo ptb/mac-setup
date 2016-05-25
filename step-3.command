@@ -565,6 +565,17 @@ stty erase \b
 if [ "\$TERM_PROGRAM" = "Apple_Terminal" ]; then
   setopt combiningchars
 fi
+function precmd () {
+  print -Pn "\\e]7;file://%M\${PWD// /%%20}\a"
+  print -Pn "\\e]2;%n@%m\a"
+  print -Pn "\\e]1;%~\a"
+}
+gb () { git branch --no-color 2> /dev/null | /usr/bin/sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/' }
+xd () { /usr/bin/xattr -d com.apple.diskimages.fsck \$* 2> /dev/null; /usr/bin/xattr -d com.apple.diskimages.recentcksum \$* 2> /dev/null; /usr/bin/xattr -d com.apple.metadata:kMDItemFinderComment \$* 2> /dev/null; /usr/bin/xattr -d com.apple.metadata:kMDItemDownloadedDate \$* 2> /dev/null; /usr/bin/xattr -d com.apple.metadata:kMDItemWhereFroms \$* 2> /dev/null; /usr/bin/xattr -d com.apple.quarantine \$* 2> /dev/null; /usr/bin/find . -name .DS_Store -delete; /usr/bin/find . -name Icon
+ -delete }
+sf () { /usr/bin/SetFile -P -d "\$1 12:00:00" -m "\$1 12:00:00" \$argv[2,\$] }
+sd () { xd **/*; sf \$1 .; for i in **/*; do sf \$1 \$i; done; /usr/sbin/chown -R root ROOT 2> /dev/null; /usr/bin/chgrp -R wheel ROOT 2> /dev/null; /bin/chmod -R a+r ROOT 2> /dev/null; /bin/chmod -R u+w ROOT 2> /dev/null; /bin/chmod -R go-w ROOT 2> /dev/null; /usr/bin/find . -type d -exec /bin/chmod a+x '{}' ';'; /usr/bin/chgrp -R admin ROOT/Applications 2> /dev/null; /bin/chmod -R g+w ROOT/Applications 2> /dev/null; /usr/bin/chgrp -R admin ROOT/Library 2> /dev/null; /bin/chmod -R g+w ROOT/Library 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Application\ Enhancers 2> /dev/null; /usr/bin/chgrp -R staff ROOT/Library/Application\ Support/Adobe 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Bundles 2> /dev/null; /bin/chmod -R g-w ROOT/Library/InputManagers 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Keychains 2> /dev/null; /bin/chmod -R g-w ROOT/Library/ScriptingAdditions 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Tcl 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/Filesystems 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Filesystems 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/LaunchAgents 2> /dev/null; /bin/chmod -R g-w ROOT/Library/LaunchAgents 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/LaunchDaemons 2> /dev/null; /bin/chmod -R g-w ROOT/Library/LaunchDaemons 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/PreferencePanes 2> /dev/null; /bin/chmod -R g-w ROOT/Library/PreferencePanes 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/StartupItems 2> /dev/null; /bin/chmod -R g-w ROOT/Library/StartupItems 2> /dev/null; /usr/bin/chgrp -R wheel ROOT/Library/Widgets 2> /dev/null; /bin/chmod -R g-w ROOT/Library/Widgets 2> /dev/null; /usr/bin/find . -name "kexts" -type d -exec /bin/chmod -R g-w '{}' ';'; /usr/bin/find . -name "*.kext" -exec /usr/sbin/chown -R root:wheel '{}' ';'; /usr/bin/find . -name "*.kext" -exec /bin/chmod -R g-w '{}' ';' }
+PROMPT='%B%n@%m%b:%2~%B\$(gb) %#%b '
 EOF
 }
 

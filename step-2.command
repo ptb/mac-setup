@@ -59,108 +59,93 @@ function install_homebrew () {
 
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
-}
 
-function create_brew_update_script () {
-  cat > /usr/local/bin/brew-update.sh <<-EOF
-#!/bin/sh
-
-brew update
-brew doctor
-
-brew cask install "caskroom/fonts/font-inconsolata-lgc" 2> /dev/null
-brew cask install "ptb/custom/blankscreen" 2> /dev/null
-
-# Details: https://github.com/caskroom/homebrew-cask/issues/13201
-# Source: https://github.com/caskroom/homebrew-cask/pull/13966/files?diff=split
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact.rb
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/app.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/app.rb
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/moved.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/moved.rb
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/artifact/suite.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/suite.rb
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/dsl/postflight.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/dsl/postflight.rb
-
-curl --compressed --location --show-error --silent \\
-  --url https://github.com/mwean/homebrew-cask/raw/master/lib/hbc/staged.rb \\
-  --output /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/staged.rb
-
-sed -i -e "s/@cask.staged_path/Hbc.appdir/" \\
-  /usr/local/Library/Taps/caskroom/homebrew-cask/lib/hbc/artifact/symlinked.rb
-
-cd /usr/local/ && brew bundle
-
-brew upgrade --all
-brew linkapps
-EOF
-
-  chmod +x /usr/local/bin/brew-update.sh
+  brew install hub
+  cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
+    && hub checkout https://github.com/caskroom/homebrew-cask/pull/13966
 }
 
 function create_brewfile () {
   cat > /usr/local/Brewfile <<-EOF
 tap "caskroom/cask"
+tap "caskroom/fonts"
+tap "caskroom/versions"
 tap "homebrew/bundle"
+tap "homebrew/dupes"
+tap "homebrew/nginx"
+tap "infinit/releases"
+tap "ptb/custom"
+tap "railwaycat/emacsmacport"
 
 cask "java"
 
 brew "aspell", args: ["lang=en"]
 brew "duti"
 brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
-brew "ptb/custom/ffmpeg",
+brew "ffmpeg",
   args: [
-  'with-faac',
-  'with-fdk-aac',
-  'with-ffplay',
-  'with-fontconfig',
-  'with-freetype',
-  'with-frei0r',
-  'with-lame',
-  'with-libass',
-  'with-libbluray',
-  'with-libcaca',
-  'with-libsoxr',
-  'with-libssh',
-  'with-libvidstab',
-  'with-libvorbis',
-  'with-libvpx',
-  'with-opencore-amr',
-  'with-openjpeg',
-  'with-openssl',
-  'with-opus',
-  'with-rtmpdump',
-  'with-schroedinger',
-  'with-speex',
-  'with-theora',
-  'with-tools',
-  'with-webp',
-  'with-x264',
-  'with-x265',
-  'with-xvid',
-  'with-zeromq' ]
+  "with-dcadec",
+  "with-faac",
+  "with-fdk-aac",
+  "with-ffplay",
+  "with-fontconfig",
+  "with-freetype",
+  "with-frei0r",
+  "with-lame",
+  "with-libass",
+  "with-libbluray",
+  "with-libbs2b",
+  "with-libcaca",
+  "with-libsoxr",
+  "with-libssh",
+  "with-libvidstab",
+  "with-libvorbis",
+  "with-libvpx",
+  "with-opencore-amr",
+  "with-openh264",
+  "with-openjpeg",
+  "with-openssl",
+  "with-opus",
+  "with-pkg-config",
+  "with-qtkit",
+  "with-rtmpdump",
+  "with-rubberband",
+  "with-schroedinger",
+  "with-sdl",
+  "with-snappy",
+  "with-speex",
+  "with-texi2html",
+  "with-theora",
+  "with-tools",
+  "with-webp",
+  "with-x264",
+  "with-x265",
+  "with-xvid",
+  "with-yasm",
+  "with-zeromq",
+  "with-zimg" ]
 brew "git"
 brew "git-annex"
 brew "gnu-sed", args: ["with-default-names"]
 brew "gnupg"
 brew "gpac", args: ["HEAD"]
+brew "hub"
 brew "imagemagick"
 brew "mercurial"
 brew "mp4v2"
 brew "mtr"
 brew "nmap"
+brew "homebrew/nginx/nginx-full",
+  args: [
+  "with-dav-ext-module",
+  "with-fancyindex-module",
+  "with-gzip-static",
+  "with-http2",
+  "with-mp4-h264-module",
+  "with-passenger",
+  "with-push-stream-module",
+  "with-secure-link",
+  "with-webdav" ]
 brew "node"
 brew "openssl"
 brew "homebrew/dupes/rsync"
@@ -172,6 +157,7 @@ brew "terminal-notifier"
 brew "trash"
 brew "vim"
 brew "wget"
+brew "wine"
 brew "youtube-dl"
 brew "zsh"
 
@@ -179,23 +165,27 @@ cask "adium"
 cask "adobe-illustrator-cc"
 cask "adobe-indesign-cc"
 cask "adobe-photoshop-cc"
-cask "airfoil"
+# cask "airfoil"
 cask "alfred"
 cask "arduino"
 cask "atom"
 cask "autodmg"
 cask "bettertouchtool"
 cask "caffeine"
+cask "carbon-copy-cloner"
 cask "charles"
 cask "couchpotato"
 cask "dash"
 # cask "datetree"
 cask "deluge"
+# cask "disk-inventory-x"
 cask "dockertoolbox"
 cask "dropbox"
+cask "duet"
 cask "exifrenamer"
 cask "expandrive"
 cask "firefox"
+cask "flux"
 cask "github-desktop"
 cask "gitup"
 cask "google-chrome"
@@ -225,7 +215,10 @@ cask "opera"
 cask "pacifist"
 cask "platypus"
 cask "plex-media-server"
+cask "quitter"
 cask "raindrop"
+cask "rescuetime"
+# cask "safari-technology-preview"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -240,6 +233,8 @@ cask "sourcetree"
 cask "steermouse"
 cask "subler"
 cask "caskroom/versions/sublime-text3"
+cask "time-sink"
+# cask "timing"
 cask "the-unarchiver"
 # cask "tidy-up"
 cask "torbrowser"
@@ -248,14 +243,17 @@ cask "transmit"
 cask "vimr"
 cask "vlc"
 cask "vmware-fusion"
+# cask "webkit-nightly"
 cask "xld"
 
 cask "xquartz"
 cask "inkscape"
 cask "wireshark"
 
+cask "caskroom/fonts/font-inconsolata-lgc"
+
 cask "ptb/custom/bbedit-10"
-cask "ptb/custom/carbon-copy-cloner"
+cask "ptb/custom/blankscreen"
 cask "ptb/custom/composer"
 cask "ptb/custom/enhanced-dictation"
 cask "ptb/custom/ipmenulet"
@@ -278,6 +276,10 @@ cask "ptb/custom/sketchup-pro"
 cask "ptb/custom/synergy"
 cask "ptb/custom/text-to-speech-allison"
 cask "ptb/custom/tune4mac"
+
+cask "https://raw.githubusercontent.com/ptb/homebrew-cask/e45c9cda9876fc614425bdb67c231c1a303829f6/Casks/airfoil.rb"
+cask "https://raw.githubusercontent.com/ptb/homebrew-versions/8438c02f1bc5d3c1fc7edc2fc98ec111c8f8917f/Casks/osxfuse-beta.rb"
+cask "infinit/releases/infinit"
 EOF
 }
 
@@ -297,7 +299,7 @@ function install_osx_software () {
 }
 
 function install_node_software () {
-  npm install -g bower grunt-cli polyserve svgo
+  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli polyserve riot superstatic svgo uglify-js watchify webpack
 }
 
 function install_python_software () {
@@ -380,7 +382,6 @@ function reenable_sudo_timeout () {
 function install_all () {
   install_command_line_tools
   install_homebrew
-  create_brew_update_script
   create_brewfile
   install_osx_software
   install_node_software
@@ -397,7 +398,6 @@ cat <<-END
 Enter any of these commands:
   install_command_line_tools
   install_homebrew
-  create_brew_update_script
   create_brewfile
   install_osx_software
   install_node_software
