@@ -181,10 +181,9 @@ function install_homebrew () {
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
 
-  brew install hub
   cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && hub checkout https://github.com/caskroom/homebrew-cask/pull/13966 \
-    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/c7afacc2229db2b1a880c467fd0ac81328631525/13966.patch | git apply -
+    && git remote add github git@github.com:ptb/homebrew-cask.git \
+    && git pull github
 }
 #+END_SRC
 
@@ -284,7 +283,6 @@ brew "terminal-notifier"
 brew "trash"
 brew "vim"
 brew "wget"
-brew "wine"
 brew "youtube-dl"
 brew "zsh"
 
@@ -376,6 +374,7 @@ cask "xld"
 
 cask "xquartz"
 cask "inkscape"
+brew "wine"
 cask "wireshark"
 
 cask "caskroom/fonts/font-inconsolata-lgc"
