@@ -292,7 +292,13 @@ function install_osx_software () {
       && cp -av * /Library/Caches/Homebrew/
   fi
 
-  /usr/local/bin/brew-update.sh
+  brew update
+  brew doctor
+
+  cd /usr/local/ && brew bundle
+
+  brew upgrade --all
+  brew linkapps
 
   cd $(cd /usr/local/Caskroom/little-snitch/* && pwd) && open "Little Snitch Installer.app"
 }
