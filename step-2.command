@@ -60,8 +60,10 @@ function install_homebrew () {
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
 
+  brew install hub
   cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/25096c5a91a776c4d3f21ca0fd737ba007ded5f8/13966.patch | git apply -
+    && hub checkout https://github.com/caskroom/homebrew-cask/pull/13966 \
+    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/c7afacc2229db2b1a880c467fd0ac81328631525/13966.patch | git apply -
 }
 
 function create_brewfile () {
@@ -290,9 +292,6 @@ function install_osx_software () {
     cd "$(cd "${INSTALL_PATH_HOMEBREW}" && pwd)" \
       && cp -av * /Library/Caches/Homebrew/
   fi
-
-  brew update
-  brew doctor
 
   cd /usr/local/ && brew bundle
 
