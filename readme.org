@@ -181,9 +181,8 @@ function install_homebrew () {
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
 
-  brew install hub
   cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && hub checkout https://github.com/caskroom/homebrew-cask/pull/13966
+    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/dc55e997e453c03d9a286515647ee142b20651e5/13966.patch | git apply -
 }
 #+END_SRC
 
