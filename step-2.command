@@ -61,8 +61,7 @@ function install_homebrew () {
   brew tap "homebrew/bundle"
 
   cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && git remote add github git@github.com:ptb/homebrew-cask.git \
-    && git pull github
+    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/701f76b37c1039c7ab39653cd428c7b1ebd9305c/13966.patch | git apply -
 }
 
 function create_brewfile () {
