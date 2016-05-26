@@ -112,6 +112,7 @@ cask "sonarr-menu"
 cask "vmware-fusion"
 
 brew "aspell", args: ["lang=en"]
+brew "vitorgalvao/tiny-scripts/cask-repair"
 brew "duti"
 brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
 brew "ffmpeg",

@@ -202,15 +202,14 @@ function config_file_map () {
       "org.videolan.vlc" "public.mpeg-4" "all" \
       > "${HOME}/.duti"
 
-      /usr/local/bin/duti "${HOME}/.duti"
-    fi
-
-    sudo mkdir -p /var/db/lsd
-    sudo chown root:admin /var/db/lsd
-    sudo chmod 775 /var/db/lsd
-
-    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -kill -r -domain local -domain system -domain user
+    /usr/local/bin/duti "${HOME}/.duti"
   fi
+
+  sudo mkdir -p /var/db/lsd
+  sudo chown root:admin /var/db/lsd
+  sudo chmod 775 /var/db/lsd
+
+  /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -kill -r -domain local -domain system -domain user
 }
 
 function config_finder () {
