@@ -79,13 +79,30 @@ tap "vitorgalvao/tiny-scripts"
 
 cask "java"
 
+cask "ptb/custom/mas-xcode"
+
+cask "adobe-illustrator-cc"
+cask "adobe-indesign-cc"
+cask "adobe-photoshop-cc"
+
+cask "ptb/custom/enhanced-dictation"
+cask "ptb/custom/text-to-speech-allison"
+
+cask "ptb/custom/mas-keynote"
+cask "ptb/custom/mas-numbers"
+cask "ptb/custom/mas-pages"
+
+cask "ptb/custom/mas-affinity-photo"
+
+cask "sonarr"
+cask "sonarr-menu"
+cask "vmware-fusion"
+
 cask "ptb/custom/bbedit-10"
 cask "ptb/custom/blankscreen"
 cask "ptb/custom/composer"
-cask "ptb/custom/enhanced-dictation"
 cask "ptb/custom/ipmenulet"
 cask "ptb/custom/mas-1password"
-cask "ptb/custom/mas-affinity-photo"
 cask "ptb/custom/mas-autoping"
 cask "ptb/custom/mas-coffitivity"
 cask "ptb/custom/mas-growl"
@@ -93,24 +110,12 @@ cask "ptb/custom/mas-hardwaregrowler"
 cask "ptb/custom/mas-i-love-stars"
 cask "ptb/custom/mas-icon-slate"
 cask "ptb/custom/mas-justnotes"
-cask "ptb/custom/mas-keynote"
-cask "ptb/custom/mas-numbers"
-cask "ptb/custom/mas-pages"
 cask "ptb/custom/mas-wifi-explorer"
-cask "ptb/custom/mas-xcode"
 cask "ptb/custom/pcalc-3"
 cask "ptb/custom/sketchup-pro"
 cask "ptb/custom/sublime-text3"
 cask "ptb/custom/synergy"
-cask "ptb/custom/text-to-speech-allison"
 cask "ptb/custom/tune4mac"
-
-cask "adobe-illustrator-cc"
-cask "adobe-indesign-cc"
-cask "adobe-photoshop-cc"
-cask "sonarr"
-cask "sonarr-menu"
-cask "vmware-fusion"
 
 brew "aspell", args: ["lang=en"]
 brew "vitorgalvao/tiny-scripts/cask-repair"
