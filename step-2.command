@@ -75,6 +75,7 @@ tap "homebrew/nginx"
 tap "infinit/releases"
 tap "ptb/custom"
 tap "railwaycat/emacsmacport"
+tap "vitorgalvao/tiny-scripts"
 
 cask "java"
 
