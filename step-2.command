@@ -190,6 +190,7 @@ brew "openssl"
 brew "homebrew/dupes/rsync"
 brew "python"
 brew "ruby"
+brew "selenium-server-standalone"
 brew "sqlite"
 brew "stow"
 brew "terminal-notifier"
@@ -314,7 +315,7 @@ function install_node_software () {
 function install_python_software () {
   curl -Ls https://bootstrap.pypa.io/get-pip.py | sudo -H python
   pip install --upgrade pip setuptools
-  pip install --upgrade babelfish bottle 'guessit<2' influxdb netifaces pika psutil py2app pyobjc-core pysnmp pystache qtfaststart requests scour statsd subliminal watchdog yapf zeroconf
+  pip install --upgrade babelfish bottle 'guessit<2' influxdb netifaces pika psutil py2app pyobjc-core pysnmp pystache qtfaststart requests scour selenium statsd subliminal watchdog yapf zeroconf
   pip install --upgrade glances pyobjc 'requests[security]'
 }
 
