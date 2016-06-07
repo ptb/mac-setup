@@ -245,6 +245,7 @@ cask "ptb/custom/tune4mac"
 
 brew "aspell", args: ["lang=en"]
 brew "vitorgalvao/tiny-scripts/cask-repair"
+brew "chromedriver"
 brew "duti"
 brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
 brew "ffmpeg",
