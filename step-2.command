@@ -310,7 +310,7 @@ function install_osx_software () {
 }
 
 function install_node_software () {
-  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli polyserve riot superstatic svgo uglify-js watchify webpack
+  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli polyserve riot selenium-webdriver superstatic svgo uglify-js watchify webpack
 }
 
 function install_python_software () {
@@ -331,7 +331,7 @@ function install_ruby_software () {
   gem install web-console --version "~> 2"
   gem install rails sqlite3 sass-rails uglifier coffee-rails jquery-rails turbolinks jbuilder sdoc byebug spring tzinfo-data
   gem install em-websocket middleman middleman-autoprefixer middleman-blog middleman-compass middleman-livereload middleman-minify-html middleman-robots mime-types slim
-  gem install bootstrap-sass git-cipher org-ruby thin
+  gem install bootstrap-sass git-cipher org-ruby selenium-webdriver thin
 }
 
 function create_vi_script () {
