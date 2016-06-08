@@ -310,7 +310,7 @@ function install_osx_software () {
 }
 
 function install_node_software () {
-  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli jasmine polyserve riot selenium-webdriver superstatic svgo uglify-js watchify webpack
+  npm i -g babel-cli bower browser-sync browserify chimp coffee-script eslint gulp-cli jasmine polyserve riot selenium-webdriver superstatic svgo uglify-js watchify webpack
 }
 
 function install_python_software () {
