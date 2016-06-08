@@ -442,7 +442,7 @@ function install_osx_software () {
 *** Install Node Software
 #+BEGIN_SRC sh
 function install_node_software () {
-  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli polyserve riot selenium-webdriver superstatic svgo uglify-js watchify webpack
+  npm i -g babel-cli bower browser-sync browserify coffee-script eslint gulp-cli jasmine polyserve riot selenium-webdriver superstatic svgo uglify-js watchify webpack
 }
 #+END_SRC
 
