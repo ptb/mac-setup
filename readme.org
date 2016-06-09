@@ -1011,6 +1011,11 @@ EOF
 ### Desktop & Screen Saver
 
   # Desktop: Solid Colors: Custom Color… Solid Black
+  base64 -D > "/Library/Caches/com.apple.desktop.admin.png" <<-EOF
+iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQAAAADrRVxmAAAAGElEQVR4AWOgMxgFo2AUjIJRMApG
+wSgAAAiAAAH3bJXBAAAAAElFTkSuQmCC
+EOF
+
   mkdir -m go= -p "${HOME}/Library/Desktop Pictures/Solid Colors/"
   base64 -D > "${HOME}/Library/Desktop Pictures/Solid Colors/Solid Black.png" <<-EOF
 iVBORw0KGgoAAAANSUhEUgAAAIAAAACAAQAAAADrRVxmAAAAGElEQVR4AWOgMxgFo2AUjIJRMApG
