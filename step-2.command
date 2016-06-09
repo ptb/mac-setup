@@ -50,7 +50,7 @@ function install_command_line_tools () {
 }
 
 function install_homebrew () {
-  sudo chown $(whoami) '/usr/local' '/usr/local/Caskroom' '/Library/Caches/Homebrew/'
+  sudo chown $(whoami) '/usr/local' '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
 
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 

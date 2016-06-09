@@ -31,7 +31,6 @@ if ! grep -Fq '/usr/local/sbin' /etc/paths; then
 fi
 
 sudo mkdir -p '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
-sudo chown $(whoami) "${HOME}/Library/Caches/Homebrew/"
 sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
 sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
 #+END_SRC
@@ -172,7 +171,7 @@ Details: http://brew.sh
 
 #+BEGIN_SRC sh
 function install_homebrew () {
-  sudo chown $(whoami) '/usr/local' '/usr/local/Caskroom' '/Library/Caches/Homebrew/'
+  sudo chown $(whoami) '/usr/local' '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
 
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 

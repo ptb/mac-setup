@@ -14,7 +14,6 @@ if ! grep -Fq '/usr/local/sbin' /etc/paths; then
 fi
 
 sudo mkdir -p '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
-sudo chown $(whoami) "${HOME}/Library/Caches/Homebrew/"
 sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
 sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
 
