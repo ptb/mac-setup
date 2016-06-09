@@ -59,9 +59,6 @@ function install_homebrew () {
 
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
-
-  cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/701f76b37c1039c7ab39653cd428c7b1ebd9305c/13966.patch | git apply -
 }
 
 function create_brewfile () {
@@ -258,7 +255,7 @@ cask "quitter"
 cask "raindrop"
 cask "rescuetime"
 # cask "caskroom/versions/safari-technology-preview"
-cask "https://raw.githubusercontent.com/ptb/homebrew-versions/patch-1/Casks/safari-technology-preview.rb"
+cask "ptb/versions/safari-technology-preview"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -268,7 +265,7 @@ cask "skitch"
 cask "skype"
 cask "slack"
 cask "sourcetree"
-cask "steermouse"
+cask "ptb/cask/steermouse"
 cask "subler"
 cask "time-sink"
 # cask "timing"

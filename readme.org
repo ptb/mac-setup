@@ -30,9 +30,10 @@ if ! grep -Fq '/usr/local/sbin' /etc/paths; then
 ' /etc/paths
 fi
 
-sudo mkdir -p '/usr/local/Caskroom' '/Library/Caches/Homebrew/'
-sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' '/Library/Caches/Homebrew/' '/Library/ColorPickers/' '/Library/Screen Savers/'
-sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' '/Library/Caches/Homebrew/' '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo mkdir -p '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
+sudo chown $(whoami) "${HOME}/Library/Caches/Homebrew/"
+sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
 #+END_SRC
 
 *** Set Environment Variables Permanently (after restart)
@@ -180,9 +181,6 @@ function install_homebrew () {
 
   brew tap "caskroom/cask"
   brew tap "homebrew/bundle"
-
-  cd "/usr/local/Library/Taps/caskroom/homebrew-cask" \
-    && curl https://gist.githubusercontent.com/ptb/2685546c5fa068f0506e7040726aec41/raw/701f76b37c1039c7ab39653cd428c7b1ebd9305c/13966.patch | git apply -
 }
 #+END_SRC
 
@@ -384,7 +382,7 @@ cask "quitter"
 cask "raindrop"
 cask "rescuetime"
 # cask "caskroom/versions/safari-technology-preview"
-cask "https://raw.githubusercontent.com/ptb/homebrew-versions/patch-1/Casks/safari-technology-preview.rb"
+cask "ptb/versions/safari-technology-preview"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -394,7 +392,7 @@ cask "skitch"
 cask "skype"
 cask "slack"
 cask "sourcetree"
-cask "steermouse"
+cask "ptb/cask/steermouse"
 cask "subler"
 cask "time-sink"
 # cask "timing"
