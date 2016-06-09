@@ -257,7 +257,8 @@ cask "plex-media-server"
 cask "quitter"
 cask "raindrop"
 cask "rescuetime"
-# cask "safari-technology-preview"
+# cask "caskroom/versions/safari-technology-preview"
+cask "https://raw.githubusercontent.com/ptb/homebrew-versions/patch-1/Casks/safari-technology-preview.rb"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -299,7 +300,7 @@ function install_osx_software () {
 
   if [ -d "${INSTALL_PATH_HOMEBREW}" ]; then
     cd "$(cd "${INSTALL_PATH_HOMEBREW}" && pwd)" \
-      && cp -av * /Library/Caches/Homebrew/
+      && cp -av * "${HOME}/Library/Caches/Homebrew/"
   fi
 
   cd /usr/local/ && brew bundle
