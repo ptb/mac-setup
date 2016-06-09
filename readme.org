@@ -296,6 +296,7 @@ brew "gnu-sed", args: ["with-default-names"]
 brew "gnupg"
 brew "gpac"
 brew "hub"
+brew "ievms"
 brew "imagemagick"
 brew "mercurial"
 brew "mp4v2"
@@ -928,6 +929,41 @@ function config_safari () {
   # Show Status Bar
   defaults write 'com.apple.Safari' 'ShowStatusBar' -bool true
   defaults write 'com.apple.Safari' 'ShowStatusBarInFullScreen' -bool true
+
+  # Install Extensions
+  chrome_extensions=(
+    "https://agilebits.com/onepassword/extensions/chrome?beta=false" \
+    "http://redditenhancementsuite.com/download-chrome.html" \
+    "https://www.ublock.org/"
+  )
+
+  for extension in "${chrome_extensions[@]}"; do
+    open -a "/Applications/Google Chrome.app" "$extension"
+  done
+
+  firefox_extensions=(
+    "https://agilebits.com/onepassword/extensions/firefox?beta=false" \
+    "http://redditenhancementsuite.com/download-firefox.html" \
+    "https://www.ublock.org/"
+  )
+
+  for extension in "${firefox_extensions[@]}"; do
+    open -a "/Applications/Firefox.app" "$extension"
+  done
+
+  safari_browsers=("/Applications/Safari.app" "/Applications/Safari Technology Preview.app")
+  safari_extensions=(
+    "https://agilebits.com/onepassword/extensions/safari?beta=false" \
+    "http://redditenhancementsuite.com/download-safari.html" \
+    "https://www.ublock.org/" \
+    "http://selenium-release.storage.googleapis.com/2.48/SafariDriver.safariextz"
+  )
+
+  for safari in "${safari_browsers[@]}"; do
+    for extension in "${safari_extensions[@]}"; do
+      open -a "$safari" "$extension"
+    done
+  done
 }
 #+END_SRC
 
