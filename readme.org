@@ -125,7 +125,7 @@ done
 
 sudo createhomedir -c -u $USERNAME
 
-defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
+sudo defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
 #+END_SRC
 
 *** Restart Before Continuing
@@ -363,14 +363,11 @@ cask "alfred"
 cask "arduino"
 cask "atom"
 cask "autodmg"
-cask "bettertouchtool"
 cask "caffeine"
 cask "carbon-copy-cloner"
 cask "charles"
-cask "couchpotato"
 cask "dash"
 # cask "datetree"
-cask "deluge"
 # cask "disk-inventory-x"
 cask "dockertoolbox"
 cask "dropbox"
@@ -413,7 +410,7 @@ cask "quitter"
 cask "raindrop"
 cask "rescuetime"
 # cask "caskroom/versions/safari-technology-preview"
-cask "ptb/versions/safari-technology-preview"
+cask "caskroom/versions/safari-technology-preview"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -423,7 +420,7 @@ cask "skitch"
 cask "skype"
 cask "slack"
 cask "sourcetree"
-cask "ptb/cask/steermouse"
+cask "steermouse"
 cask "subler"
 cask "time-sink"
 # cask "timing"

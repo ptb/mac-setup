@@ -93,6 +93,6 @@ done
 
 sudo createhomedir -c -u $USERNAME
 
-defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
+sudo defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
 
 osascript -e 'tell app "loginwindow" to «event aevtrrst»'
