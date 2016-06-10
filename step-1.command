@@ -66,4 +66,33 @@ sudo plutil -convert xml1 '/Library/LaunchDaemons/environment.plist'
 sudo chmod 644 /Library/LaunchDaemons/environment.plist
 sudo launchctl load -w /Library/LaunchDaemons/environment.plist
 
+echo "Enter full name: "
+read FULLNAME
+
+echo "Enter account name: "
+read USERNAME
+
+echo "Enter password: "
+read -s PASSWORD
+
+LASTID=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
+USERID=$((LASTID+1))
+
+sudo dscl . -create "/Users/${USERNAME}"
+sudo dscl . -create "/Users/${USERNAME}" UserShell /bin/zsh
+sudo dscl . -create "/Users/${USERNAME}" RealName "${FULLNAME}"
+sudo dscl . -create "/Users/${USERNAME}" UniqueID "${USERID}"
+sudo dscl . -create "/Users/${USERNAME}" PrimaryGroupID 20
+sudo dscl . -create "/Users/${USERNAME}" NFSHomeDirectory "/Users/${USERNAME}"
+sudo dscl . -passwd "/Users/${USERNAME}" "${PASSWORD}"
+
+ADMIN_GROUPS="admin appserveradm appserverusr com.apple.sharepoint.group.1 lpadmin"
+for GROUP in $ADMIN_GROUPS ; do
+  sudo dseditgroup -o edit -t user -a $USERNAME $GROUP
+done
+
+sudo createhomedir -c -u $USERNAME
+
+defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
+
 osascript -e 'tell app "loginwindow" to «event aevtrrst»'
