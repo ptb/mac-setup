@@ -54,6 +54,8 @@ function install_homebrew () {
 
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
+  brew analytics off
+
   brew update
   brew doctor
 
