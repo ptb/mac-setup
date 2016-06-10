@@ -91,7 +91,7 @@ for GROUP in $ADMIN_GROUPS ; do
   sudo dseditgroup -o edit -t user -a $USERNAME $GROUP
 done
 
-sudo createhomedir -c -u $USERNAME
+sudo createhomedir -c -u $USERNAME 2> /dev/null
 
 sudo defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
 
