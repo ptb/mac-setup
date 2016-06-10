@@ -98,13 +98,13 @@ sudo launchctl load -w /Library/LaunchDaemons/environment.plist
 
 *** Add Secondary User
 #+BEGIN_SRC sh
-echo "Enter full name: "
+echo -n "Enter full name: "
 read FULLNAME
 
-echo "Enter account name: "
+echo -n "Enter account name: "
 read USERNAME
 
-echo "Enter password: "
+echo -n "Enter password: "
 read -s PASSWORD
 
 LASTID=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)

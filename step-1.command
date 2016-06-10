@@ -66,13 +66,13 @@ sudo plutil -convert xml1 '/Library/LaunchDaemons/environment.plist'
 sudo chmod 644 /Library/LaunchDaemons/environment.plist
 sudo launchctl load -w /Library/LaunchDaemons/environment.plist
 
-echo "Enter full name: "
+echo -n "Enter full name: "
 read FULLNAME
 
-echo "Enter account name: "
+echo -n "Enter account name: "
 read USERNAME
 
-echo "Enter password: "
+echo -n "Enter password: "
 read -s PASSWORD
 
 LASTID=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
