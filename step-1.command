@@ -1,9 +1,9 @@
 #!/bin/sh
-sudo tee -a /etc/sudoers.d/timeout > /dev/null <<-EOF
+sudo tee /etc/sudoers.d/timeout > /dev/null <<-EOF
 Defaults  timestamp_timeout=-1
 EOF
 
-sudo tee -a /etc/sudoers.d/installer > /dev/null <<-EOF
+sudo tee /etc/sudoers.d/installer > /dev/null <<-EOF
 %admin ALL=(ALL) NOPASSWD:SETENV: /usr/sbin/installer
 EOF
 
