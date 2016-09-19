@@ -184,21 +184,21 @@ function install_command_line_tools () {
   fi
 
   if [ ! -f "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" ] \
-    || [ ! -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" ]; then
+    || [ ! -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1012.pkg" ]; then
     cd "${INSTALL_PATH_XCODE}" \
       && curl --compressed --location --silent \
-      "https://swscan.apple.com/content/catalogs/others/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog.gz" \
+      "https://swscan.apple.com/content/catalogs/others/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog.gz" \
       | sed -n \
         -e "s/^.*<string>\(.*CLTools_Executables.pkg\).*/\1/p" \
-        -e "s/^.*<string>\(.*DevSDK_OSX1011.pkg\).*/\1/p" \
+        -e "s/^.*<string>\(.*DevSDK_OSX1012.pkg\).*/\1/p" \
       | tail -n 2 \
       | xargs -L 1 curl --compressed --location --remote-name
   fi
 
   if [ -f "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" ] \
-    && [ -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" ]; then
+    && [ -f "${INSTALL_PATH_XCODE}/DevSDK_OSX1012.pkg" ]; then
     sudo installer -pkg "${INSTALL_PATH_XCODE}/CLTools_Executables.pkg" -target /
-    sudo installer -pkg "${INSTALL_PATH_XCODE}/DevSDK_OSX1011.pkg" -target /
+    sudo installer -pkg "${INSTALL_PATH_XCODE}/DevSDK_OSX1012.pkg" -target /
   fi
 }
 #+END_SRC
@@ -260,7 +260,7 @@ cask "sonarr"
 cask "sonarr-menu"
 cask "vmware-fusion"
 
-cask "ptb/custom/bbedit-10"
+# cask "ptb/custom/bbedit-10"
 cask "ptb/custom/blankscreen"
 cask "ptb/custom/composer"
 cask "ptb/custom/ipmenulet"
@@ -274,8 +274,8 @@ cask "ptb/custom/mas-icon-slate"
 cask "ptb/custom/mas-justnotes"
 cask "ptb/custom/mas-wifi-explorer"
 cask "ptb/custom/pcalc-3"
+cask "ptb/custom/safari-technology-preview"
 cask "ptb/custom/sketchup-pro"
-cask "ptb/custom/sublime-text3"
 cask "ptb/custom/synergy"
 cask "ptb/custom/tune4mac"
 
@@ -284,7 +284,7 @@ brew "vitorgalvao/tiny-scripts/cask-repair"
 brew "chromedriver"
 brew "duti"
 brew "railwaycat/emacsmacport/emacs-mac", args: ["with-spacemacs-icon"]
-brew "ffmpeg",
+brew "ptb/custom/ffmpeg",
   args: [
   "with-dcadec",
   "with-faac",
@@ -370,6 +370,7 @@ cask "alfred"
 cask "arduino"
 cask "atom"
 cask "autodmg"
+cask "bbedit"
 cask "caffeine"
 cask "carbon-copy-cloner"
 cask "charles"
@@ -416,8 +417,6 @@ cask "plex-media-server"
 cask "quitter"
 cask "raindrop"
 cask "rescuetime"
-# cask "caskroom/versions/safari-technology-preview"
-cask "caskroom/versions/safari-technology-preview"
 cask "scrivener"
 cask "sitesucker"
 cask "sizeup"
@@ -429,6 +428,7 @@ cask "slack"
 cask "sourcetree"
 cask "steermouse"
 cask "subler"
+cask "caskroom/versions/sublime-text-dev"
 cask "time-sink"
 # cask "timing"
 cask "the-unarchiver"
