@@ -19,6 +19,8 @@ function init_install_path () {
   else
     INSTALL_PATH="${HOME}/Downloads"
   fi
+
+  mkdir -p "${HOME}/Library/Caches/Homebrew/"
 }
 
 function install_command_line_tools () {
@@ -393,12 +395,12 @@ function install_all () {
   install_homebrew
   create_brewfile
   install_osx_software
-  install_node_software
+  # install_node_software
   install_python_software
-  install_ruby_software
+  # install_ruby_software
   create_vi_script
   link_utilities
-  reenable_sudo_timeout
+  # reenable_sudo_timeout
 }
 
 clear
@@ -409,12 +411,12 @@ Enter any of these commands:
   install_homebrew
   create_brewfile
   install_osx_software
-  install_node_software
+  # install_node_software
   install_python_software
-  install_ruby_software
+  # install_ruby_software
   create_vi_script
   link_utilities
-  reenable_sudo_timeout
+  # reenable_sudo_timeout
 
 Or:
   install_all

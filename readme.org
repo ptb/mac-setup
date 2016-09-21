@@ -9,17 +9,17 @@ From clean install to fully configured.
 :END:
 *** Temporarily Disable ~sudo~ Password Timeout
 The ~sudo~ password timeout is re-enabled at the end of this script.
-#+BEGIN_SRC sh
+##+BEGIN_SRC sh
 sudo tee /etc/sudoers.d/timeout > /dev/null <<-EOF
 Defaults  timestamp_timeout=-1
 EOF
-#+END_SRC
+##+END_SRC
 
-#+BEGIN_SRC sh
+##+BEGIN_SRC sh
 sudo tee /etc/sudoers.d/installer > /dev/null <<-EOF
 %admin ALL=(ALL) NOPASSWD:SETENV: /usr/sbin/installer
 EOF
-#+END_SRC
+##+END_SRC
 
 *** Disable System and Disk Sleep
 #+BEGIN_SRC sh
@@ -35,9 +35,9 @@ if ! grep -Fq '/usr/local/sbin' /etc/paths; then
 ' /etc/paths
 fi
 
-sudo mkdir -p '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
-sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
-sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo mkdir -p '/usr/local/Caskroom'
+sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' '/Library/ColorPickers/' '/Library/Screen Savers/'
 #+END_SRC
 
 *** Set Environment Variables Permanently (after restart)
@@ -103,13 +103,13 @@ sudo launchctl load -w /Library/LaunchDaemons/environment.plist
 
 *** Add Secondary User
 #+BEGIN_SRC sh
-echo -n "Enter full name: "
+/bin/echo -n "Enter full name: "
 read FULLNAME
 
-echo -n "Enter account name: "
+/bin/echo -n "Enter account name: "
 read USERNAME
 
-echo -n "Enter password: "
+/bin/echo -n "Enter password: "
 read -s PASSWORD
 
 LASTID=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
@@ -169,6 +169,8 @@ function init_install_path () {
   else
     INSTALL_PATH="${HOME}/Downloads"
   fi
+
+  mkdir -p "${HOME}/Library/Caches/Homebrew/"
 }
 #+END_SRC
 
@@ -580,12 +582,12 @@ function install_all () {
   install_homebrew
   create_brewfile
   install_osx_software
-  install_node_software
+  # install_node_software
   install_python_software
-  install_ruby_software
+  # install_ruby_software
   create_vi_script
   link_utilities
-  reenable_sudo_timeout
+  # reenable_sudo_timeout
 }
 #+END_SRC
 
@@ -599,12 +601,12 @@ Enter any of these commands:
   install_homebrew
   create_brewfile
   install_osx_software
-  install_node_software
+  # install_node_software
   install_python_software
-  install_ruby_software
+  # install_ruby_software
   create_vi_script
   link_utilities
-  reenable_sudo_timeout
+  # reenable_sudo_timeout
 
 Or:
   install_all

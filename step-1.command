@@ -1,12 +1,4 @@
 #!/bin/sh
-sudo tee /etc/sudoers.d/timeout > /dev/null <<-EOF
-Defaults  timestamp_timeout=-1
-EOF
-
-sudo tee /etc/sudoers.d/installer > /dev/null <<-EOF
-%admin ALL=(ALL) NOPASSWD:SETENV: /usr/sbin/installer
-EOF
-
 sudo pmset -a sleep 0
 sudo pmset -a disksleep 0
 
@@ -16,9 +8,9 @@ if ! grep -Fq '/usr/local/sbin' /etc/paths; then
 ' /etc/paths
 fi
 
-sudo mkdir -p '/usr/local/Caskroom' "${HOME}/Library/Caches/Homebrew/"
-sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
-sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' "${HOME}/Library/Caches/Homebrew/" '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo mkdir -p '/usr/local/Caskroom'
+sudo chgrp admin '/usr/local/' '/usr/local/Caskroom/' '/Library/ColorPickers/' '/Library/Screen Savers/'
+sudo chmod g+w '/usr/local/' '/usr/local/Caskroom/' '/Library/ColorPickers/' '/Library/Screen Savers/'
 
 sudo tee /etc/environment > /dev/null <<-EOF
 #!/bin/sh
@@ -69,13 +61,13 @@ sudo plutil -convert xml1 '/Library/LaunchDaemons/environment.plist'
 sudo chmod 644 /Library/LaunchDaemons/environment.plist
 sudo launchctl load -w /Library/LaunchDaemons/environment.plist
 
-echo -n "Enter full name: "
+/bin/echo -n "Enter full name: "
 read FULLNAME
 
-echo -n "Enter account name: "
+/bin/echo -n "Enter account name: "
 read USERNAME
 
-echo -n "Enter password: "
+/bin/echo -n "Enter password: "
 read -s PASSWORD
 
 LASTID=$(dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1)
