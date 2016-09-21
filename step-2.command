@@ -80,11 +80,11 @@ cask "java"
 
 cask "ptb/custom/mas-xcode"
 
-cask "adobe-illustrator-cc"
-cask "adobe-indesign-cc"
-cask "adobe-photoshop-cc"
+# cask "adobe-illustrator-cc"
+# cask "adobe-indesign-cc"
+# cask "adobe-photoshop-cc"
 
-cask "ptb/custom/enhanced-dictation"
+# cask "ptb/custom/enhanced-dictation"
 cask "ptb/custom/text-to-speech-allison"
 
 cask "ptb/custom/mas-keynote"
@@ -164,7 +164,7 @@ brew "ptb/custom/ffmpeg",
   "with-zeromq",
   "with-zimg" ]
 brew "git"
-brew "git-annex"
+# brew "git-annex"
 brew "gnu-sed", args: ["with-default-names"]
 brew "gnupg"
 brew "gpac"
@@ -182,7 +182,7 @@ brew "homebrew/nginx/nginx-full",
   "with-gzip-static",
   "with-http2",
   "with-mp4-h264-module",
-  "with-passenger",
+  # "with-passenger",
   "with-push-stream-module",
   "with-secure-link",
   "with-webdav" ]
@@ -214,7 +214,7 @@ cask "charles"
 cask "dash"
 # cask "datetree"
 # cask "disk-inventory-x"
-cask "dockertoolbox"
+cask "docker-toolbox"
 cask "dropbox"
 cask "duet"
 cask "exifrenamer"
@@ -236,7 +236,7 @@ cask "machg"
 cask "makemkv"
 cask "menubar-countdown"
 cask "meteorologist"
-cask "microsoft-office"
+# cask "microsoft-office"
 cask "moom"
 cask "mp4tools"
 cask "munki"
@@ -252,7 +252,7 @@ cask "pacifist"
 cask "platypus"
 cask "plex-media-server"
 cask "quitter"
-cask "raindrop"
+# cask "raindropio"
 cask "rescuetime"
 cask "scrivener"
 cask "sitesucker"
@@ -280,7 +280,7 @@ cask "xld"
 
 cask "xquartz"
 cask "inkscape"
-brew "wine"
+# brew "wine"
 cask "wireshark"
 
 cask "caskroom/fonts/font-inconsolata-lgc"
