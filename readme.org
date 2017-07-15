@@ -455,7 +455,7 @@ EOF
 }
 #+END_SRC
 
-*** Install OS X Software
+*** Install macOS Software
 #+BEGIN_SRC sh
 function install_osx_software () {
   init_install_path
