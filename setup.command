@@ -792,6 +792,27 @@ function prefs_restart () {
   killall Finder
 }
 
+function prefs_vlc () {
+  p "Set VLC preferences"
+
+  if [ ! -d "${HOME}/Library/Preferences/org.videolan.vlc" ]; then
+    mkdir -m o-w -p "${HOME}/Library/Preferences/org.videolan.vlc"
+  fi
+
+  cat > "${HOME}/Library/Preferences/org.videolan.vlc/vlcrc" << EOF
+avcodec-hw=vda
+macosx-appleremote=0
+macosx-continue-playback=1
+macosx-nativefullscreenmode=1
+macosx-pause-minimized=1
+macosx-video-autoresize=0
+spdif=1
+sub-language=English
+subsdec-encoding=UTF-8
+volume-save=0
+EOF
+}
+
 function prefs () {
   prefs_finder
   prefs_moom
@@ -812,6 +833,9 @@ function prefs () {
   prefs_accessibility
 
   prefs_restart
+
+  prefs_vlc
+
   which config
 }
 
