@@ -2032,7 +2032,6 @@ function config () {
   config_terminal
   config_openssl
   config_dovecot
-  #config_getmail
   config_gpg
   config_git
   config_shell

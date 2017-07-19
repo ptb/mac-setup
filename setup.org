@@ -2135,20 +2135,6 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
   }
 #+end_src
 
-*** VLC
-
-"${HOME}/Library/Preferences/org.videolan.vlc/vlcrc"
-subsdec-encoding=UTF-8
-macosx-nativefullscreenmode=1
-macosx-video-autoresize=0
-macosx-pause-minimized=1
-macosx-continue-playback=1
-macosx-appleremote=0
-avcodec-hw=vda
-volume-save=0
-spdif=1
-sub-language=English
-
 *** dovecot
 
 #+begin_src sh
@@ -2246,14 +2232,6 @@ sub-language=English
     fi
 
     sudo brew services start dovecot
-  }
-#+end_src
-
-*** TODO: getmail
-
-#+begin_src sh :tangle no
-  function config_getmail () {
-    p "Configure getmail"
   }
 #+end_src
 
@@ -2565,25 +2543,6 @@ EOF
 #+end_src
 
 *** Login Items
-
-TODO: menubar-countdown
-TODO: meteorologist
-TODO: istat-menus
-TODO: nzbget
-TODO: plex
-TODO: sonarr
-TODO: ipmenulet
-TODO: synergy
-TODO: coffitivity
-TODO: hardwaregrowler
-TODO: ilovestars
-TODO: nginx
-TODO: caffeine
-TODO: 1passwordmini
-TODO: mdhiggins/sickbeard_mp4_automator
-
-autoping don't ask to add to login items
-Security & PRivacy: Privacy: Accessibility: Moom, Dropbox, SteerMouse
 
 #+begin_src sh
   function config_loginitems () {
@@ -2914,7 +2873,6 @@ Security & PRivacy: Privacy: Accessibility: Moom, Dropbox, SteerMouse
     config_terminal
     config_openssl
     config_dovecot
-    #config_getmail
     config_gpg
     config_git
     config_shell
