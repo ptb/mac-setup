@@ -1684,6 +1684,7 @@ Inspiration: [[https://evanhahn.com/atom-apm-install-list/][@EvanHahn]]
       "Atom" \
       "Utilities/Terminal" \
       "System Preferences" \
+      "PCalc" \
       "iTunes" \
       "VLC" \
     ; do

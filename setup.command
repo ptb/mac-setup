@@ -997,6 +997,7 @@ function config_dock () {
     "Atom" \
     "Utilities/Terminal" \
     "System Preferences" \
+    "PCalc" \
     "iTunes" \
     "VLC" \
   ; do
