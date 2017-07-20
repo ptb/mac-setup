@@ -190,9 +190,15 @@ cask "wireshark"
 brew "aspell",
   args: ["lang=en"]
 brew "chromedriver"
+brew "coreutils"
 tap "homebrew/services"
-brew "dovecot"
+brew "dovecot",
+  args: [
+  "with-pam",
+  "with-pigeonhole",
+  "with-pigeonhole-unfinished-features"]
 brew "duti"
+brew "gawk"
 brew "getmail"
 brew "git"
 brew "gnu-sed",
@@ -1435,6 +1441,9 @@ passdb {
   # driver = static
   # args = nopassword=y
 }
+plugin {
+  sieve = file:/Users/%u/.sieve
+}
 postmaster_address = ${USER}@${DOMAIN}
 protocols = imap
 service imap-login {
@@ -1445,6 +1454,9 @@ service imap-login {
     port = 993
     ssl = yes
   }
+}
+protocol lda {
+  mail_plugins = $mail_plugins sieve
 }
 ssl = required
 ssl_cert = <${SSL}/certs/${MAIL}/${MAIL}.crt
@@ -1478,6 +1490,69 @@ EOF
   fi
 
   sudo brew services start dovecot
+}
+
+function config_getmail () {
+  p "Configure getmail"
+
+  mkdir -m go= -p "${HOME}/.getmail" "${HOME}/Library/LaunchDaemons"
+
+  printf "%s\n" \
+    "add ':KeepAlive' bool false" \
+    "add ':Label' string 'ca.pyropus.getmail'" \
+    "add ':ProgramArguments' array" \
+    "add ':ProgramArguments:0' string '/usr/local/bin/getmail'" \
+    "add ':RunAtLoad' bool true" \
+    "add ':StandardOutPath' string '${HOME}/.getmail/getmail.log'" \
+    "add ':StandardErrorPath' string '${HOME}/.getmail/getmail.err'" \
+    "add ':StartInterval' integer 300" \
+  | while read a; do
+    /usr/libexec/PlistBuddy "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist" -c "${a}" &> /dev/null
+  done
+
+  for email in \
+    "pbosse@gmail.com" \
+    "ptb@ioutime.com" \
+  ; do
+    p "Add password for '${email}' to Keychain"
+
+    security add-internet-password -a "${email}" -s "imap.gmail.com" -r "imap" \
+      -l "${email}" -D "getmail password" -P 993 -w
+
+    cat > "${HOME}/.getmail/${email}" << EOF
+[retriever]
+type = SimpleIMAPSSLRetriever
+server = imap.gmail.com
+port = 993
+username = ${email}
+mailboxes = ("[Gmail]/All Mail",)
+
+[destination]
+type = MDA_external
+path = /usr/local/Cellar/dovecot/2.2.31/libexec/dovecot/dovecot-lda
+arguments = ("-c","/usr/local/etc/dovecot/dovecot.conf","-d","$(whoami)",)
+ignore_stderr = true
+
+[options]
+# delete = true
+# delete_after = 30
+delivered_to = false
+read_all = false
+received = false
+verbose = 1
+EOF
+  defaults write "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail" \
+    ProgramArguments -array-add "--rcfile"
+  defaults write "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail" \
+    ProgramArguments -array-add "${email}"
+  done
+
+  plutil -convert xml1 "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist"
+  launchctl load "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist"
+
+  # http://shadow-file.blogspot.com/2012/06/parsing-email-and-fixing-timestamps-in.html
+  curl -L https://pastebin.com/raw/ZBq7euid | tr -d '\015' > /usr/local/bin/timestamp.py
+  chmod +x /usr/local/bin/timestamp.py
 }
 
 function config_git () {
@@ -1622,6 +1697,43 @@ function config_shell () {
     chsh -s /usr/local/bin/zsh
     touch "${HOME}/.zshrc"
   fi
+}
+
+function config_sieve () {
+  p "Configure sieve"
+
+  cat > "${HOME}/.sieve" << EOF
+require ["date", "fileinto", "imap4flags", "mailbox", "relational", "variables"];
+
+setflag "\\Seen";
+
+if date :is "date" "year" "1995" { fileinto :create "Archives.1995"; }
+if date :is "date" "year" "1996" { fileinto :create "Archives.1996"; }
+if date :is "date" "year" "1997" { fileinto :create "Archives.1997"; }
+if date :is "date" "year" "1998" { fileinto :create "Archives.1998"; }
+if date :is "date" "year" "1999" { fileinto :create "Archives.1999"; }
+if date :is "date" "year" "2000" { fileinto :create "Archives.2000"; }
+if date :is "date" "year" "2001" { fileinto :create "Archives.2001"; }
+if date :is "date" "year" "2002" { fileinto :create "Archives.2002"; }
+if date :is "date" "year" "2003" { fileinto :create "Archives.2003"; }
+if date :is "date" "year" "2004" { fileinto :create "Archives.2004"; }
+if date :is "date" "year" "2005" { fileinto :create "Archives.2005"; }
+if date :is "date" "year" "2006" { fileinto :create "Archives.2006"; }
+if date :is "date" "year" "2007" { fileinto :create "Archives.2007"; }
+if date :is "date" "year" "2008" { fileinto :create "Archives.2008"; }
+if date :is "date" "year" "2009" { fileinto :create "Archives.2009"; }
+if date :is "date" "year" "2010" { fileinto :create "Archives.2010"; }
+if date :is "date" "year" "2011" { fileinto :create "Archives.2011"; }
+if date :is "date" "year" "2012" { fileinto :create "Archives.2012"; }
+if date :is "date" "year" "2013" { fileinto :create "Archives.2013"; }
+if date :is "date" "year" "2014" { fileinto :create "Archives.2014"; }
+if date :is "date" "year" "2015" { fileinto :create "Archives.2015"; }
+if date :is "date" "year" "2016" { fileinto :create "Archives.2016"; }
+if date :is "date" "year" "2017" { fileinto :create "Archives.2017"; }
+if date :is "date" "year" "2018" { fileinto :create "Archives.2018"; }
+if date :is "date" "year" "2019" { fileinto :create "Archives.2019"; }
+if date :is "date" "year" "2020" { fileinto :create "Archives.2020"; }
+EOF
 }
 
 function config_ssh () {
@@ -2057,6 +2169,8 @@ function config () {
   config_terminal
   config_openssl
   config_dovecot
+  config_sieve
+  config_getmail
   config_gpg
   config_git
   config_shell
