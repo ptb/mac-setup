@@ -439,6 +439,13 @@ function install () {
   which prefs
 }
 
+function prefs_autoping () {
+  defaults write -app autoping Hostname -string "google.com"
+  defaults write -app autoping LaunchAtLogin -bool true
+  defaults write -app autoping ShowNotifications -bool true
+  defaults write -app autoping ShowPacketLossText -bool true
+}
+
 function prefs_finder () {
   p "Set Finder preferences"
 
@@ -820,6 +827,7 @@ EOF
 }
 
 function prefs () {
+  prefs_autoping
   prefs_finder
   prefs_moom
   prefs_nvalt
@@ -872,8 +880,8 @@ EOF
   chmod a+x "/usr/local/bin/mas_save.sh"
   rehash
 
-mkdir -m go= -p "${HOME}/Library/LaunchDaemons"
-launchctl unload "${HOME}/Library/LaunchDaemons/com.github.ptb.mas_save.plist" 2> /dev/null
+mkdir -m go= -p "${HOME}/Library/LaunchAgents"
+launchctl unload "${HOME}/Library/LaunchAgents/com.github.ptb.mas_save.plist" 2> /dev/null
 printf "%s\n" \
   "add ':KeepAlive' bool false" \
   "add ':Label' string 'com.github.ptb.mas_save'" \
@@ -882,9 +890,9 @@ printf "%s\n" \
   "add ':WatchPaths' array" \
   "add ':WatchPaths:0' string '$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore'" \
 | while IFS=$'\t' read a; do
-  /usr/libexec/PlistBuddy "${HOME}/Library/LaunchDaemons/com.github.ptb.mas_save.plist" -c "${a}" &> /dev/null
+  /usr/libexec/PlistBuddy "${HOME}/Library/LaunchAgents/com.github.ptb.mas_save.plist" -c "${a}" &> /dev/null
 done
-launchctl load "${HOME}/Library/LaunchDaemons/com.github.ptb.mas_save.plist"
+launchctl load "${HOME}/Library/LaunchAgents/com.github.ptb.mas_save.plist"
 
 }
 
@@ -1118,7 +1126,8 @@ cat > "${HOME}/.emacs.d/private/ptb/config.el" << EOF
   ibuffer-shrink-to-minimum-size t
   ibuffer-always-show-last-buffer nil
   ibuffer-sorting-mode 'recency
-  ibuffer-use-header-line nil)
+  ibuffer-use-header-line nil
+  x-select-enable-clipboard nil)
 
 (global-linum-mode t)
 (recentf-mode t)
@@ -1149,18 +1158,6 @@ cat > "${HOME}/.emacs.d/private/ptb/funcs.el" << EOF
 
 (add-hook 'org-mode-hook #'org-babel-tangle-hook)
 
-(defun ptb/get-buffer-menu-in-new-frame ()
-  (interactive)
-  (switch-to-buffer-other-frame (list-buffers-noselect)))
-
-(defun ptb/minibuffer-keyboard-quit ()
-  (interactive)
-  (if
-    (and delete-selection-mode transient-mark-mode mark-active)
-    (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-
 (defun ptb/new-untitled-buffer ()
   "Create a new untitled buffer in the current frame."
   (interactive)
@@ -1170,18 +1167,6 @@ cat > "${HOME}/.emacs.d/private/ptb/funcs.el" << EOF
       (get-buffer (concat buffer (number-to-string count)))
       (setq count (1+ count)))
     (switch-to-buffer
-    (concat buffer (number-to-string count))))
-  (org-mode))
-
-(defun ptb/new-untitled-frame ()
-  "Create a new untitled buffer in a new frame."
-  (interactive)
-  (let
-    ((buffer "Untitled-") (count 1))
-    (while
-      (get-buffer (concat buffer (number-to-string count)))
-      (setq count (1+ count)))
-    (switch-to-buffer-other-frame
     (concat buffer (number-to-string count))))
   (org-mode))
 
@@ -1202,33 +1187,31 @@ cat > "${HOME}/.emacs.d/private/ptb/funcs.el" << EOF
 EOF
 
 cat > "${HOME}/.emacs.d/private/ptb/keybindings.el" << EOF
-(define-key evil-insert-state-map (kbd "S-<down>") 'evil-next-visual-line)
-(define-key evil-insert-state-map (kbd "S-<up>") 'evil-previous-visual-line)
-(define-key evil-motion-state-map (kbd "S-<down>") 'evil-next-visual-line)
-(define-key evil-motion-state-map (kbd "S-<up>") 'evil-previous-visual-line)
-(define-key evil-normal-state-map (kbd "S-<down>") 'evil-next-visual-line)
-(define-key evil-normal-state-map (kbd "S-<up>") 'evil-previous-visual-line)
-(define-key evil-visual-state-map (kbd "S-<down>") 'evil-next-visual-line)
-(define-key evil-visual-state-map (kbd "S-<up>") 'evil-previous-visual-line)
+(define-key evil-normal-state-map (kbd "s-c") 'clipboard-kill-ring-save)
+(define-key evil-insert-state-map (kbd "s-c") 'clipboard-kill-ring-save)
+(define-key evil-visual-state-map (kbd "s-c") 'clipboard-kill-ring-save)
 
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'ptb/minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'ptb/minibuffer-keyboard-quit)
-(define-key minibuffer-local-map [escape] 'ptb/minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'ptb/minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'ptb/minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
+(define-key evil-ex-completion-map (kbd "s-v") 'clipboard-yank)
+(define-key evil-ex-search-keymap (kbd "s-v") 'clipboard-yank)
+(define-key evil-insert-state-map (kbd "s-v") 'clipboard-yank)
 
-(global-set-key (kbd "<end>") 'end-of-line)
-(global-set-key (kbd "<home>") 'beginning-of-line)
-(global-set-key (kbd "RET") 'newline-and-indent)
+(define-key evil-normal-state-map (kbd "s-x") 'clipboard-kill-region)
+(define-key evil-insert-state-map (kbd "s-x") 'clipboard-kill-region)
+(define-key evil-visual-state-map (kbd "s-x") 'clipboard-kill-region)
+
+(define-key evil-normal-state-map (kbd "<S-up>") 'evil-previous-visual-line)
+(define-key evil-insert-state-map (kbd "<S-up>") 'evil-previous-visual-line)
+(define-key evil-visual-state-map (kbd "<S-up>") 'evil-previous-visual-line)
+
+(define-key evil-normal-state-map (kbd "<S-down>") 'evil-next-visual-line)
+(define-key evil-insert-state-map (kbd "<S-down>") 'evil-next-visual-line)
+(define-key evil-visual-state-map (kbd "<S-down>") 'evil-next-visual-line)
 
 (global-set-key (kbd "C-l") 'evil-search-highlight-persist-remove-all)
 
-(global-set-key (kbd "s-a") 'mark-whole-buffer)
-(global-set-key (kbd "s-n") 'ptb/new-untitled-frame)
-(global-set-key (kbd "s-w") 'ptb/kill-current-buffer)
+(global-set-key (kbd "s-t") 'make-frame)
+(global-set-key (kbd "s-n") 'ptb/new-untitled-buffer)
+(global-set-key (kbd "s-w") 'ptb/kill-this-buffer)
 (global-set-key (kbd "s-{") 'ptb/previous-buffer)
 (global-set-key (kbd "s-}") 'ptb/next-buffer)
 EOF
@@ -1353,7 +1336,7 @@ for terminal_prop in \
 ":ShowTTYNameInTitle bool false" \
 ":ShowDimensionsInTitle bool false" \
 ":ShowCommandKeyInTitle bool false" \
-":columnCount integer 92" \
+":columnCount integer 124" \
 ":rowCount integer 20" \
 ":ShouldLimitScrollback integer 0" \
 ":ScrollbackLines integer 0" \
@@ -1495,7 +1478,7 @@ EOF
 function config_getmail () {
   p "Configure getmail"
 
-  mkdir -m go= -p "${HOME}/.getmail" "${HOME}/Library/LaunchDaemons"
+  mkdir -m go= -p "${HOME}/.getmail" "${HOME}/Library/LaunchAgents"
 
   printf "%s\n" \
     "add ':KeepAlive' bool false" \
@@ -1507,7 +1490,7 @@ function config_getmail () {
     "add ':StandardErrorPath' string '${HOME}/.getmail/getmail.err'" \
     "add ':StartInterval' integer 300" \
   | while read a; do
-    /usr/libexec/PlistBuddy "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist" -c "${a}" &> /dev/null
+    /usr/libexec/PlistBuddy "${HOME}/Library/LaunchAgents/ca.pyropus.getmail.plist" -c "${a}" &> /dev/null
   done
 
   for email in \
@@ -1541,14 +1524,14 @@ read_all = false
 received = false
 verbose = 1
 EOF
-  defaults write "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail" \
+  defaults write "${HOME}/Library/LaunchAgents/ca.pyropus.getmail" \
     ProgramArguments -array-add "--rcfile"
-  defaults write "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail" \
+  defaults write "${HOME}/Library/LaunchAgents/ca.pyropus.getmail" \
     ProgramArguments -array-add "${email}"
   done
 
-  plutil -convert xml1 "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist"
-  launchctl load "${HOME}/Library/LaunchDaemons/ca.pyropus.getmail.plist"
+  plutil -convert xml1 "${HOME}/Library/LaunchAgents/ca.pyropus.getmail.plist"
+  launchctl load "${HOME}/Library/LaunchAgents/ca.pyropus.getmail.plist"
 
   # http://shadow-file.blogspot.com/2012/06/parsing-email-and-fixing-timestamps-in.html
   curl -L https://pastebin.com/raw/ZBq7euid | tr -d '\015' > /usr/local/bin/timestamp.py
@@ -1861,9 +1844,27 @@ function config_loginitems () {
       make new login item with properties ¬
         { path: "/Applications/autoping.app", hidden: true }
       make new login item with properties ¬
+        { path: "/Applications/Caffeine.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/Coffitivity.app", hidden: true }
+      make new login item with properties ¬
         { path: "/Applications/Dropbox.app", hidden: true }
       make new login item with properties ¬
+        { path: "/Applications/HardwareGrowler.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/I Love Stars.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/IPMenulet.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/iTunes.app/Contents/MacOS/iTunesHelper.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/Menubar Countdown.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/Meteorologist.app", hidden: true }
+      make new login item with properties ¬
         { path: "/Applications/Moom.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/Plex Media Server.app", hidden: true }
       make new login item with properties ¬
         { path: "/Library/PreferencePanes/SteerMouse.prefPane/Contents/MacOS/SteerMouse Manager.app", hidden: true }
     end tell
