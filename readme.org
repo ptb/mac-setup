@@ -283,6 +283,7 @@ function init_no_sleep () {
     "with-pigeonhole",
     "with-pigeonhole-unfinished-features"]
   brew "duti"
+  brew "fdupes"
   brew "gawk"
   brew "getmail"
   brew "git"
@@ -2159,6 +2160,10 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
 
 *** dovecot
 
+#+begin_example sh :tangle no
+  doveadm sync -u $(whoami) maildir:~/.email:INBOX=~/.email/Inbox:LAYOUT=fs
+#+end_example
+
 #+begin_src sh
   function config_dovecot () {
     p "Enable email authentication with macOS accounts"
@@ -2178,6 +2183,8 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
   default_login_user = _dovenull
   log_path = /dev/stderr
   mail_location = maildir:~/.mail:INBOX=~/.mail/Inbox:LAYOUT=fs
+  mail_plugins = zlib
+  maildir_copy_with_hardlinks = no
   namespace {
     inbox = yes
     mailbox Drafts {
@@ -2203,16 +2210,18 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
     type = private
   }
   passdb {
-    driver = passwd-file
     args = scheme=cram-md5 /usr/local/etc/dovecot/cram-md5.pwd
+    driver = passwd-file
 
     # driver = pam
 
-    # driver = static
     # args = nopassword=y
+    # driver = static
   }
   plugin {
     sieve = file:/Users/%u/.sieve
+    zlib_save = bz2
+    zlib_save_level = 9
   }
   postmaster_address = ${USER}@${DOMAIN}
   protocols = imap
@@ -2220,13 +2229,6 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
     inet_listener imap {
       port = 0
     }
-    inet_listener imaps {
-      port = 993
-      ssl = yes
-    }
-  }
-  protocol lda {
-    mail_plugins = $mail_plugins sieve
   }
   ssl = required
   ssl_cert = <${SSL}/certs/${MAIL}/${MAIL}.crt
@@ -2235,9 +2237,11 @@ Inspiration: [[https://github.com/ChrisKempson/Tomorrow-Theme#tomorrow-night-eig
   ssl_key = <${SSL}/certs/${MAIL}/${MAIL}.key
   ssl_prefer_server_ciphers = yes
   ssl_protocols = !SSLv2 !SSLv3
-  ssl_require_crl = yes
   userdb {
     driver = passwd
+  }
+  protocol lda {
+    mail_plugins = sieve
   }
 
   # auth_debug = yes

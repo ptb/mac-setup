@@ -198,6 +198,7 @@ brew "dovecot",
   "with-pigeonhole",
   "with-pigeonhole-unfinished-features"]
 brew "duti"
+brew "fdupes"
 brew "gawk"
 brew "getmail"
 brew "git"
@@ -1391,6 +1392,8 @@ default_internal_user = _dovecot
 default_login_user = _dovenull
 log_path = /dev/stderr
 mail_location = maildir:~/.mail:INBOX=~/.mail/Inbox:LAYOUT=fs
+mail_plugins = zlib
+maildir_copy_with_hardlinks = no
 namespace {
   inbox = yes
   mailbox Drafts {
@@ -1416,16 +1419,18 @@ namespace {
   type = private
 }
 passdb {
-  driver = passwd-file
   args = scheme=cram-md5 /usr/local/etc/dovecot/cram-md5.pwd
+  driver = passwd-file
 
   # driver = pam
 
-  # driver = static
   # args = nopassword=y
+  # driver = static
 }
 plugin {
   sieve = file:/Users/%u/.sieve
+  zlib_save = bz2
+  zlib_save_level = 9
 }
 postmaster_address = ${USER}@${DOMAIN}
 protocols = imap
@@ -1433,13 +1438,6 @@ service imap-login {
   inet_listener imap {
     port = 0
   }
-  inet_listener imaps {
-    port = 993
-    ssl = yes
-  }
-}
-protocol lda {
-  mail_plugins = $mail_plugins sieve
 }
 ssl = required
 ssl_cert = <${SSL}/certs/${MAIL}/${MAIL}.crt
@@ -1448,9 +1446,11 @@ ssl_dh_parameters_length = 4096
 ssl_key = <${SSL}/certs/${MAIL}/${MAIL}.key
 ssl_prefer_server_ciphers = yes
 ssl_protocols = !SSLv2 !SSLv3
-ssl_require_crl = yes
 userdb {
   driver = passwd
+}
+protocol lda {
+  mail_plugins = sieve
 }
 
 # auth_debug = yes
