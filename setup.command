@@ -1518,12 +1518,13 @@ ignore_stderr = true
 
 [options]
 # delete = true
-# delete_after = 30
+delete_after = 30
 delivered_to = false
 read_all = false
 received = false
 verbose = 1
 EOF
+
   defaults write "${HOME}/Library/LaunchAgents/ca.pyropus.getmail" \
     ProgramArguments -array-add "--rcfile"
   defaults write "${HOME}/Library/LaunchAgents/ca.pyropus.getmail" \
