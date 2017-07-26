@@ -432,9 +432,12 @@ function install_node_sw () {
 
   printf "%s\n" \
     'export NVM_DIR="$(brew --prefix)/node"' \
+  >> "${HOME}/.zshenv"
+  source "${HOME}/.zshenv"
+
+  printf "%s\n" \
     '[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && . "$(brew --prefix)/opt/nvm/nvm.sh"' \
   >> "${HOME}/.zshrc"
-
   source "${HOME}/.zshrc"
 
   nvm install node
@@ -445,9 +448,12 @@ function install_python_sw () {
 
   printf "%s\n" \
     'export PYENV_ROOT="$(brew --prefix)/python"' \
+  >> "${HOME}/.zshenv"
+  source "${HOME}/.zshenv"
+
+  printf "%s\n" \
     'if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi' \
   >> "${HOME}/.zshrc"
-
   source "${HOME}/.zshrc"
 
   pyenv install --skip-existing 2.7.13
@@ -473,9 +479,12 @@ function install_ruby_sw () {
 
   printf "%s\n" \
     'export RBENV_ROOT="$(brew --prefix)/ruby"' \
+  >> "${HOME}/.zshenv"
+  source "${HOME}/.zshenv"
+
+  printf "%s\n" \
     'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' \
   >> "${HOME}/.zshrc"
-
   source "${HOME}/.zshrc"
 
   rbenv install --skip-existing 2.4.1
