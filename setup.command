@@ -176,6 +176,7 @@ cask_args colorpickerdir: "/Library/ColorPickers",
 tap "homebrew/bundle"
 tap "caskroom/cask"
 
+brew "rsync"
 brew "mas"
 mas "autoping", id: 632347870
 
@@ -218,7 +219,6 @@ brew "openssl"
 brew "pinentry-mac"
 brew "pyenv"
 brew "rbenv"
-brew "rsync"
 brew "selenium-server-standalone"
 brew "sqlite"
 brew "stow"
@@ -1807,7 +1807,7 @@ EOF
   p "Adding ssh key to macOS keychain"
 
   ssh-add -K
-  echo "ssh-add -A &> /dev/null" > "${HOME}/.zshrc"
+  echo "ssh-add -A &> /dev/null" >> "${HOME}/.zshrc"
 }
 
 function config_ssh_help () {
