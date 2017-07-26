@@ -298,13 +298,12 @@ function init_no_sleep () {
   brew "mp4v2"
   brew "mtr"
   brew "nmap"
-  brew "node"
+  brew "nvm"
   brew "openssl"
   brew "pinentry-mac"
-  brew "python"
-  brew "python3"
+  brew "pyenv"
+  brew "rbenv"
   brew "rsync"
-  brew "ruby"
   brew "selenium-server-standalone"
   brew "sqlite"
   brew "stow"
@@ -379,6 +378,7 @@ function init_no_sleep () {
   cask "torbrowser"
   cask "tower"
   cask "transmit"
+  cask "unrarx"
   cask "vimr"
   cask "vlc"
   cask "xld"
@@ -521,27 +521,79 @@ function init_no_sleep () {
   }
 #+end_src
 
-*** TODO: Node Software
+*** Node Software
 
-#+begin_src sh :tangle no
+#+begin_src sh
   function install_node_sw () {
     p "Install Node software"
+
+    printf "%s\n" \
+      'export NVM_DIR="$(brew --prefix)/node"' \
+      '[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && . "$(brew --prefix)/opt/nvm/nvm.sh"' \
+    >> "${HOME}/.zshrc"
+
+    source "${HOME}/.zshrc"
+
+    nvm install node
   }
 #+end_src
 
-*** TODO: Python Software
+*** Python Software
 
-#+begin_src sh :tangle no
+[[http://akbaribrahim.com/managing-multiple-python-versions-with-pyenv/][Managing Multiple Python Versions with pyenv]]
+
+#+begin_src sh
   function install_python_sw () {
     p "Install Python software"
+
+    printf "%s\n" \
+      'export PYENV_ROOT="$(brew --prefix)/python"' \
+      'if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi' \
+    >> "${HOME}/.zshrc"
+
+    source "${HOME}/.zshrc"
+
+    pyenv install --skip-existing 2.7.13
+    pyenv install --skip-existing 3.6.2
+    pyenv global 2.7.13
+
+    pip install --upgrade "pip" "setuptools"
+#+end_src
+
+[[https://github.com/mdhiggins/sickbeard_mp4_automator][Automatic MP4 Conversion/Tagging]]
+
+#+begin_src sh
+  pip install --upgrade "babelfish" "guessit<2" "qtfaststart" "requests" "subliminal<2"
+  pip install --upgrade "requests-cache" "requests[security]"
+
+  mkdir -m go= -p "${HOME}/.config/NzbDrone"
+  git clone "https://github.com/mdhiggins/sickbeard_mp4_automator.git" \
+    "${HOME}/.config/NzbDrone/scripts" --depth 1
+  cd "${HOME}/.config/NzbDrone/scripts" && pyenv local 2.7.13 && cd "${HOME}"
+#+end_src
+
+#+begin_src sh
+  pip install --upgrade "crudini"
+#+end_src
+
+#+begin_src sh
   }
 #+end_src
 
-*** TODO: Ruby Software
+*** Ruby Software
 
-#+begin_src sh :tangle no
+#+begin_src sh
   function install_ruby_sw () {
     p "Install Ruby software"
+
+    printf "%s\n" \
+      'export RBENV_ROOT="$(brew --prefix)/ruby"' \
+      'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' \
+    >> "${HOME}/.zshrc"
+
+    source "${HOME}/.zshrc"
+
+    rbenv install --skip-existing 2.4.1
   }
 #+end_src
 
@@ -554,9 +606,9 @@ function init_no_sleep () {
     install_brew
     install_macos_sw
     install_links
-    #install_node_sw
-    #install_python_sw
-    #install_ruby_sw
+    install_node_sw
+    install_python_sw
+    install_ruby_sw
 
     which prefs
   }
