@@ -431,7 +431,7 @@ function install_node_sw () {
   p "Install Node software"
 
   printf "%s\n" \
-    'export NVM_DIR="$(brew --prefix)/node"' \
+    'export NVM_DIR="/usr/local/node"' \
   >> "${HOME}/.zshenv"
   source "${HOME}/.zshenv"
 
@@ -447,7 +447,7 @@ function install_python_sw () {
   p "Install Python software"
 
   printf "%s\n" \
-    'export PYENV_ROOT="$(brew --prefix)/python"' \
+    'export PYENV_ROOT="/usr/local/python"' \
   >> "${HOME}/.zshenv"
   source "${HOME}/.zshenv"
 
@@ -478,7 +478,7 @@ function install_ruby_sw () {
   p "Install Ruby software"
 
   printf "%s\n" \
-    'export RBENV_ROOT="$(brew --prefix)/ruby"' \
+    'export RBENV_ROOT="/usr/local/ruby"' \
   >> "${HOME}/.zshenv"
   source "${HOME}/.zshenv"
 
@@ -488,6 +488,14 @@ function install_ruby_sw () {
   source "${HOME}/.zshrc"
 
   rbenv install --skip-existing 2.4.1
+  rbenv global 2.4.1
+
+  printf "%s\n" \
+  "gem: --no-document" \
+  >> "${HOME}/.gemrc"
+
+  gem update --system
+  gem update
 }
 
 function install () {
