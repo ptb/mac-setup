@@ -865,6 +865,10 @@ defaults write -globalDomain "com.apple.sound.beep.feedback" -int 0
 
 }
 
+function prefs_wifi () {
+  defaults -currentHost write com.apple.systemuiserver dontAutoLoad -array-add "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+}
+
 function prefs_sharing () {
   sudo dscl . -delete "/SharePoints"
 }
@@ -873,7 +877,12 @@ function prefs_guest () {
   sudo sysadminctl -guestAccount off
 }
 
+function prefs_siri () {
+  defaults write com.apple.Siri StatusMenuVisible -bool false
+}
+
 function prefs_clock () {
+  defaults -currentHost write com.apple.systemuiserver dontAutoLoad -array-add "/System/Library/CoreServices/Menu Extras/Clock.menu"
   defaults write com.apple.menuextra.clock "DateFormat" -string "EEE MMM d  h:mm:ss a"
 }
 
@@ -925,8 +934,10 @@ function prefs () {
   prefs_mouse
   prefs_trackpad
   prefs_sound
+  prefs_wifi
   prefs_sharing
   prefs_guest
+  prefs_siri
   prefs_clock
   prefs_accessibility
 

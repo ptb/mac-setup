@@ -1491,6 +1491,15 @@ function init_no_sleep () {
   }
 #+end_src
 
+**** Network: Wi-Fi
+
+=off= Show Wi-Fi status in menu bar
+#+begin_src sh
+  function prefs_wifi () {
+    defaults -currentHost write com.apple.systemuiserver dontAutoLoad -array-add "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+  }
+#+end_src
+
 **** Sharing: File Sharing
 
 *Shared Folders:* =None=
@@ -1509,9 +1518,18 @@ function init_no_sleep () {
   }
 #+end_src
 
+**** Siri
+
+=off= Show Siri in menu bar
+#+begin_src sh
+  function prefs_siri () {
+    defaults write com.apple.Siri StatusMenuVisible -bool false
+  }
+#+end_src
+
 **** Date & Time: Clock
 
-=on= *Show date and time in menu bar*
+=off= *Show date and time in menu bar*
 
 =on= *Time options: Display the time with seconds*
 
@@ -1522,6 +1540,7 @@ function init_no_sleep () {
 =on= *Date options: Show date*
 #+begin_src sh
   function prefs_clock () {
+    defaults -currentHost write com.apple.systemuiserver dontAutoLoad -array-add "/System/Library/CoreServices/Menu Extras/Clock.menu"
     defaults write com.apple.menuextra.clock "DateFormat" -string "EEE MMM d  h:mm:ss a"
   }
 #+end_src
@@ -1588,8 +1607,10 @@ function init_no_sleep () {
     prefs_mouse
     prefs_trackpad
     prefs_sound
+    prefs_wifi
     prefs_sharing
     prefs_guest
+    prefs_siri
     prefs_clock
     prefs_accessibility
 
