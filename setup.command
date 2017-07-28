@@ -196,8 +196,7 @@ tap "homebrew/services"
 brew "dovecot",
   args: [
   "with-pam",
-  "with-pigeonhole",
-  "with-pigeonhole-unfinished-features"]
+  "with-pigeonhole" ]
 brew "duti"
 brew "fdupes"
 brew "gawk"
@@ -226,6 +225,8 @@ brew "terminal-notifier"
 brew "trash"
 brew "vim"
 brew "wget"
+brew "yarn",
+  args: ["ignore-dependencies"]
 brew "youtube-dl"
 brew "zsh"
 
@@ -304,8 +305,8 @@ cask "railwaycat/emacsmacport/emacs-mac-spacemacs-icon"
 tap "caskroom/fonts"
 cask "caskroom/fonts/font-inconsolata-lgc"
 
-tap "caskroom/versions"
-cask "caskroom/versions/safari-technology-preview"
+# tap "caskroom/versions"
+# cask "caskroom/versions/safari-technology-preview"
 
 tap "ptb/custom"
 cask "ptb/custom/adobe-creative-cloud-2014"
@@ -462,7 +463,7 @@ function install_python_sw () {
 
   pip install --upgrade "pip" "setuptools"
 
-pip install --upgrade "babelfish" "guessit<2" "qtfaststart" "requests" "subliminal<2"
+pip install --upgrade "babelfish" "guessit<2" "qtfaststart" "requests" "stevedore==1.19.1" "subliminal<2"
 pip install --upgrade "requests-cache" "requests[security]"
 
 mkdir -m go= -p "${HOME}/.config/NzbDrone"
@@ -491,11 +492,12 @@ function install_ruby_sw () {
   rbenv global 2.4.1
 
   printf "%s\n" \
-  "gem: --no-document" \
+    "gem: --no-document" \
   >> "${HOME}/.gemrc"
 
   gem update --system
   gem update
+  gem install bundler
 }
 
 function install () {
@@ -862,6 +864,10 @@ defaults write -globalDomain "com.apple.sound.uiaudio.enabled" -int 0
 defaults write -globalDomain "com.apple.sound.beep.feedback" -int 0
 
 }
+
+sudo dscl . -delete "/SharePoints"
+
+sudo sysadminctl -guestAccount off
 
 function prefs_clock () {
   defaults write com.apple.menuextra.clock "DateFormat" -string "EEE MMM d  h:mm:ss a"
@@ -1350,6 +1356,99 @@ EOF
 
   chmod a+x /usr/local/bin/vi
   rehash
+}
+function config_istat () {
+  p "Set iStat Menu preferences"
+
+  printf "%s\t%s\t%s\n" \
+"MenubarSkinColor" "-int" "8" \
+"MenubarTheme" "-int" "0" \
+"DropdownTheme" "-int" "1" \
+"CPU_MenubarMode" "-string" "100,2,0" \
+"CPU_MenubarTextSize" "-int" "14" \
+"CPU_MenubarGraphShowBackground" "-int" "0" \
+"CPU_MenubarGraphWidth" "-int" "32" \
+"CPU_MenubarGraphBreakdowns" "-int" "0" \
+"CPU_MenubarGraphCustomColors" "-int" "0" \
+"CPU_MenubarGraphOverall" "-string" "0.40 0.60 0.40 1.00" \
+"CPU_MenubarCombineCores" "-int" "1" \
+"CPU_MenubarGroupItems" "-int" "0" \
+"CPU_MenubarSingleHistoryGraph" "-int" "0" \
+"CPU_CombineLogicalCores" "-int" "1" \
+"CPU_AppFormat" "-int" "0" \
+"Memory_MenubarMode" "-string" "100,2,6" \
+"Memory_MenubarPercentageSize" "-int" "14" \
+"Memory_MenubarGraphBreakdowns" "-int" "1" \
+"Memory_MenubarGraphCustomColors" "-int" "0" \
+"Memory_MenubarGraphOverall" "-string" "0.40 0.60 0.40 1.00" \
+"Memory_MenubarGraphWired" "-string" "0.40 0.60 0.40 1.00" \
+"Memory_MenubarGraphActive" "-string" "0.47 0.67 0.47 1.00" \
+"Memory_MenubarGraphCompressed" "-string" "0.53 0.73 0.53 1.00" \
+"Memory_MenubarGraphInactive" "-string" "0.60 0.80 0.60 1.00" \
+"Memory_IgnoreInactive" "-int" "0" \
+"Memory_AppFormat" "-int" "0" \
+"Memory_DisplayFormat" "-int" "1" \
+"Disks_MenubarMode" "-string" "100,9,8" \
+"Disks_MenubarGroupItems" "-int" "1" \
+"Disks_MenubarRWShowLabel" "-int" "1" \
+"Disks_MenubarRWBold" "-int" "0" \
+"Disks_MenubarGraphActivityWidth" "-int" "32" \
+"Disks_MenubarGraphActivityShowBackground" "-int" "0" \
+"Disks_MenubarGraphActivityCustomColors" "-int" "0" \
+"Disks_MenubarGraphActivityRead" "-string" "0.60 0.80 0.60 1.00" \
+"Disks_MenubarGraphActivityWrite" "-string" "0.40 0.60 0.40 1.00" \
+"Disks_SeperateFusion" "-int" "1" \
+"Network_MenubarMode" "-string" "4,0,1" \
+"Network_TextUploadColor-Dark" "-string" "1.00 1.00 1.00 1.00" \
+"Network_TextDownloadColor-Dark" "-string" "1.00 1.00 1.00 1.00" \
+"Network_GraphWidth" "-int" "32" \
+"Network_GraphShowBackground" "-int" "0" \
+"Network_GraphCustomColors" "-int" "0" \
+"Network_GraphUpload" "-string" "0.60 0.80 0.60 1.00" \
+"Network_GraphDownload" "-string" "0.40 0.60 0.40 1.00" \
+"Network_GraphMode" "-int" "1" \
+"Battery_MenubarMode" "-string" "5,0" \
+"Battery_ColorGraphCustomColors" "-int" "1" \
+"Battery_ColorGraphCharged" "-string" "0.40 0.60 0.40 1.00" \
+"Battery_ColorGraphCharging" "-string" "0.60 0.80 0.60 1.00" \
+"Battery_ColorGraphDraining" "-string" "1.00 0.60 0.60 1.00" \
+"Battery_ColorGraphLow" "-string" "1.00 0.20 0.20 1.00" \
+"Battery_PercentageSize" "-int" "14" \
+"Battery_MenubarCustomizeStates" "-int" "0" \
+"Battery_MenubarHideBluetooth" "-int" "1" \
+"Time_MenubarFormat" "-array-add" "EE" \
+"Time_MenubarFormat" "-array-add" " " \
+"Time_MenubarFormat" "-array-add" "MMM" \
+"Time_MenubarFormat" "-array-add" " " \
+"Time_MenubarFormat" "-array-add" "d" \
+"Time_MenubarFormat" "-array-add" " " \
+"Time_MenubarFormat" "-array-add" "h" \
+"Time_MenubarFormat" "-array-add" ":" \
+"Time_MenubarFormat" "-array-add" "mm" \
+"Time_MenubarFormat" "-array-add" ":" \
+"Time_MenubarFormat" "-array-add" "ss" \
+"Time_MenubarFormat" "-array-add" " " \
+"Time_MenubarFormat" "-array-add" "a" \
+"Time_DropdownFormat" "-array-add" "EE" \
+"Time_DropdownFormat" "-array-add" " " \
+"Time_DropdownFormat" "-array-add" "h" \
+"Time_DropdownFormat" "-array-add" ":" \
+"Time_DropdownFormat" "-array-add" "mm" \
+"Time_DropdownFormat" "-array-add" " " \
+"Time_DropdownFormat" "-array-add" "a" \
+"Time_DropdownFormat" "-array-add" "' ('" \
+"Time_DropdownFormat" "-array-add" "zzz" \
+"Time_DropdownFormat" "-array-add" "')'" \
+"Time_Cities" "-array-add" "4930956" \
+"Time_Cities" "-array-add" "4887398" \
+"Time_Cities" "-array-add" "5419384" \
+"Time_Cities" "-array-add" "5392171" \
+"Time_Cities" "-array-add" "5879400" \
+"Time_Cities" "-array-add" "5856195" \
+"Time_TextSize" "-int" "14" \
+| while IFS=$'\t' read a b c; do
+  defaults write com.bjango.istatmenus5.extras "$a" $b "$c"
+done
 }
 function config_terminal () {
   p "Set Terminal preferences"
@@ -1936,9 +2035,15 @@ function config_loginitems () {
       make new login item with properties ¬
         { path: "/Applications/Moom.app", hidden: true }
       make new login item with properties ¬
+        { path: "/Applications/NZBGet.app", hidden: true }
+      make new login item with properties ¬
         { path: "/Applications/Plex Media Server.app", hidden: true }
       make new login item with properties ¬
+        { path: "/Applications/Sonarr-Menu.app", hidden: true }
+      make new login item with properties ¬
         { path: "/Library/PreferencePanes/SteerMouse.prefPane/Contents/MacOS/SteerMouse Manager.app", hidden: true }
+      make new login item with properties ¬
+        { path: "/Applications/Synergy Preferences.app/Contents/PreferencePanes/Synergy.prefPane/Contents/Helpers/Synergy.app", hidden: true }
     end tell
 EOF
 
@@ -2238,6 +2343,7 @@ function config () {
   config_desktop
   config_dock
   config_emacs
+  config_istat
   config_vi_script
   config_terminal
   config_openssl
@@ -2258,6 +2364,7 @@ function config () {
 function private () {
   printf "%s\n"
 
+# sudo fdesetup enable
 }
 
 function display_help () {
