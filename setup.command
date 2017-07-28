@@ -2336,6 +2336,25 @@ function config_handlers () {
   killall Finder
 }
 
+function config_home () {
+  STORAGE="/Volumes/Storage"
+
+  printf "%s\t%s\n" \
+    "Incoming/Downloads" "Downloads" \
+    "Media" "Music" \
+    "Incoming/Movies" "Movies" \
+    "Incoming/TV-Shows" "TV Shows" \
+  | while IFS=$'\t' read a b; do
+    SetFile -P -a l "${HOME}/${b}" 1> /dev/null
+    chmod -h -N "${HOME}/${b}" 2> /dev/null
+    rm -rf "${HOME}/${b}"
+    ln -s "${STORAGE}/${a}" "${HOME}/${b}"
+    chmod -h go= "${HOME}/${b}"
+    chmod -h +a "group:everyone deny delete" "${HOME}/${b}"
+    SetFile -P -a L "${HOME}/${b}"
+  done
+}
+
 function config_done () {
   p "To copy gpg public key, enter 'config_gpg_help'"
   p "To copy ssh public key, enter 'config_ssh_help'"
@@ -2364,6 +2383,7 @@ function config () {
   config_zsh
   config_loginitems
   config_handlers
+  config_home
   config_done
 }
 
