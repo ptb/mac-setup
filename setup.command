@@ -865,9 +865,13 @@ defaults write -globalDomain "com.apple.sound.beep.feedback" -int 0
 
 }
 
-sudo dscl . -delete "/SharePoints"
+function prefs_sharing () {
+  sudo dscl . -delete "/SharePoints"
+}
 
-sudo sysadminctl -guestAccount off
+function prefs_guest () {
+  sudo sysadminctl -guestAccount off
+}
 
 function prefs_clock () {
   defaults write com.apple.menuextra.clock "DateFormat" -string "EEE MMM d  h:mm:ss a"
@@ -921,6 +925,8 @@ function prefs () {
   prefs_mouse
   prefs_trackpad
   prefs_sound
+  prefs_sharing
+  prefs_guest
   prefs_clock
   prefs_accessibility
 
