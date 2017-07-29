@@ -887,17 +887,23 @@ defaults write -globalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
 function prefs_shortcuts () {
 
-/usr/libexec/PlistBuddy -c "set ':AppleSymbolicHotKeys:64:enabled' false" \
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys' dict" \
+  "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:64' dict" \
+  "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:64:enabled' false" \
   "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
 
-/usr/libexec/PlistBuddy -c "set ':AppleSymbolicHotKeys:65:enabled' false" \
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:65' dict" \
+  "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:65:enabled' bool false" \
   "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
 
 }
 
 function prefs_dictation () {
 
-defaults read com.apple.speech.recognition.AppleSpeechRecognition.prefs \
+defaults write com.apple.speech.recognition.AppleSpeechRecognition.prefs \
   DictationIMMasterDictationEnabled -bool true
 
 defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys \
@@ -1139,7 +1145,7 @@ function config_atom () {
 
 cat > "${HOME}/.atom/packages/tomorrow-night-eighties-syntax/styles/colors.less" \
   << EOF
-@background: #191919;
+@background: #222222;
 @current-line: #333333;
 @selection: #4c4c4c;
 @foreground: #cccccc;
@@ -1829,7 +1835,7 @@ EOF
     "LowPriorityIO" "-bool" "true" \
     "ProgramArguments" "-array-add" "/usr/local/bin/imaptimefix.py" \
     "ProgramArguments" "-array-add" "${HOME}/.mail" \
-    "WatchPaths" "-array-add" "${HOME}/.mail" \
+    "StartInterval" "-int" "600" \
   | while IFS=$'\t' read a b c; do
     defaults write "${HOME}/Library/LaunchAgents/org.dovecot.imaptimefix" "$a" $b $c
   done
@@ -1894,7 +1900,6 @@ EOF
   done
 
   plutil -convert xml1 "${HOME}/Library/LaunchAgents/ca.pyropus.getmail.plist"
-  launchctl load "${HOME}/Library/LaunchAgents/ca.pyropus.getmail.plist"
 }
 
 function config_git () {
@@ -2519,9 +2524,12 @@ function config_handlers () {
 }
 
 function config_home () {
+  DROPBOX="/Volumes/Dropbox"
   STORAGE="/Volumes/Storage"
 
   printf "%s\t%s\n" \
+    "${DROPBOX}/Dropbox" "Documents" \
+    "${DROPBOX}/Dropbox" "Dropbox" \
     "${STORAGE}/Incoming/Downloads" "Downloads" \
     "${STORAGE}/Incoming/Movies" "Movies" \
     "${STORAGE}/Incoming/TV-Shows" "TV Shows" \
