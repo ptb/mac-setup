@@ -891,7 +891,7 @@ function prefs_shortcuts () {
   "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
 /usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:64' dict" \
   "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
-/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:64:enabled' false" \
+/usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:64:enabled' bool false" \
   "${HOME}/Library/Preferences/com.apple.symbolichotkeys.plist"
 
 /usr/libexec/PlistBuddy -c "add ':AppleSymbolicHotKeys:65' dict" \
@@ -1423,7 +1423,21 @@ cat > "${HOME}/.emacs.d/private/ptb/keybindings.el" << EOF
 EOF
 
 cat > "${HOME}/.emacs.d/private/ptb/packages.el" << EOF
-(setq ptb-packages '(auto-indent-mode inline-crypt))
+(setq ptb-packages '(adaptive-wrap auto-indent-mode inline-crypt))
+
+(defun ptb/init-adaptive-wrap ()
+  "Load the adaptive wrap package"
+  (use-package adaptive-wrap
+    :init
+    (setq adaptive-wrap-extra-indent 2)
+    :config
+    (progn
+      ;; http://stackoverflow.com/questions/13559061
+      (when (fboundp 'adaptive-wrap-prefix-mode)
+        (defun ptb/activate-adaptive-wrap-prefix-mode ()
+          "Toggle 'visual-line-mode' and 'adaptive-wrap-prefix-mode' simultaneously."
+          (adaptive-wrap-prefix-mode (if visual-line-mode 1 -1)))
+        (add-hook 'visual-line-mode-hook 'ptb/activate-adaptive-wrap-prefix-mode)))))
 
 (defun ptb/init-auto-indent-mode ()
   (use-package auto-indent-mode
@@ -1877,6 +1891,7 @@ server = imap.gmail.com
 port = 993
 username = ${email}
 mailboxes = ("[Gmail]/All Mail",)
+move_on_delete = "[Gmail]/Trash"
 
 [destination]
 type = MDA_external
@@ -1885,12 +1900,11 @@ arguments = ("-c","/usr/local/etc/dovecot/dovecot.conf","-d","$(whoami)",)
 ignore_stderr = true
 
 [options]
-# delete = true
-delete_after = 30
+delete = true
 delivered_to = false
 read_all = false
 received = false
-verbose = 1
+verbose = 0
 EOF
 
   defaults write "${HOME}/Library/LaunchAgents/ca.pyropus.getmail" \
@@ -1910,7 +1924,7 @@ function config_git () {
   git config --global user.name "Peter T Bosse II"
   git config --global user.email "ptb@ioutime.com"
 
-  git config --global alias.cm "commit --allow-empty-message --message="
+  git config --global alias.cm "commit --allow-empty --allow-empty-message --message="
   git config --global alias.co "checkout"
   git config --global alias.st "status"
 
