@@ -2603,7 +2603,7 @@ autoload -Uz \
   compaudit \
   compinit
 
-compaudit | \
+compaudit 2> /dev/null | \
   xargs -L 1 chmod go-w 2> /dev/null
 
 compinit -u
