@@ -381,6 +381,26 @@ zsh-history-substring-search
 homebrew/php/php71
 ptb/custom/dovecot
 ptb/custom/ffmpeg
+sdl2
+zimg
+x265
+webp
+wavpack
+libvorbis
+libvidstab
+two-lame
+theora
+tesseract
+speex
+libssh
+libsoxr
+snappy
+schroedinger
+rubberband
+rtmpdump
+opus
+openh264
+opencore-amr
 ptb/custom/nginx-full'
 
 install_brewfile_brew_pkgs () {
