@@ -1143,8 +1143,8 @@ config_new_account () {
 # Reinstate =sudo= Password
 
 config_rm_sudoers () {
-  sudo rm -f "/etc/sudoers.d/wheel" && \
-  sudo dscl /Local/Default -delete /Groups/wheel GroupMembership "$(whoami)"
+  sudo -- sh -c \
+    "rm -f /etc/sudoers.d/wheel; dscl /Local/Default -delete /Groups/wheel GroupMembership $(whoami)"
 
   /usr/bin/read -n 1 -p "Press any key to continue.
 " -s
@@ -1556,9 +1556,6 @@ EOF
   )
 )
 EOF
-
-  test -d "/Applications/Emacs.app" && \
-    open "/Applications/Emacs.app"
 }
 
 # Customize Finder
