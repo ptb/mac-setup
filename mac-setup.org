@@ -663,6 +663,7 @@ install_brewfile_cask_pkgs () {
 | dash                                             | https://kapeli.com/dash                                       |
 | dropbox                                          | https://www.dropbox.com/                                      |
 | exifrenamer                                      | http://www.qdev.de/?location=mac/exifrenamer                  |
+| find-empty-folders                               | http://www.tempel.org/FindEmptyFolders                        |
 | firefox                                          | https://www.mozilla.org/firefox/                              |
 | github-desktop                                   | https://desktop.github.com/                                   |
 | gitup                                            | http://gitup.co/                                              |

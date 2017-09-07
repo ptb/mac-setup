@@ -455,6 +455,7 @@ charles
 dash
 dropbox
 exifrenamer
+find-empty-folders
 firefox
 github-desktop
 gitup
