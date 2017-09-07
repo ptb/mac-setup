@@ -401,6 +401,16 @@ rtmpdump
 opus
 openh264
 opencore-amr
+libmodplug
+libgsm
+game-music-emu
+fontconfig
+fdk-aac
+libcaca
+libbs2b
+libbluray
+libass
+chromaprint
 ptb/custom/nginx-full'
 
 install_brewfile_brew_pkgs () {
