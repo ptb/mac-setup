@@ -367,6 +367,8 @@ selenium-server-standalone
 shellcheck
 sqlite
 stow
+syncthing
+syncthing-inotify
 tag
 terminal-notifier
 the_silver_searcher
@@ -449,6 +451,7 @@ alfred
 arduino
 atom
 bbedit
+bitbar
 caffeine
 carbon-copy-cloner
 charles
@@ -486,7 +489,9 @@ platypus
 plex-media-server
 qlstephen
 quitter
+radarr
 rescuetime
+resilio-sync
 scrivener
 sizeup
 sketch
@@ -2042,6 +2047,7 @@ com.apple.coreservices.useractivityd	ActivityReceivingAllowed	-bool	true	-curren
 -globalDomain	AppleFontSmoothing	-int	1	-currentHost'
 
 custom_general () {
+  osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to true'
   config_defaults "${_general}"
   osascript << EOF
     tell application "System Events"
@@ -2111,6 +2117,7 @@ Messages
 Emacs
 Atom
 Utilities/Terminal
+iTerm
 System Preferences
 PCalc
 Hermes

@@ -572,6 +572,8 @@ install_brewfile_brew_pkgs () {
 | shellcheck                   | https://github.com/koalaman/shellcheck                    |
 | sqlite                       | https://sqlite.org                                        |
 | stow                         | https://www.gnu.org/software/stow/                        |
+| syncthing                    | https://syncthing.net/                                    |
+| syncthing-inotify            | https://github.com/syncthing/syncthing-inotify            |
 | tag                          | https://github.com/jdberry/tag                            |
 | terminal-notifier            | https://github.com/julienXX/terminal-notifier             |
 | the_silver_searcher          | https://geoff.greer.fm/ag/                                |
@@ -657,6 +659,7 @@ install_brewfile_cask_pkgs () {
 | arduino                                          | https://www.arduino.cc/                                       |
 | atom                                             | https://atom.io/                                              |
 | bbedit                                           | https://www.barebones.com/products/bbedit/                    |
+| bitbar                                           | https://getbitbar.com/                                        |
 | caffeine                                         | http://lightheadsw.com/caffeine/                              |
 | carbon-copy-cloner                               | https://bombich.com/                                          |
 | charles                                          | https://www.charlesproxy.com/                                 |
@@ -694,7 +697,9 @@ install_brewfile_cask_pkgs () {
 | plex-media-server                                | https://www.plex.tv/                                          |
 | qlstephen                                        | https://whomwah.github.io/qlstephen/                          |
 | quitter                                          | https://marco.org/apps#quitter                                |
+| radarr                                           | https://radarr.video/                                         |
 | rescuetime                                       | https://www.rescuetime.com/                                   |
+| resilio-sync                                     | https://www.resilio.com/individuals/                          |
 | scrivener                                        | https://literatureandlatte.com/scrivener.php                  |
 | sizeup                                           | https://www.irradiatedsoftware.com/sizeup/                    |
 | sketch                                           | https://www.sketchapp.com/                                    |
@@ -2446,6 +2451,7 @@ custom_sysprefs () {
 #+begin_src sh :var _general=_general[3:-2,1:5]
 
 custom_general () {
+  osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to true'
   config_defaults "${_general}"
   osascript << EOF
 <<recent-items.applescript>>
@@ -2588,6 +2594,7 @@ custom_dockapps () {
 | Emacs              |
 | Atom               |
 | Utilities/Terminal |
+| iTerm              |
 | System Preferences |
 | PCalc              |
 | Hermes             |
