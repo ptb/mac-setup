@@ -535,9 +535,11 @@ install_brewfile_brew_pkgs () {
 | Homebrew Package Name        | Reference URL                                             |
 |------------------------------+-----------------------------------------------------------|
 | aspell                       | http://aspell.net/                                        |
+| certbot                      |                                                           |
 | chromedriver                 | https://sites.google.com/a/chromium.org/chromedriver/     |
 | coreutils                    | https://www.gnu.org/software/coreutils/                   |
 | duti                         | https://github.com/moretension/duti                       |
+| e2fsprogs                    |                                                           |
 | fasd                         | https://github.com/clvv/fasd                              |
 | fdupes                       | https://github.com/adrianlopezroche/fdupes                |
 | gawk                         | https://www.gnu.org/software/gawk/                        |
@@ -760,24 +762,26 @@ install_brewfile_mas_apps () {
 
 **** _mas
 #+name: _mas
-|-----------------+-----------+------------------------------------------|
-| App Name        |    App ID | App Store URL                            |
-|-----------------+-----------+------------------------------------------|
-| 1Password       | 443987910 | https://itunes.apple.com/app/id443987910 |
-| Affinity Photo  | 824183456 | https://itunes.apple.com/app/id824183456 |
-| autoping        | 632347870 | https://itunes.apple.com/app/id632347870 |
-| Coffitivity     | 659901392 | https://itunes.apple.com/app/id659901392 |
-| Growl           | 467939042 | https://itunes.apple.com/app/id467939042 |
-| HardwareGrowler | 475260933 | https://itunes.apple.com/app/id475260933 |
-| I Love Stars    | 402642760 | https://itunes.apple.com/app/id402642760 |
-| Icon Slate      | 439697913 | https://itunes.apple.com/app/id439697913 |
-| Justnotes       | 511230166 | https://itunes.apple.com/app/id511230166 |
-| Keynote         | 409183694 | https://itunes.apple.com/app/id409183694 |
-| Metanota Pro    | 515250764 | https://itunes.apple.com/app/id515250764 |
-| Numbers         | 409203825 | https://itunes.apple.com/app/id409203825 |
-| Pages           | 409201541 | https://itunes.apple.com/app/id409201541 |
-| WiFi Explorer   | 494803304 | https://itunes.apple.com/app/id494803304 |
-|-----------------+-----------+------------------------------------------|
+|----------------------------+------------+-------------------------------------------|
+| App Name                   |     App ID | App Store URL                             |
+|----------------------------+------------+-------------------------------------------|
+| 1Password                  |  443987910 | https://itunes.apple.com/app/id443987910  |
+| Affinity Photo             |  824183456 | https://itunes.apple.com/app/id824183456  |
+| autoping                   |  632347870 | https://itunes.apple.com/app/id632347870  |
+| Coffitivity                |  659901392 | https://itunes.apple.com/app/id659901392  |
+| Duplicate Photos Fixer Pro |  963642514 | https://itunes.apple.com/app/id963642514  |
+| Growl                      |  467939042 | https://itunes.apple.com/app/id467939042  |
+| HardwareGrowler            |  475260933 | https://itunes.apple.com/app/id475260933  |
+| I Love Stars               |  402642760 | https://itunes.apple.com/app/id402642760  |
+| Icon Slate                 |  439697913 | https://itunes.apple.com/app/id439697913  |
+| macOS High Sierra          | 1209167288 | https://itunes.apple.com/app/id1209167288 |
+| Justnotes                  |  511230166 | https://itunes.apple.com/app/id511230166  |
+| Keynote                    |  409183694 | https://itunes.apple.com/app/id409183694  |
+| Metanota Pro               |  515250764 | https://itunes.apple.com/app/id515250764  |
+| Numbers                    |  409203825 | https://itunes.apple.com/app/id409203825  |
+| Pages                      |  409201541 | https://itunes.apple.com/app/id409201541  |
+| WiFi Explorer              |  494803304 | https://itunes.apple.com/app/id494803304  |
+|----------------------------+------------+-------------------------------------------|
 
 *** Link System Utilities to Applications
 #+begin_src sh :var _links=_links[3:-2,0]

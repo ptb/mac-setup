@@ -330,9 +330,11 @@ install_brewfile_taps () {
 # Add Homebrew Packages to Brewfile
 
 _pkgs='aspell
+certbot
 chromedriver
 coreutils
 duti
+e2fsprogs
 fasd
 fdupes
 gawk
@@ -544,10 +546,12 @@ _mas='1Password	443987910
 Affinity Photo	824183456
 autoping	632347870
 Coffitivity	659901392
+Duplicate Photos Fixer Pro	963642514
 Growl	467939042
 HardwareGrowler	475260933
 I Love Stars	402642760
 Icon Slate	439697913
+macOS High Sierra	1209167288
 Justnotes	511230166
 Keynote	409183694
 Metanota Pro	515250764
