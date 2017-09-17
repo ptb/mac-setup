@@ -755,6 +755,7 @@ config () {
   config_desktop
   config_dovecot
   config_emacs
+  config_environment
   config_ipmenulet
   config_istatmenus
   config_nginx
@@ -1041,6 +1042,53 @@ EOF
 
   chmod a+x /usr/local/bin/vi
   rehash
+}
+
+# Configure Environment Variables
+
+_environment_defaults='/Library/LaunchAgents/environment.user	KeepAlive	-bool	false	
+/Library/LaunchAgents/environment.user	Label	-string	environment.user	
+/Library/LaunchAgents/environment.user	ProcessType	-string	Background	
+/Library/LaunchAgents/environment.user	Program	-string	/etc/environment.sh	
+/Library/LaunchAgents/environment.user	RunAtLoad	-bool	true	
+/Library/LaunchAgents/environment.user	WatchPaths	-array-add	/etc/environment.sh	
+/Library/LaunchAgents/environment.user	WatchPaths	-array-add	/etc/paths	
+/Library/LaunchAgents/environment.user	WatchPaths	-array-add	/etc/paths.d	
+/Library/LaunchDaemons/environment	KeepAlive	-bool	false	
+/Library/LaunchDaemons/environment	Label	-string	environment	
+/Library/LaunchDaemons/environment	ProcessType	-string	Background	
+/Library/LaunchDaemons/environment	Program	-string	/etc/environment.sh	
+/Library/LaunchDaemons/environment	RunAtLoad	-bool	true	
+/Library/LaunchDaemons/environment	WatchPaths	-array-add	/etc/environment.sh	
+/Library/LaunchDaemons/environment	WatchPaths	-array-add	/etc/paths	
+/Library/LaunchDaemons/environment	WatchPaths	-array-add	/etc/paths.d	'
+config_environment () {
+  sudo tee "/etc/environment.sh" << 'EOF' > /dev/null
+#!/bin/sh
+
+set -e
+
+if test -x /usr/libexec/path_helper; then
+  export PATH=""
+  eval `/usr/libexec/path_helper -s`
+  launchctl setenv PATH $PATH
+fi
+
+osascript -e 'tell app "Dock" to quit'
+EOF
+  sudo chmod a+x "/etc/environment.sh"
+  rehash
+
+  la="/Library/LaunchAgents/environment.user"
+  ld="/Library/LaunchDaemons/environment"
+
+  sudo mkdir -p "$(dirname $la)" "$(dirname $ld)"
+  sudo launchctl unload "${la}.plist" "${ld}.plist" 2> /dev/null
+  sudo rm -f "${la}.plist" "${ld}.plist"
+
+  config_defaults "$_environment_defaults" "sudo"
+  sudo plutil -convert xml1 "${la}.plist" "${ld}.plist"
+  sudo launchctl load "${la}.plist" "${ld}.plist" 2> /dev/null
 }
 
 # Configure IPMenulet
@@ -2003,12 +2051,77 @@ custom_moom () {
 
 # Customize MP4 Automator
 
+_mp4_automator='MP4	aac_adtstoasc	True
+MP4	audio-channel-bitrate	
+MP4	audio-codec	ac3,aac
+MP4	audio-default-language	eng
+MP4	audio-filter	
+MP4	audio-language	eng
+MP4	convert-mp4	True
+MP4	copy_to	
+MP4	delete_original	False
+MP4	download-artwork	Poster
+MP4	download-subs	True
+MP4	embed-subs	True
+MP4	ffmpeg	/usr/local/bin/ffmpeg
+MP4	ffprobe	/usr/local/bin/ffprobe
+MP4	fullpathguess	True
+MP4	h264-max-level	4.1
+MP4	ios-audio	True
+MP4	ios-audio-filter	
+MP4	ios-first-track-only	True
+MP4	max-audio-channels	
+MP4	move_to	
+MP4	output_directory	
+MP4	output_extension	m4v
+MP4	output_format	mp4
+MP4	permissions	644
+MP4	pix-fmt	
+MP4	post-process	False
+MP4	postopts	
+MP4	preopts	
+MP4	relocate_moov	True
+MP4	sub-providers	addic7ed,podnapisi,thesubdb,opensubtitles
+MP4	subtitle-codec	mov_text
+MP4	subtitle-default-language	eng
+MP4	subtitle-encoding	
+MP4	subtitle-language	eng
+MP4	tag-language	eng
+MP4	tagfile	True
+MP4	threads	auto
+MP4	use-qsv-decoder-with-encoder	True
+MP4	video-bitrate	
+MP4	video-codec	h264,x264
+MP4	video-crf	
+MP4	video-max-width	1920
+Plex	host	localhost
+Plex	port	32400
+Plex	refresh	True
+Plex	token	
+Radarr	apikey	
+Radarr	host	localhost
+Radarr	port	7878
+Radarr	ssl	False
+Radarr	web_root	
+Sonarr	apikey	
+Sonarr	host	localhost
+Sonarr	port	8989
+Sonarr	ssl	False
+Sonarr	web_root	'
+
 custom_mp4_automator () {
   mkdir -p "${HOME}/.config/mp4_automator" && \
   curl --compressed --location --silent \
     "https://github.com/mdhiggins/sickbeard_mp4_automator/archive/master.tar.gz" | \
   tar -C "${HOME}/.config/mp4_automator" --strip-components 1 -xf -
   printf "%s\n" "2.7.13" > "${HOME}/.config/mp4_automator/.python-version"
+
+  if which crudini > /dev/null; then
+    printf "%s\n" "${_mp4_automator}" | \
+    while IFS="$(printf '\t')" read section key value; do
+      crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "${section}" "${key}" "${value}"
+    done
+  fi
 }
 
 # Customize nvALT
