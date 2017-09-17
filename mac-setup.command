@@ -1361,22 +1361,29 @@ config_zsh () {
   esac
 
   grep -q "ZDOTDIR" "/etc/zshenv" || \
-  sudo tee -a /etc/zshenv << EOF > /dev/null
-export ZDOTDIR="\${HOME}/.zsh"
-export MASDIR="\$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore"
+  sudo tee -a /etc/zshenv << 'EOF' > /dev/null
+#-- Exports ----------------------------------------------------
 
-export EDITOR="vi"
-export VISUAL="vi"
-export PAGER="less"
-
-test -z "\${LANG}" && \\
-  export LANG="en_US.UTF-8"
+export \
+  ZDOTDIR="${HOME}/.zsh" \
+  HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" \
+  MASDIR="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore" \
+  NODENV_ROOT="/usr/local/node" \
+  PLENV_ROOT="/usr/local/perl" \
+  PYENV_ROOT="/usr/local/python" \
+  RBENV_ROOT="/usr/local/ruby" \
+  EDITOR="vi" \
+  VISUAL="vi" \
+  PAGER="less" \
+  LANG="en_US.UTF-8" \
+  LESS="-egiMQRS -x2 -z-2" \
+  LESSHISTFILE="/dev/null" \
+  HISTSIZE=50000 \
+  SAVEHIST=50000 \
+  KEYTIMEOUT=1
 
 # Ensure path arrays do not contain duplicates.
 typeset -gU cdpath fpath mailpath path
-
-# Set the default Less options.
-export LESS="-egiMQRS -x2 -z-2"
 EOF
   sudo chmod +x "/etc/zshenv"
   . "/etc/zshenv"
@@ -1388,15 +1395,6 @@ custom_zsh () {
   mkdir -m go= "${ZDOTDIR:-$HOME}" 2> /dev/null
   cat << 'EOF' >! "${ZDOTDIR:-$HOME}/.zshrc"
 #!/bin/sh
-
-#-- Exports ----------------------------------------------------
-
-export \
-  HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" \
-  HISTSIZE=50000 \
-  KEYTIMEOUT=1 \
-  LESSHISTFILE="/dev/null" \
-  SAVEHIST=50000
 
 #-- Changing Directories ---------------------------------------
 
@@ -1775,7 +1773,6 @@ custom () {
   custom_terminal
   custom_vim
   custom_vlc
-  custom_zsh
 
   which personalize_all
 }
