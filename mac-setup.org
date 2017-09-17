@@ -1668,8 +1668,12 @@ config_zsh () {
   print "$(which zsh)\n" | \
   sudo tee -a /etc/shells > /dev/null
 
-  chsh -s $(which zsh)
-  sudo chsh -s $(which zsh)
+  case "$SHELL" in
+    ($(which zsh)) ;;
+    (*)
+      chsh -s "$(which zsh)"
+      sudo chsh -s $(which zsh) ;;
+  esac
 
   grep -q "ZDOTDIR" "/etc/zshenv" || \
   sudo tee -a /etc/zshenv << EOF > /dev/null
