@@ -2477,6 +2477,10 @@ custom_mp4_automator () {
     open "http://localhost:8989/settings/general"
     SONARRAPI="$(ask 'Sonarr API Key?' 'Set API Key' '')"
     crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Sonarr" "apikey" "$SONARRAPI"
+
+    open "http://localhost:7878/settings/general"
+    RADARRAPI="$(ask 'Radarr API Key?' 'Set API Key' '')"
+    crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Radarr" "apikey" "$RADARRAPI"
   fi
 
   find "${HOME}/.config/mp4_automator" -name "*.py" -print0 | \
