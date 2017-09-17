@@ -1360,8 +1360,7 @@ config_zsh () {
       sudo chsh -s $(which zsh) ;;
   esac
 
-  grep -q "ZDOTDIR" "/etc/zshenv" || \
-  sudo tee -a /etc/zshenv << 'EOF' > /dev/null
+  sudo tee /etc/zshenv << 'EOF' > /dev/null
 #-- Exports ----------------------------------------------------
 
 export \
@@ -1387,13 +1386,8 @@ typeset -gU cdpath fpath mailpath path
 EOF
   sudo chmod +x "/etc/zshenv"
   . "/etc/zshenv"
-}
 
-# Customize Z-Shell
-
-custom_zsh () {
-  mkdir -m go= "${ZDOTDIR:-$HOME}" 2> /dev/null
-  cat << 'EOF' >! "${ZDOTDIR:-$HOME}/.zshrc"
+  sudo tee /etc/zshrc << 'EOF' > /dev/null
 #!/bin/sh
 
 #-- Changing Directories ---------------------------------------
@@ -1704,8 +1698,8 @@ prompt_ptb_precmd () {
 add-zsh-hook precmd \
   prompt_ptb_precmd
 EOF
-  chmod +x "${ZDOTDIR:-$HOME}/.zshrc"
-  . "${ZDOTDIR:-$HOME}/.zshrc"
+  sudo chmod +x "/etc/zshrc"
+  . "/etc/zshrc"
 }
 
 # Configure New Account

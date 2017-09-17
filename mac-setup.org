@@ -1675,12 +1675,17 @@ config_zsh () {
       sudo chsh -s $(which zsh) ;;
   esac
 
-  grep -q "ZDOTDIR" "/etc/zshenv" || \
-  sudo tee -a /etc/zshenv << 'EOF' > /dev/null
+  sudo tee /etc/zshenv << 'EOF' > /dev/null
 <<zshenv>>
 EOF
   sudo chmod +x "/etc/zshenv"
   . "/etc/zshenv"
+
+  sudo tee /etc/zshrc << 'EOF' > /dev/null
+<<zshrc>>
+EOF
+  sudo chmod +x "/etc/zshrc"
+  . "/etc/zshrc"
 }
 #+end_src
 
@@ -1710,19 +1715,7 @@ export \
 typeset -gU cdpath fpath mailpath path
 #+end_src
 
-*** Customize Z-Shell
-#+begin_src sh
-custom_zsh () {
-  mkdir -m go= "${ZDOTDIR:-$HOME}" 2> /dev/null
-  cat << 'EOF' >! "${ZDOTDIR:-$HOME}/.zshrc"
-<<zshrc>>
-EOF
-  chmod +x "${ZDOTDIR:-$HOME}/.zshrc"
-  . "${ZDOTDIR:-$HOME}/.zshrc"
-}
-#+end_src
-
-**** =${ZDOTDIR:-$HOME}/.zshrc=
+**** =/etc/zshrc=
 #+begin_src sh :noweb-ref zshrc :tangle no
 #!/bin/sh
 
