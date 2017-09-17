@@ -1459,6 +1459,7 @@ custom () {
   custom_nzbget
   custom_safari
   custom_sieve
+  custom_sonarr
   custom_ssh
   custom_sysprefs
   custom_terminal
@@ -2052,14 +2053,14 @@ custom_moom () {
 # Customize MP4 Automator
 
 _mp4_automator='MP4	aac_adtstoasc	True
-MP4	audio-channel-bitrate	
+MP4	audio-channel-bitrate	256
 MP4	audio-codec	ac3,aac
 MP4	audio-default-language	eng
 MP4	audio-filter	
 MP4	audio-language	eng
 MP4	convert-mp4	True
 MP4	copy_to	
-MP4	delete_original	False
+MP4	delete_original	True
 MP4	download-artwork	Poster
 MP4	download-subs	True
 MP4	embed-subs	True
@@ -2103,7 +2104,6 @@ Radarr	host	localhost
 Radarr	port	7878
 Radarr	ssl	False
 Radarr	web_root	
-Sonarr	apikey	
 Sonarr	host	localhost
 Sonarr	port	8989
 Sonarr	ssl	False
@@ -2121,7 +2121,14 @@ custom_mp4_automator () {
     while IFS="$(printf '\t')" read section key value; do
       crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "${section}" "${key}" "${value}"
     done
+
+    open "http://localhost:8989/settings/general"
+    SONARRAPI="$(ask 'Sonarr API Key?' 'Set API Key' '')"
+    crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Sonarr" "apikey" "$SONARRAPI"
   fi
+
+  find "${HOME}/.config/mp4_automator" -name "*.py" -print0 | \
+    xargs -0 -L 1 sed -i "" -e "s:/usr/bin/env python:/usr/local/python/versions/2.7.13/bin/python:"
 }
 
 # Customize nvALT
@@ -2329,6 +2336,59 @@ if date :is "date" "year" "2018" { fileinto :create "Archives.2018"; }
 if date :is "date" "year" "2019" { fileinto :create "Archives.2019"; }
 if date :is "date" "year" "2020" { fileinto :create "Archives.2020"; }
 EOF
+}
+
+# Customize Sonarr
+
+_sonarr='Advanced Settings	Shown
+Rename Episodes	Yes
+Replace Illegal Characters	Yes
+Standard Episode Format	{Series Title} - s{season:00}e{episode:00} - {Episode Title}
+Daily Episode Format	{Series Title} - {Air-Date} - {Episode Title}
+Anime Episode Format	{Series Title} - s{season:00}e{episode:00} - {Episode Title}
+Series Folder Format	{Series Title}
+Season Folder Format	Season {season}
+Multi-Episode Style	Scene
+Create empty series folders	Yes
+Skip Free Space Check	No
+Use Hardlinks instead of Copy	Yes
+Import Extra Files	No
+Ignore Deleted Episodes	Yes
+Download Propers	Yes
+Analyse video files	Yes
+Change File Date	UTC Air Date
+Set Permissions	Yes
+File chmod mask	644
+Folder chmod mask	755
+Download Clients	NZBGet
+NZBGet: Name	NZBGet
+NZBGet: Enable	Yes
+NZBGet: Host	localhost
+NZBGet: Port	6789
+NZBGet: Username	[blank]
+NZBGet: Password	[blank]
+NZBGet: Category	Sonarr
+Completed: Enable	Yes
+Completed: Remove	No
+Failed: Redownload	Yes
+Failed: Remove	No
+Drone Factory Interval	0
+Connect: Custom Script	
+postSonarr: Name	postSonarr
+postSonarr: On Grab	No
+postSonarr: On Download	Yes
+postSonarr: On Upgrade	Yes
+postSonarr: On Rename	No
+postSonarr: Path	${HOME}/.config/mp4_automator/postSonarr.py
+Start-Up: Enable SSL	No
+Start-Up: Open browser on start	No
+Security: Authentication	Basic (Browser popup)'
+
+custom_sonarr () {
+  printf "%s" "$_sonarr" | \
+  while IFS="$(printf '\t')" read pref value; do
+    printf "\033[1m\033[34m%s:\033[0m %s\n" "$pref" "$value"
+  done
 }
 
 # Customize SSH
