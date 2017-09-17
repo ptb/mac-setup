@@ -813,29 +813,18 @@ install_links () {
 #+begin_src sh
 install_node_sw () {
   if which nodenv > /dev/null; then
+    NODENV_ROOT="/usr/local/node"
+
+    sudo mkdir -p "$NODENV_ROOT"
+    sudo chown -R "$(whoami):admin" "$NODENV_ROOT"
+
     p "Installing Node.js Software"
-    sudo mkdir -p "/usr/local/node"
-    sudo chown -R "$(whoami):admin" "/usr/local/node"
-    test -f "/etc/zshenv" && \
-    grep -q "NODENV_ROOT" "/etc/zshenv" || \
-    printf "%s\n" \
-      'export NODENV_ROOT="/usr/local/node"' | \
-    sudo tee -a "/etc/zshenv" > /dev/null
-    . "/etc/zshenv"
-
-    test -f "/etc/zshrc" && \
-    grep -q "nodenv" "/etc/zshrc" || \
-    printf "%s\n" \
-      'eval "$(nodenv init - zsh)"' | \
-    sudo tee -a "/etc/zshrc" > /dev/null
-    . "/etc/zshrc"
-
     git clone https://github.com/nodenv/node-build-update-defs.git \
       "$(nodenv root)"/plugins/node-build-update-defs
     nodenv update-version-defs > /dev/null
 
-    nodenv install --skip-existing 8.4.0
-    nodenv global 8.4.0
+    nodenv install --skip-existing 8.5.0
+    nodenv global 8.5.0
     rehash
 
     grep -q "${NODENV_ROOT}" "/etc/paths" || \
@@ -850,23 +839,12 @@ ${NODENV_ROOT}/shims
 #+begin_src sh
 install_perl_sw () {
   if which plenv > /dev/null; then
+    PLENV_ROOT="/usr/local/perl"
+
+    sudo mkdir -p "$PLENV_ROOT"
+    sudo chown -R "$(whoami):admin" "$PLENV_ROOT"
+
     p "Installing Perl 5 Software"
-    sudo mkdir -p "/usr/local/perl"
-    sudo chown -R "$(whoami):admin" "/usr/local/perl"
-    test -f "/etc/zshenv" && \
-    grep -q "PLENV_ROOT" "/etc/zshenv" || \
-    printf "%s\n" \
-      'export PLENV_ROOT="/usr/local/perl"' | \
-    sudo tee -a "/etc/zshenv" > /dev/null
-    . "/etc/zshenv"
-
-    test -f "/etc/zshrc" && \
-    grep -q "plenv" "/etc/zshrc" || \
-    printf "%s\n" \
-      'eval "$(plenv init - zsh)"' | \
-    sudo tee -a "/etc/zshrc" > /dev/null
-    . "/etc/zshrc"
-
     plenv install 5.26.0 > /dev/null 2>&1
     plenv global 5.26.0
     rehash
@@ -885,30 +863,18 @@ install_python_sw () {
   if which pyenv > /dev/null; then
     CFLAGS="-I$(brew --prefix openssl)/include" && export CFLAGS
     LDFLAGS="-L$(brew --prefix openssl)/lib" && export LDFLAGS
+    PYENV_ROOT="/usr/local/python"
 
-    sudo mkdir -p "/usr/local/python"
-    sudo chown -R "$(whoami):admin" "/usr/local/python"
-    test -f "/etc/zshenv" && \
-    grep -q "PYENV_ROOT" "/etc/zshenv" || \
-    printf "%s\n" \
-      'export PYENV_ROOT="/usr/local/python"' | \
-    sudo tee -a "/etc/zshenv" > /dev/null
-    . "/etc/zshenv"
-
-    test -f "/etc/zshrc" && \
-    grep -q "pyenv" "/etc/zshrc" || \
-    printf "%s\n" \
-      'eval "$(pyenv init - zsh)"' | \
-    sudo tee -a "/etc/zshrc" > /dev/null
-    . "/etc/zshrc"
+    sudo mkdir -p "$PYENV_ROOT"
+    sudo chown -R "$(whoami):admin" "$PYENV_ROOT"
 
     p "Installing Python 2 Software"
     pyenv install --skip-existing 2.7.13
+    pyenv global 2.7.13
+    rehash
 
     p "Installing Python 3 Software"
     pyenv install --skip-existing 3.6.2
-    pyenv global 2.7.13
-    rehash
 
     pip install --upgrade "pip" "setuptools"
 
@@ -931,25 +897,14 @@ ${PYENV_ROOT}/shims
 #+begin_src sh
 install_ruby_sw () {
   if which rbenv > /dev/null; then
+    RBENV_ROOT="/usr/local/ruby"
+
+    sudo mkdir -p "$RBENV_ROOT"
+    sudo chown -R "$(whoami):admin" "$RBENV_ROOT"
+
     p "Installing Ruby Software"
-    sudo mkdir -p "/usr/local/ruby"
-    sudo chown -R "$(whoami):admin" "/usr/local/ruby"
-    test -f "/etc/zshenv" && \
-    grep -q "RBENV_ROOT" "/etc/zshenv" || \
-    printf "%s\n" \
-      'export RBENV_ROOT="/usr/local/ruby"' | \
-    sudo tee -a "/etc/zshenv" > /dev/null
-    . "/etc/zshenv"
-
-    test -f "/etc/zshrc" && \
-    grep -q "rbenv" "/etc/zshrc" || \
-    printf "%s\n" \
-      'eval "$(rbenv init - zsh)"' | \
-    sudo tee -a "/etc/zshrc" > /dev/null
-    . "/etc/zshrc"
-
-    rbenv install --skip-existing 2.4.1
-    rbenv global 2.4.1
+    rbenv install --skip-existing 2.4.2
+    rbenv global 2.4.2
     rehash
 
     printf "%s\n" \
@@ -958,8 +913,8 @@ install_ruby_sw () {
 
     gem update --system > /dev/null
 
-    trash /usr/local/ruby/versions/2.4.1/bin/rdoc
-    trash /usr/local/ruby/versions/2.4.1/bin/ri
+    trash "$(which rdoc)"
+    trash "$(which ri)"
     gem update
 
     gem install bundler
