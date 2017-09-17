@@ -1382,6 +1382,334 @@ EOF
   . "/etc/zshenv"
 }
 
+# Customize Z-Shell
+
+custom_zsh () {
+  mkdir -m go= "${ZDOTDIR:-$HOME}" 2> /dev/null
+  cat << 'EOF' >! "${ZDOTDIR:-$HOME}/.zshrc"
+#!/bin/sh
+
+#-- Exports ----------------------------------------------------
+
+export \
+  HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" \
+  HISTSIZE=50000 \
+  KEYTIMEOUT=1 \
+  LESSHISTFILE="/dev/null" \
+  SAVEHIST=50000
+
+#-- Changing Directories ---------------------------------------
+
+setopt \
+  autocd \
+  autopushd \
+  cdablevars \
+  chasedots \
+  chaselinks \
+  NO_posixcd \
+  pushdignoredups \
+  no_pushdminus \
+  pushdsilent \
+  pushdtohome
+
+#-- Completion -------------------------------------------------
+
+setopt \
+  ALWAYSLASTPROMPT \
+  no_alwaystoend \
+  AUTOLIST \
+  AUTOMENU \
+  autonamedirs \
+  AUTOPARAMKEYS \
+  AUTOPARAMSLASH \
+  AUTOREMOVESLASH \
+  no_bashautolist \
+  no_completealiases \
+  completeinword \
+  no_globcomplete \
+  HASHLISTALL \
+  LISTAMBIGUOUS \
+  no_LISTBEEP \
+  no_listpacked \
+  no_listrowsfirst \
+  LISTTYPES \
+  menucomplete \
+  no_recexact
+
+#-- Expansion and Globbing -------------------------------------
+
+setopt \
+  BADPATTERN \
+  BAREGLOBQUAL \
+  braceccl \
+  CASEGLOB \
+  CASEMATCH \
+  NO_cshnullglob \
+  EQUALS \
+  extendedglob \
+  no_forcefloat \
+  GLOB \
+  NO_globassign \
+  no_globdots \
+  no_globstarshort \
+  NO_globsubst \
+  no_histsubstpattern \
+  NO_ignorebraces \
+  no_ignoreclosebraces \
+  NO_kshglob \
+  no_magicequalsubst \
+  no_markdirs \
+  MULTIBYTE \
+  NOMATCH \
+  no_nullglob \
+  no_numericglobsort \
+  no_rcexpandparam \
+  no_rematchpcre \
+  NO_shglob \
+  UNSET \
+  no_warncreateglobal \
+  no_warnnestedvar
+
+#-- History ----------------------------------------------------
+
+setopt \
+  APPENDHISTORY \
+  BANGHIST \
+  extendedhistory \
+  no_histallowclobber \
+  no_HISTBEEP \
+  histexpiredupsfirst \
+  no_histfcntllock \
+  histfindnodups \
+  histignorealldups \
+  histignoredups \
+  histignorespace \
+  histlexwords \
+  no_histnofunctions \
+  no_histnostore \
+  histreduceblanks \
+  HISTSAVEBYCOPY \
+  histsavenodups \
+  histverify \
+  incappendhistory \
+  incappendhistorytime \
+  sharehistory
+
+#-- Initialisation ---------------------------------------------
+
+setopt \
+  no_allexport \
+  GLOBALEXPORT \
+  GLOBALRCS \
+  RCS
+
+#-- Input/Output -----------------------------------------------
+
+setopt \
+  ALIASES \
+  no_CLOBBER \
+  no_correct \
+  no_correctall \
+  dvorak \
+  no_FLOWCONTROL \
+  no_ignoreeof \
+  NO_interactivecomments \
+  HASHCMDS \
+  HASHDIRS \
+  no_hashexecutablesonly \
+  no_mailwarning \
+  pathdirs \
+  NO_pathscript \
+  no_printeightbit \
+  no_printexitvalue \
+  rcquotes \
+  NO_rmstarsilent \
+  no_rmstarwait \
+  SHORTLOOPS \
+  no_sunkeyboardhack
+
+#-- Job Control ------------------------------------------------
+
+setopt \
+  no_autocontinue \
+  autoresume \
+  no_BGNICE \
+  no_CHECKJOBS \
+  no_HUP \
+  longlistjobs \
+  no_monitor \
+  NOTIFY \
+  NO_posixjobs
+
+#-- Prompting --------------------------------------------------
+
+setopt \
+  NO_promptbang \
+  PROMPTCR \
+  PROMPTSP \
+  PROMPTPERCENT \
+  promptsubst \
+  transientrprompt
+
+#-- Scripts and Functions --------------------------------------
+
+setopt \
+  NO_aliasfuncdef \
+  no_cbases \
+  no_cprecedences \
+  DEBUGBEFORECMD \
+  no_errexit \
+  no_errreturn \
+  EVALLINENO \
+  EXEC \
+  FUNCTIONARGZERO \
+  no_localloops \
+  NO_localoptions \
+  no_localpatterns \
+  NO_localtraps \
+  MULTIFUNCDEF \
+  MULTIOS \
+  NO_octalzeroes \
+  no_pipefail \
+  no_sourcetrace \
+  no_typesetsilent \
+  no_verbose \
+  no_xtrace
+
+#-- Shell Emulation --------------------------------------------
+
+setopt \
+  NO_appendcreate \
+  no_bashrematch \
+  NO_bsdecho \
+  no_continueonerror \
+  NO_cshjunkiehistory \
+  NO_cshjunkieloops \
+  NO_cshjunkiequotes \
+  NO_cshnullcmd \
+  NO_ksharrays \
+  NO_kshautoload \
+  NO_kshoptionprint \
+  no_kshtypeset \
+  no_kshzerosubscript \
+  NO_posixaliases \
+  no_posixargzero \
+  NO_posixbuiltins \
+  NO_posixidentifiers \
+  NO_posixstrings \
+  NO_posixtraps \
+  NO_shfileexpansion \
+  NO_shnullcmd \
+  NO_shoptionletters \
+  NO_shwordsplit \
+  no_trapsasync
+
+#-- Zle --------------------------------------------------------
+
+setopt \
+  no_BEEP \
+  combiningchars \
+  no_overstrike \
+  NO_singlelinezle
+
+#-- Aliases ----------------------------------------------------
+
+alias \
+  ll="/bin/ls -aFGHhlOw" \
+  sudo="/usr/bin/sudo -E"
+
+#-- Functions --------------------------------------------------
+
+autoload -Uz \
+  add-zsh-hook \
+  compaudit \
+  compinit
+
+compaudit 2> /dev/null | \
+  xargs -L 1 chmod go-w 2> /dev/null
+
+compinit -u
+
+#-- zsh-syntax-highlighting ------------------------------------
+
+. "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+#-- zsh-history-substring-search -------------------------------
+
+. "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND="fg=default,underline" && \
+  export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND="fg=red,underline" && \
+  export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND
+
+#-- Zle --------------------------------------------------------
+
+zmodload zsh/zle
+
+bindkey -d
+bindkey -v
+
+for k in "vicmd" "viins"; do
+  bindkey -M $k '\C-A' beginning-of-line
+  bindkey -M $k '\C-E' end-of-line
+  bindkey -M $k '\C-U' kill-whole-line
+  bindkey -M $k '\e[3~' delete-char
+  bindkey -M $k '\e[A' history-substring-search-up
+  bindkey -M $k '\e[B' history-substring-search-down
+  bindkey -M $k '\x7f' backward-delete-char
+done
+
+for f in \
+  "zle-keymap-select" \
+  "zle-line-finish" \
+  "zle-line-init"
+do
+  eval "$f () {
+    case \$TERM_PROGRAM in
+      ('Apple_Terminal')
+        test \$KEYMAP = 'vicmd' && \
+          printf '%b' '\e[4 q' || \
+          printf '%b' '\e[6 q' ;;
+      ('iTerm.app')
+        test \$KEYMAP = 'vicmd' && \
+          printf '%b' '\e]Plf27f7f\e\x5c\e[4 q' || \
+          printf '%b' '\e]Pl99cc99\e\x5c\e[6 q' ;;
+    esac
+  }"
+  zle -N $f
+done
+
+#-- prompt_ptb_setup -------------------------------------------
+
+prompt_ptb_setup () {
+  I="$(printf '%b' '%{\e[3m%}')"
+  i="$(printf '%b' '%{\e[0m%}')"
+  PROMPT="%F{004}$I%d$i %(!.%F{001}.%F{002})%n %B❯%b%f " && \
+  export PROMPT
+}
+
+prompt_ptb_setup
+
+prompt_ptb_precmd () {
+  if test "$(uname -s)" = "Darwin"; then
+    print -Pn "\e]7;file://%M\${PWD// /%%20}\a"
+    print -Pn "\e]2;%n@%m\a"
+    print -Pn "\e]1;%~\a"
+  fi
+
+  test -n "$(git rev-parse --git-dir 2> /dev/null)" && \
+  RPROMPT="%F{000}$(git rev-parse --abbrev-ref HEAD)%f" && \
+  export RPROMPT
+}
+
+add-zsh-hook precmd \
+  prompt_ptb_precmd
+EOF
+  chmod +x "${ZDOTDIR:-$HOME}/.zshrc"
+  . "${ZDOTDIR:-$HOME}/.zshrc"
+}
+
 # Configure New Account
 
 config_new_account () {
