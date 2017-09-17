@@ -1381,6 +1381,9 @@ export \
   SAVEHIST=50000 \
   KEYTIMEOUT=1
 
+test -d "$ZDOTDIR" || \
+  mkdir -p "$ZDOTDIR"
+
 # Ensure path arrays do not contain duplicates.
 typeset -gU cdpath fpath mailpath path
 EOF
@@ -1388,8 +1391,6 @@ EOF
   . "/etc/zshenv"
 
   sudo tee /etc/zshrc << 'EOF' > /dev/null
-#!/bin/sh
-
 #-- Changing Directories ---------------------------------------
 
 setopt \
@@ -1607,8 +1608,7 @@ setopt \
 #-- Aliases ----------------------------------------------------
 
 alias \
-  ll="/bin/ls -aFGHhlOw" \
-  sudo="/usr/bin/sudo -E"
+  ll="/bin/ls -aFGHhlOw"
 
 #-- Functions --------------------------------------------------
 
@@ -1621,6 +1621,18 @@ compaudit 2> /dev/null | \
   xargs -L 1 chmod go-w 2> /dev/null
 
 compinit -u
+
+which nodenv > /dev/null && \
+  eval "$(nodenv init - zsh)"
+
+which plenv > /dev/null && \
+  eval "$(plenv init - zsh)"
+
+which pyenv > /dev/null && \
+  eval "$(pyenv init - zsh)"
+
+which rbenv > /dev/null && \
+  eval "$(rbenv init - zsh)"
 
 #-- zsh-syntax-highlighting ------------------------------------
 
