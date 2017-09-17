@@ -757,6 +757,7 @@ config () {
   config_emacs
   config_ipmenulet
   config_istatmenus
+  config_nginx
   config_sysprefs
   config_zsh
   config_new_account
@@ -1405,6 +1406,7 @@ custom () {
   custom_istatmenus
   custom_meteorologist
   custom_moom
+  custom_mp4_automator
   custom_nvalt
   custom_nzbget
   custom_safari
@@ -1999,6 +2001,16 @@ custom_moom () {
     open "/Applications/Moom.app"
 }
 
+# Customize MP4 Automator
+
+custom_mp4_automator () {
+  mkdir -p "${HOME}/.config/mp4_automator" && \
+  curl --compressed --location --silent \
+    "https://github.com/mdhiggins/sickbeard_mp4_automator/archive/master.tar.gz" | \
+  tar -C "${HOME}/.config/mp4_automator" --strip-components 1 -xf -
+  printf "%s\n" "2.7.13" > "${HOME}/.config/mp4_automator/.python-version"
+}
+
 # Customize nvALT
 
 _nvalt='net.elasticthreads.nv	TableFontPointSize	-int	11	
@@ -2413,6 +2425,7 @@ _loginitems='/Applications/Alfred 3.app
 /Applications/Moom.app
 /Applications/NZBGet.app
 /Applications/Plex Media Server.app
+/Applications/Radarr.app
 /Applications/Sonarr-Menu.app
 /Library/PreferencePanes/SteerMouse.prefPane/Contents/MacOS/SteerMouse Manager.app'
 custom_loginitems () {
