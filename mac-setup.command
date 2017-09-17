@@ -2099,7 +2099,6 @@ Plex	host	localhost
 Plex	port	32400
 Plex	refresh	True
 Plex	token	
-Radarr	apikey	
 Radarr	host	localhost
 Radarr	port	7878
 Radarr	ssl	False
@@ -2122,13 +2121,13 @@ custom_mp4_automator () {
       crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "${section}" "${key}" "${value}"
     done
 
-    open "http://localhost:8989/settings/general"
-    SONARRAPI="$(ask 'Sonarr API Key?' 'Set API Key' '')"
-    crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Sonarr" "apikey" "$SONARRAPI"
-
     open "http://localhost:7878/settings/general"
     RADARRAPI="$(ask 'Radarr API Key?' 'Set API Key' '')"
     crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Radarr" "apikey" "$RADARRAPI"
+
+    open "http://localhost:8989/settings/general"
+    SONARRAPI="$(ask 'Sonarr API Key?' 'Set API Key' '')"
+    crudini --set "${HOME}/.config/mp4_automator/autoProcess.ini" "Sonarr" "apikey" "$SONARRAPI"
   fi
 
   find "${HOME}/.config/mp4_automator" -name "*.py" -print0 | \
@@ -2389,6 +2388,8 @@ Start-Up: Open browser on start	No
 Security: Authentication	Basic (Browser popup)'
 
 custom_sonarr () {
+  open "http://localhost:7878/settings/mediamanagement"
+  open "http://localhost:8989/settings/mediamanagement"
   printf "%s" "$_sonarr" | \
   while IFS="$(printf '\t')" read pref value; do
     printf "\033[1m\033[34m%s:\033[0m %s\n" "$pref" "$value"
