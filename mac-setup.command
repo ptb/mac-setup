@@ -1365,7 +1365,6 @@ config_zsh () {
 
 export \
   ZDOTDIR="${HOME}/.zsh" \
-  HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" \
   MASDIR="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore" \
   NODENV_ROOT="/usr/local/node" \
   PLENV_ROOT="/usr/local/perl" \
@@ -1384,6 +1383,9 @@ export \
 test -d "$ZDOTDIR" || \
   mkdir -p "$ZDOTDIR"
 
+test -f "${ZDOTDIR}/.zshrc" || \
+  touch "${ZDOTDIR}/.zshrc"
+
 # Ensure path arrays do not contain duplicates.
 typeset -gU cdpath fpath mailpath path
 EOF
@@ -1391,6 +1393,11 @@ EOF
   . "/etc/zshenv"
 
   sudo tee /etc/zshrc << 'EOF' > /dev/null
+#-- Exports ----------------------------------------------------
+
+export \
+  HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
+
 #-- Changing Directories ---------------------------------------
 
 setopt \
