@@ -155,6 +155,8 @@ init_xcode () {
       curl --location --silent \
         "https://gist.githubusercontent.com/pudquick/ff412bcb29c9c1fa4b8d/raw/24b25538ea8df8d0634a2a6189aa581ccc6a5b4b/parse_pbzx2.py" | \
         python - "${dest}/Content"
+      find "${dest}" -empty -name "*.xz" -type f -print0 | \
+        xargs -0 -l 1 rm
       find "${dest}" -name "*.xz" -print0 | \
         xargs -0 -L 1 gunzip
       cat ${dest}/Content.part* > \
@@ -165,7 +167,7 @@ init_xcode () {
     for pkg in /Applications/Xcode*.app/Contents/Resources/Packages/*.pkg; do
       sudo installer -pkg "$pkg" -target /
     done
-    x="$(find '/Applications' -maxdepth 1 -name 'Xcode[^ ]*.app' -print -quit)"
+    x="$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)"
     if test -n "${x}"; then
       sudo xcode-select -s "${x}"
       sudo xcodebuild -license accept
@@ -662,7 +664,6 @@ ${PLENV_ROOT}/shims
 
 install_python_sw () {
   if which pyenv > /dev/null; then
-    p "Installing Python 2 & 3 Software"
     CFLAGS="-I$(brew --prefix openssl)/include" && export CFLAGS
     LDFLAGS="-L$(brew --prefix openssl)/lib" && export LDFLAGS
 
@@ -682,7 +683,10 @@ install_python_sw () {
     sudo tee -a "/etc/zshrc" > /dev/null
     . "/etc/zshrc"
 
+    p "Installing Python 2 Software"
     pyenv install --skip-existing 2.7.13
+
+    p "Installing Python 3 Software"
     pyenv install --skip-existing 3.6.2
     pyenv global 2.7.13
     rehash
@@ -1110,6 +1114,15 @@ config_istatmenus () {
 
 # Configure nginx
 
+_nginx_defaults='/Library/LaunchDaemons/org.nginx.nginx	KeepAlive	-bool	true	
+/Library/LaunchDaemons/org.nginx.nginx	Label	-string	org.nginx.nginx	
+/Library/LaunchDaemons/org.nginx.nginx	ProcessType	-string	Background	
+/Library/LaunchDaemons/org.nginx.nginx	Program	-string	/usr/local/bin/nginx	
+/Library/LaunchDaemons/org.nginx.nginx	RunAtLoad	-bool	true	
+/Library/LaunchDaemons/org.nginx.nginx	StandardErrorPath	-string	/usr/local/var/log/nginx/error.log	
+/Library/LaunchDaemons/org.nginx.nginx	StandardOutPath	-string	/usr/local/var/log/nginx/access.log	
+/Library/LaunchDaemons/org.nginx.nginx	UserName	-string	root	
+/Library/LaunchDaemons/org.nginx.nginx	WatchPaths	-array-add	/usr/local/etc/nginx	'
 config_nginx () {
   cat << 'EOF' > /usr/local/etc/nginx/nginx.conf
 daemon off;
@@ -1303,6 +1316,16 @@ http {
 
 worker_processes auto;
 EOF
+
+  ld="/Library/LaunchDaemons/org.nginx.nginx"
+
+  sudo mkdir -p "$(dirname $ld)"
+  sudo launchctl unload "${ld}.plist" 2> /dev/null
+  sudo rm -f "${ld}.plist"
+
+  config_defaults "$_nginx_defaults" "sudo"
+  sudo plutil -convert xml1 "${ld}.plist"
+  sudo launchctl load "${ld}.plist" 2> /dev/null
 }
 
 # Configure OpenSSL
