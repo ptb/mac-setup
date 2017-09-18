@@ -1970,6 +1970,10 @@ which pyenv > /dev/null && \
 which rbenv > /dev/null && \
   eval "$(rbenv init - zsh)"
 
+sf () {
+  SetFile -P -d "$1 12:00:00" -m "$1 12:00:00" $argv[2,$]
+}
+
 #-- zsh-syntax-highlighting ------------------------------------
 
 . "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
