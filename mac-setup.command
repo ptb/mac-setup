@@ -915,7 +915,7 @@ ssl = required
 ssl_cipher_list = ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS:!AES128
 ssl_dh_parameters_length = 4096
 ssl_prefer_server_ciphers = yes
-ssl_protocols = TLSv2
+ssl_protocols = !SSLv2 !SSLv3
 userdb {
   driver = passwd
 }
