@@ -711,13 +711,13 @@ ${RBENV_ROOT}/shims
 config () {
   config_admin_req
   config_bbedit
+  config_certbot
   config_desktop
   config_dovecot
   config_emacs
   config_environment
   config_ipmenulet
   config_istatmenus
-  config_certbot
   config_nginx
   config_openssl
   config_sysprefs
@@ -776,6 +776,65 @@ config_bbedit () {
     ln /Applications/BBEdit.app/Contents/Helpers/bbfind /usr/local/bin/bbfind && \
     ln /Applications/BBEdit.app/Contents/Helpers/bbresults /usr/local/bin/bbresults
   fi
+}
+
+# Configure Let’s Encrypt
+
+config_certbot () {
+  sudo launchctl unload /Library/LaunchDaemons/org.nginx.nginx.plist 2> /dev/null
+
+  while true; do
+    test -n "$1" && server_name="$1" || \
+      server_name="$(ask 'New SSL Server: Server Name?' 'Create Server' 'example.com')"
+    test -n "$server_name" || break
+
+    test -n "$2" && proxy_address="$2" || \
+      proxy_address="$(ask "Proxy Address for $server_name?" 'Set Address' 'http://127.0.0.1:80')"
+
+    sudo certbot certonly --domain $server_name
+
+    key1="$(openssl x509 -pubkey < /etc/letsencrypt/live/$server_name/fullchain.pem | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+    key2="$(curl -s https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+    key3="$(curl -s https://letsencrypt.org/certs/isrgrootx1.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+
+    pkp="$(printf "add_header Public-Key-Pins 'pin-sha256=\"%s\"; pin-sha256=\"%s\"; pin-sha256=\"%s\"; max-age=2592000;';\n" $key1 $key2 $key3)"
+
+    cat << EOF > "/usr/local/etc/nginx/servers/$server_name.conf"
+server {
+  server_name $server_name;
+
+  location / {
+    proxy_pass $proxy_address;
+  }
+
+  ssl_certificate /etc/letsencrypt/live/$server_name/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/$server_name/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/$server_name/chain.pem;
+
+  $pkp
+
+  add_header Content-Security-Policy "upgrade-insecure-requests;";
+  add_header Referrer-Policy "strict-origin";
+  add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-Frame-Options DENY;
+  add_header X-Robots-Tag none;
+  add_header X-XSS-Protection "1; mode=block";
+
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+
+  ssl_stapling on;
+  ssl_stapling_verify on;
+
+  # https://securityheaders.io/?q=https%3A%2F%2F$server_name&hide=on&followRedirects=on
+  # https://www.ssllabs.com/ssltest/analyze.html?d=$server_name&hideResults=on&latest
+}
+EOF
+    unset argv
+  done
+
+  sudo launchctl load /Library/LaunchDaemons/org.nginx.nginx.plist
 }
 
 # Configure Default Apps
@@ -1064,65 +1123,6 @@ config_ipmenulet () {
 config_istatmenus () {
   test -d "/Applications/iStat Menus.app" && \
   open "/Applications/iStat Menus.app"
-}
-
-# Configure Let’s Encrypt
-
-config_certbot () {
-  sudo launchctl unload /Library/LaunchDaemons/org.nginx.nginx.plist 2> /dev/null
-
-  while true; do
-    test -n "$1" && server_name="$1" || \
-      server_name="$(ask 'New SSL Server: Server Name?' 'Create Server' 'example.com')"
-    test -n "$server_name" || break
-
-    test -n "$2" && proxy_address="$2" || \
-      proxy_address="$(ask "Proxy Address for $server_name?" 'Set Address' 'http://127.0.0.1:80')"
-
-    sudo certbot certonly --domain $server_name
-
-    key1="$(openssl x509 -pubkey < /etc/letsencrypt/live/$server_name/fullchain.pem | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
-    key2="$(curl -s https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
-    key3="$(curl -s https://letsencrypt.org/certs/isrgrootx1.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
-
-    pkp="$(printf "add_header Public-Key-Pins 'pin-sha256=\"%s\"; pin-sha256=\"%s\"; pin-sha256=\"%s\"; max-age=2592000;';\n" $key1 $key2 $key3)"
-
-    cat << EOF > "/usr/local/etc/nginx/servers/$server_name.conf"
-server {
-  server_name $server_name;
-
-  location / {
-    proxy_pass $proxy_address;
-  }
-
-  ssl_certificate /etc/letsencrypt/live/$server_name/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/$server_name/privkey.pem;
-  ssl_trusted_certificate /etc/letsencrypt/live/$server_name/chain.pem;
-
-  $pkp
-
-  add_header Content-Security-Policy "upgrade-insecure-requests;";
-  add_header Referrer-Policy "strict-origin";
-  add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
-  add_header X-Content-Type-Options nosniff;
-  add_header X-Frame-Options DENY;
-  add_header X-Robots-Tag none;
-  add_header X-XSS-Protection "1; mode=block";
-
-  listen 443 ssl http2;
-  listen [::]:443 ssl http2;
-
-  ssl_stapling on;
-  ssl_stapling_verify on;
-
-  # https://securityheaders.io/?q=https%3A%2F%2F$server_name&hide=on&followRedirects=on
-  # https://www.ssllabs.com/ssltest/analyze.html?d=$server_name&hideResults=on&latest
-}
-EOF
-    unset argv
-  done
-
-  sudo launchctl load /Library/LaunchDaemons/org.nginx.nginx.plist
 }
 
 # Configure nginx
