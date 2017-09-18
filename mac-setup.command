@@ -721,6 +721,7 @@ config () {
   config_sysprefs
   config_zsh
   config_new_account
+  config_guest
   config_rm_sudoers
 
   which custom
@@ -1293,7 +1294,6 @@ config_openssl () {
 
 config_sysprefs () {
   config_energy
-  config_guest
   config_loginwindow
   config_mas
 }
@@ -1317,12 +1317,6 @@ config_energy () {
   while IFS="$(printf '\t')" read flag setting value; do
     sudo pmset $flag ${setting} ${value}
   done
-}
-
-# Configure Guest Users
-
-config_guest () {
-  sudo sysadminctl -guestAccount off
 }
 
 # Configure Login Window
@@ -1749,6 +1743,12 @@ config_new_account () {
 
   sudo sysadminctl -admin -addUser "${u}" -fullName "${n}" -password - \
     -shell "$(which zsh)" -picture "/Library/User Pictures/${e}.jpg"
+}
+
+# Configure Guest Users
+
+config_guest () {
+  sudo sysadminctl -guestAccount off
 }
 
 # Reinstate =sudo= Password

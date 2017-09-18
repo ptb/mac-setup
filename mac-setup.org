@@ -944,6 +944,7 @@ config () {
   config_sysprefs
   config_zsh
   config_new_account
+  config_guest
   config_rm_sudoers
 
   which custom
@@ -1586,7 +1587,6 @@ config_openssl () {
 #+begin_src sh
 config_sysprefs () {
   config_energy
-  config_guest
   config_loginwindow
   config_mas
 }
@@ -1620,13 +1620,6 @@ config_energy () {
 | *UPS:* ~off~ *Shut down the computer when the time remaining on the UPS battery is:* | -u   | haltremain   |    -1 |
 | *UPS:* ~off~ *Shut down the computer when the UPS battery level is below:*           | -u   | haltlevel    |    -1 |
 |--------------------------------------------------------------------------------------+------+--------------+-------|
-
-**** Configure Guest Users
-#+begin_src sh
-config_guest () {
-  sudo sysadminctl -guestAccount off
-}
-#+end_src
 
 **** Configure Login Window
 #+begin_src sh :var _loginwindow=_loginwindow[3:-2,1:5]
@@ -2075,6 +2068,13 @@ config_new_account () {
 
   sudo sysadminctl -admin -addUser "${u}" -fullName "${n}" -password - \
     -shell "$(which zsh)" -picture "/Library/User Pictures/${e}.jpg"
+}
+#+end_src
+
+*** Configure Guest Users
+#+begin_src sh
+config_guest () {
+  sudo sysadminctl -guestAccount off
 }
 #+end_src
 
