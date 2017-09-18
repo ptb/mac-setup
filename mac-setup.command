@@ -717,7 +717,9 @@ config () {
   config_environment
   config_ipmenulet
   config_istatmenus
+  config_certbot
   config_nginx
+  config_openssl
   config_sysprefs
   config_zsh
   config_new_account
@@ -797,7 +799,7 @@ EOF
 config_dovecot () {
   if which /usr/local/sbin/dovecot > /dev/null; then
     if ! run "Configure Dovecot Email Server?" "Configure Server" "Cancel"; then
-      cat << EOF > "/usr/local/etc/dovecot/dovecot.conf"
+      sudo tee "/usr/local/etc/dovecot/dovecot.conf" << EOF > /dev/null
 auth_mechanisms = cram-md5
 default_internal_user = _dovecot
 default_login_user = _dovenull
@@ -870,14 +872,14 @@ protocol lda {
 # verbose_ssl = yes
 EOF
 
-      MAILADM="$(ask 'Email: Administrator Email?' 'Set Email' "$(whoami)@$(hostname)")"
-      MAILSVR="$(ask 'Email: Server Hostname for DNS?' 'Set Hostname' "$(hostname)")"
-      SSL="$(brew --prefix openssl)"
+      MAILADM="$(ask 'Email: Postmaster Email?' 'Set Email' "$(whoami)@$(hostname -f | cut -d. -f2-)")"
+      MAILSVR="$(ask 'Email: Server Hostname for DNS?' 'Set Hostname' "$(hostname -f)")"
+      sudo certbot certonly --domain $MAILSVR
       printf "%s\n" \
         "postmaster_address = '${MAILADM}'" \
-        "ssl_cert = <${SSL}/certs/${MAILSVR}/${MAILSVR}.crt" \
-        "ssl_key = <${SSL}/certs/${MAILSVR}/${MAILSVR}.key" | \
-      tee -a "/usr/local/etc/dovecot/dovecot.conf" > /dev/null
+        "ssl_cert = </etc/letsencrypt/live/$MAILSVR/fullchain.pem" \
+        "ssl_key = </etc/letsencrypt/live/$MAILSVR/privkey.pem" | \
+      sudo tee -a "/usr/local/etc/dovecot/dovecot.conf" > /dev/null
 
       if test ! -f "/usr/local/etc/dovecot/cram-md5.pwd"; then
         while true; do
@@ -897,10 +899,6 @@ account	required	pam_nologin.so
 account	required	pam_opendirectory.so
 password	required	pam_opendirectory.so
 EOF
-
-      grep -Fq "${MAILSVR}" "/etc/hosts" || \
-      printf "%s\t%s\n" "127.0.0.1" "${MAILSVR}" | \
-      sudo tee -a "/etc/hosts" > /dev/null
 
       sudo brew services start dovecot
 
@@ -1068,6 +1066,65 @@ config_istatmenus () {
   open "/Applications/iStat Menus.app"
 }
 
+# Configure Let’s Encrypt
+
+config_certbot () {
+  sudo launchctl unload /Library/LaunchDaemons/org.nginx.nginx.plist 2> /dev/null
+
+  while true; do
+    test -n "$1" && server_name="$1" || \
+      server_name="$(ask 'New SSL Server: Server Name?' 'Create Server' 'example.com')"
+    test -n "$server_name" || break
+
+    test -n "$2" && proxy_address="$2" || \
+      proxy_address="$(ask "Proxy Address for $server_name?" 'Set Address' 'http://127.0.0.1:80')"
+
+    sudo certbot certonly --domain $server_name
+
+    key1="$(openssl x509 -pubkey < /etc/letsencrypt/live/$server_name/fullchain.pem | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+    key2="$(curl -s https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+    key3="$(curl -s https://letsencrypt.org/certs/isrgrootx1.pem | openssl x509 -pubkey | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)"
+
+    pkp="$(printf "add_header Public-Key-Pins 'pin-sha256=\"%s\"; pin-sha256=\"%s\"; pin-sha256=\"%s\"; max-age=2592000;';\n" $key1 $key2 $key3)"
+
+    cat << EOF > "/usr/local/etc/nginx/servers/$server_name.conf"
+server {
+  server_name $server_name;
+
+  location / {
+    proxy_pass $proxy_address;
+  }
+
+  ssl_certificate /etc/letsencrypt/live/$server_name/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/$server_name/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/$server_name/chain.pem;
+
+  $pkp
+
+  add_header Content-Security-Policy "upgrade-insecure-requests;";
+  add_header Referrer-Policy "strict-origin";
+  add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-Frame-Options DENY;
+  add_header X-Robots-Tag none;
+  add_header X-XSS-Protection "1; mode=block";
+
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+
+  ssl_stapling on;
+  ssl_stapling_verify on;
+
+  # https://securityheaders.io/?q=https%3A%2F%2F$server_name&hide=on&followRedirects=on
+  # https://www.ssllabs.com/ssltest/analyze.html?d=$server_name&hideResults=on&latest
+}
+EOF
+    unset argv
+  done
+
+  sudo launchctl load /Library/LaunchDaemons/org.nginx.nginx.plist
+}
+
 # Configure nginx
 
 _nginx_defaults='/Library/LaunchDaemons/org.nginx.nginx	KeepAlive	-bool	true	
@@ -1166,8 +1223,7 @@ http {
   # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
   ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS:!AES128;
 
-  # test -d "/etc/letsencrypt" || mkdir -p "/etc/letsencrypt"
-  # openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 4096
+  # openssl dhparam -out /etc/letsencrypt/ssl-dhparam.pem 4096
   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
   ssl_ecdh_curve secp384r1;
@@ -1285,9 +1341,61 @@ EOF
 }
 
 # Configure OpenSSL
+# Create an intentionally invalid certificate for use with a DNS-based ad blocker, e.g. https://pi-hole.net
 
 config_openssl () {
-  true
+  _default="/etc/letsencrypt/live/default"
+  test -d "$_default" || mkdir -p "$_default"
+
+  cat << EOF > "${_default}/default.cnf"
+[ req ]
+default_bits = 4096
+default_keyfile = ${_default}/default.key
+default_md = sha256
+distinguished_name = dn
+encrypt_key = no
+prompt = no
+utf8 = yes
+x509_extensions = v3_ca
+
+[ dn ]
+CN = *
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = CA:true
+EOF
+
+  openssl req -days 1 -new -newkey rsa -x509 \
+    -config "${_default}/default.cnf" \
+    -out "${_default}/default.crt"
+
+  cat << EOF > "/usr/local/etc/nginx/servers/default.conf"
+server {
+  server_name .$(hostname -f | cut -d. -f2-);
+
+  listen 80;
+  listen [::]:80;
+
+  return 301 https://\$host\$request_uri;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  listen 443 default_server ssl http2;
+  listen [::]:443 default_server ssl http2;
+
+  ssl_certificate ${_default}/default.crt;
+  ssl_certificate_key ${_default}/default.key;
+
+  ssl_ciphers NULL;
+
+  return 204;
+}
+EOF
 }
 
 # Configure System Preferences
