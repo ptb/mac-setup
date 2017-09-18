@@ -781,7 +781,37 @@ config_bbedit () {
 # Configure Let’s Encrypt
 
 config_certbot () {
+  test -d "/etc/letsencrypt" || \
+    sudo mkdir -p /etc/letsencrypt
+
+  sudo tee "/etc/letsencrypt/cli.ini" << EOF > dev/null
+agree-tos = True
+authenticator = standalone
+eff-email = True
+manual-public-ip-logging-ok = True
+nginx-ctl = $(which nginx)
+nginx-server-root = /usr/local/etc/nginx
+preferred-challenges = tls-sni-01
+keep-until-expiring = True
+rsa-key-size = 4096
+text = True
+EOF
+
+  a=$(ask "Existing Let’s Encrypt Git Repository Path or URL?" "Clone Repository" "")
+  test -n "$a" && \
+  case "$a" in
+    (/*)
+      printf "gitdir: $a" | \
+      sudo tee "/etc/letsencrypt/.git" > /dev/null ;;
+    (*)
+      sudo git -C "/etc/letsencrypt" remote add origin "$a"
+      sudo git -C "/etc/letsencrypt" fetch origin master ;;
+  esac
+  sudo git -C "/etc/letsencrypt" reset --hard
+  sudo git checkout -f -b master FETCH_HEAD
+
   sudo launchctl unload /Library/LaunchDaemons/org.nginx.nginx.plist 2> /dev/null
+  sudo certbot renew
 
   while true; do
     test -n "$1" && server_name="$1" || \
