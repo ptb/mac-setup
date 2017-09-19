@@ -453,7 +453,7 @@ install_macos_sw () {
   install_brewfile_mas_apps
   install_links
 
-  x="$(find '/Applications' -maxdepth 1 -name 'Xcode[^ ]*.app' -print -quit)"
+  x="$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)"
   if test -n "${x}"; then
     sudo xcode-select -s "${x}"
     sudo xcodebuild -license accept
@@ -541,6 +541,7 @@ install_brewfile_brew_pkgs () {
 | certbot                      | https://certbot.eff.org/                                  |
 | chromedriver                 | https://sites.google.com/a/chromium.org/chromedriver/     |
 | coreutils                    | https://www.gnu.org/software/coreutils/                   |
+| dash                         | http://gondor.apana.org.au/~herbert/dash/                 |
 | duti                         | https://github.com/moretension/duti                       |
 | e2fsprogs                    | https://e2fsprogs.sourceforge.io/                         |
 | fasd                         | https://github.com/clvv/fasd                              |
@@ -584,6 +585,7 @@ install_brewfile_brew_pkgs () {
 | the_silver_searcher          | https://geoff.greer.fm/ag/                                |
 | trash                        | http://hasseg.org/trash/                                  |
 | unrar                        | http://www.rarlab.com/                                    |
+| vcsh                         | https://github.com/RichiH/vcsh                            |
 | vim                          | https://vim.sourceforge.io/                               |
 | yarn                         | https://yarnpkg.com/                                      |
 | youtube-dl                   | https://rg3.github.io/youtube-dl/                         |

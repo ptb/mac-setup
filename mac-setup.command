@@ -274,7 +274,7 @@ install_macos_sw () {
   install_brewfile_mas_apps
   install_links
 
-  x="$(find '/Applications' -maxdepth 1 -name 'Xcode[^ ]*.app' -print -quit)"
+  x="$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)"
   if test -n "${x}"; then
     sudo xcode-select -s "${x}"
     sudo xcodebuild -license accept
@@ -336,6 +336,7 @@ bash
 certbot
 chromedriver
 coreutils
+dash
 duti
 e2fsprogs
 fasd
@@ -379,6 +380,7 @@ terminal-notifier
 the_silver_searcher
 trash
 unrar
+vcsh
 vim
 yarn
 youtube-dl
