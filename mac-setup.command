@@ -332,6 +332,7 @@ install_brewfile_taps () {
 # Add Homebrew Packages to Brewfile
 
 _pkgs='aspell
+bash
 certbot
 chromedriver
 coreutils

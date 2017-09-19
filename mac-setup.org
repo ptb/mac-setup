@@ -537,11 +537,12 @@ install_brewfile_brew_pkgs () {
 | Homebrew Package Name        | Reference URL                                             |
 |------------------------------+-----------------------------------------------------------|
 | aspell                       | http://aspell.net/                                        |
-| certbot                      |                                                           |
+| bash                         | https://www.gnu.org/software/bash/                        |
+| certbot                      | https://certbot.eff.org/                                  |
 | chromedriver                 | https://sites.google.com/a/chromium.org/chromedriver/     |
 | coreutils                    | https://www.gnu.org/software/coreutils/                   |
 | duti                         | https://github.com/moretension/duti                       |
-| e2fsprogs                    |                                                           |
+| e2fsprogs                    | https://e2fsprogs.sourceforge.io/                         |
 | fasd                         | https://github.com/clvv/fasd                              |
 | fdupes                       | https://github.com/adrianlopezroche/fdupes                |
 | gawk                         | https://www.gnu.org/software/gawk/                        |
