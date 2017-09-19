@@ -1019,7 +1019,7 @@ config_certbot () {
   test -d "/etc/letsencrypt" || \
     sudo mkdir -p /etc/letsencrypt
 
-  sudo tee "/etc/letsencrypt/cli.ini" << EOF > dev/null
+  sudo tee "/etc/letsencrypt/cli.ini" << EOF > /dev/null
 agree-tos = True
 authenticator = standalone
 eff-email = True
@@ -1032,18 +1032,21 @@ rsa-key-size = 4096
 text = True
 EOF
 
-  a=$(ask "Existing Let’s Encrypt Git Repository Path or URL?" "Clone Repository" "")
-  test -n "$a" && \
-  case "$a" in
-    (/*)
-      printf "gitdir: $a" | \
-      sudo tee "/etc/letsencrypt/.git" > /dev/null ;;
-    (*)
-      sudo git -C "/etc/letsencrypt" remote add origin "$a"
-      sudo git -C "/etc/letsencrypt" fetch origin master ;;
-  esac
-  sudo git -C "/etc/letsencrypt" reset --hard
-  sudo git checkout -f -b master FETCH_HEAD
+  if ! test -e "/etc/letsencrypt/.git"; then
+    a=$(ask "Existing Let’s Encrypt Git Repository Path or URL?" "Clone Repository" "")
+    test -n "$a" && \
+    case "$a" in
+      (/*)
+        sudo tee "/etc/letsencrypt/.git" << EOF > /dev/null ;;
+gitdir: $a
+EOF
+      (*)
+        sudo git -C "/etc/letsencrypt" remote add origin "$a"
+        sudo git -C "/etc/letsencrypt" fetch origin master ;;
+    esac
+    sudo git -C "/etc/letsencrypt" reset --hard
+    sudo git checkout -f -b master HEAD
+  fi
 
   sudo launchctl unload /Library/LaunchDaemons/org.nginx.nginx.plist 2> /dev/null
   sudo certbot renew
@@ -1475,6 +1478,7 @@ EOF
 daemon off;
 
 events {
+  accept_mutex off;
   worker_connections 8000;
 }
 
@@ -1548,6 +1552,9 @@ http {
 
   proxy_buffering off;
   proxy_redirect off;
+
+  sendfile on;
+  sendfile_max_chunk 512k;
 
   server_tokens off;
 
@@ -3002,7 +3009,7 @@ custom_mp4_automator () {
 |            | MP4     | audio-language               | eng                                       |
 |            | MP4     | convert-mp4                  | True                                      |
 |            | MP4     | copy_to                      |                                           |
-|            | MP4     | delete_original              | True                                      |
+|            | MP4     | delete_original              | False                                     |
 |            | MP4     | download-artwork             | Poster                                    |
 |            | MP4     | download-subs                | True                                      |
 |            | MP4     | embed-subs                   | True                                      |
@@ -3039,7 +3046,7 @@ custom_mp4_automator () {
 |            | MP4     | video-max-width              | 1920                                      |
 |            | Plex    | host                         | localhost                                 |
 |            | Plex    | port                         | 32400                                     |
-|            | Plex    | refresh                      | True                                      |
+|            | Plex    | refresh                      | False                                     |
 |            | Plex    | token                        |                                           |
 |            | Radarr  | host                         | localhost                                 |
 |            | Radarr  | port                         | 7878                                      |
