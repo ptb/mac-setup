@@ -2645,7 +2645,7 @@ net.elasticthreads.nv	AlternatingRows	-bool	true
 net.elasticthreads.nv	UseETScrollbarsOnLion	-bool	false	
 net.elasticthreads.nv	KeepsMaxTextWidth	-bool	true	
 net.elasticthreads.nv	NoteBodyMaxWidth	-int	650	
-net.elasticthreads.nv	HorizontalLayout	-bool	false	
+net.elasticthreads.nv	HorizontalLayout	-bool	true	
 net.elasticthreads.nv	NoteAttributesVisible	-array-add	Title	
 net.elasticthreads.nv	NoteAttributesVisible	-array-add	Tags	
 net.elasticthreads.nv	TableIsReverseSorted	-bool	true	
@@ -2764,7 +2764,11 @@ com.apple.Safari	WebsiteSpecificSearchEnabled	-bool	true
 com.apple.Safari	PreloadTopHit	-bool	true	
 com.apple.Safari	ShowFavoritesUnderSmartSearchField	-bool	false	
 com.apple.Safari	SafariGeolocationPermissionPolicy	-int	0	
+com.apple.Safari	BlockStoragePolicy	-int	2	
+com.apple.Safari	WebKitStorageBlockingPolicy	-int	1	
+com.apple.Safari	com.apple.Safari.ContentPageGroupIdentifier.WebKit2StorageBlockingPolicy	-int	1	
 com.apple.Safari	SendDoNotTrackHTTPHeader	-bool	true	
+com.apple.WebFoundation	NSHTTPAcceptCookies	-string	always	
 com.apple.Safari	com.apple.Safari.ContentPageGroupIdentifier.WebKit2ApplePayCapabilityDisclosureAllowed	-bool	true	
 com.apple.Safari	CanPromptForPushNotifications	-bool	false	
 com.apple.Safari	ShowFullURLInSmartSearchField	-bool	true	
