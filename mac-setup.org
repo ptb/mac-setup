@@ -2277,6 +2277,7 @@ custom () {
   custom_atom
   custom_autoping
   custom_dropbox
+  custom_duti
   custom_emacs
   custom_finder
   custom_getmail
@@ -2475,6 +2476,276 @@ custom_dropbox () {
     open "/Applications/Dropbox.app"
 }
 #+end_src
+
+*** Customize Default UTIs
+#+begin_src sh :var _duti=_duti[3:-2,0:2]
+custom_duti () {
+  if test -x "/usr/local/bin/duti"; then
+    test -f "${HOME}/Library/Preferences/org.duti.plist" && \
+      rm "${HOME}/Library/Preferences/org.duti.plist"
+
+    printf "%s\n" "${_duti}" | \
+    while IFS="$(printf '\t')" read id uti role; do
+      defaults write org.duti DUTISettings -array-add \
+        "{
+          DUTIBundleIdentifier = '$a';
+          DUTIUniformTypeIdentifier = '$b';
+          DUTIRole = '$c';
+        }"
+    done
+
+    duti "${HOME}/Library/Preferences/org.duti.plist" 2> /dev/null
+  fi
+}
+#+end_src
+
+**** _duti
+#+name: _duti
+|----------------------------+--------------------------------------------------------+--------|
+| Bundle ID                  | UTI                                                    | Role   |
+|----------------------------+--------------------------------------------------------+--------|
+| com.apple.DiskImageMounter | com.apple.disk-image                                   | all    |
+| com.apple.DiskImageMounter | public.disk-image                                      | all    |
+| com.apple.DiskImageMounter | public.iso-image                                       | all    |
+| com.apple.QuickTimePlayerX | com.apple.coreaudio-format                             | all    |
+| com.apple.QuickTimePlayerX | com.apple.quicktime-movie                              | all    |
+| com.apple.QuickTimePlayerX | com.microsoft.waveform-audio                           | all    |
+| com.apple.QuickTimePlayerX | public.aifc-audio                                      | all    |
+| com.apple.QuickTimePlayerX | public.aiff-audio                                      | all    |
+| com.apple.QuickTimePlayerX | public.audio                                           | all    |
+| com.apple.QuickTimePlayerX | public.mp3                                             | all    |
+| com.apple.Safari           | com.compuserve.gif                                     | all    |
+| com.apple.Terminal         | com.apple.terminal.shell-script                        | all    |
+| com.apple.iTunes           | com.apple.iTunes.audible                               | all    |
+| com.apple.iTunes           | com.apple.iTunes.ipg                                   | all    |
+| com.apple.iTunes           | com.apple.iTunes.ipsw                                  | all    |
+| com.apple.iTunes           | com.apple.iTunes.ite                                   | all    |
+| com.apple.iTunes           | com.apple.iTunes.itlp                                  | all    |
+| com.apple.iTunes           | com.apple.iTunes.itms                                  | all    |
+| com.apple.iTunes           | com.apple.iTunes.podcast                               | all    |
+| com.apple.iTunes           | com.apple.m4a-audio                                    | all    |
+| com.apple.iTunes           | com.apple.mpeg-4-ringtone                              | all    |
+| com.apple.iTunes           | com.apple.protected-mpeg-4-audio                       | all    |
+| com.apple.iTunes           | com.apple.protected-mpeg-4-video                       | all    |
+| com.apple.iTunes           | com.audible.aa-audio                                   | all    |
+| com.apple.iTunes           | public.mpeg-4-audio                                    | all    |
+| com.apple.installer        | com.apple.installer-package-archive                    | all    |
+| com.github.atom            | com.apple.binary-property-list                         | editor |
+| com.github.atom            | com.apple.crashreport                                  | editor |
+| com.github.atom            | com.apple.dt.document.ascii-property-list              | editor |
+| com.github.atom            | com.apple.dt.document.script-suite-property-list       | editor |
+| com.github.atom            | com.apple.dt.document.script-terminology-property-list | editor |
+| com.github.atom            | com.apple.log                                          | editor |
+| com.github.atom            | com.apple.property-list                                | editor |
+| com.github.atom            | com.apple.rez-source                                   | editor |
+| com.github.atom            | com.apple.symbol-export                                | editor |
+| com.github.atom            | com.apple.xcode.ada-source                             | editor |
+| com.github.atom            | com.apple.xcode.bash-script                            | editor |
+| com.github.atom            | com.apple.xcode.configsettings                         | editor |
+| com.github.atom            | com.apple.xcode.csh-script                             | editor |
+| com.github.atom            | com.apple.xcode.fortran-source                         | editor |
+| com.github.atom            | com.apple.xcode.ksh-script                             | editor |
+| com.github.atom            | com.apple.xcode.lex-source                             | editor |
+| com.github.atom            | com.apple.xcode.make-script                            | editor |
+| com.github.atom            | com.apple.xcode.mig-source                             | editor |
+| com.github.atom            | com.apple.xcode.pascal-source                          | editor |
+| com.github.atom            | com.apple.xcode.strings-text                           | editor |
+| com.github.atom            | com.apple.xcode.tcsh-script                            | editor |
+| com.github.atom            | com.apple.xcode.yacc-source                            | editor |
+| com.github.atom            | com.apple.xcode.zsh-script                             | editor |
+| com.github.atom            | com.apple.xml-property-list                            | editor |
+| com.github.atom            | com.barebones.bbedit.actionscript-source               | editor |
+| com.github.atom            | com.barebones.bbedit.erb-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.ini-configuration                 | editor |
+| com.github.atom            | com.barebones.bbedit.javascript-source                 | editor |
+| com.github.atom            | com.barebones.bbedit.json-source                       | editor |
+| com.github.atom            | com.barebones.bbedit.jsp-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.lasso-source                      | editor |
+| com.github.atom            | com.barebones.bbedit.lua-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.setext-source                     | editor |
+| com.github.atom            | com.barebones.bbedit.sql-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.tcl-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.tex-source                        | editor |
+| com.github.atom            | com.barebones.bbedit.textile-source                    | editor |
+| com.github.atom            | com.barebones.bbedit.vbscript-source                   | editor |
+| com.github.atom            | com.barebones.bbedit.vectorscript-source               | editor |
+| com.github.atom            | com.barebones.bbedit.verilog-hdl-source                | editor |
+| com.github.atom            | com.barebones.bbedit.vhdl-source                       | editor |
+| com.github.atom            | com.barebones.bbedit.yaml-source                       | editor |
+| com.github.atom            | com.netscape.javascript-source                         | editor |
+| com.github.atom            | com.sun.java-source                                    | editor |
+| com.github.atom            | dyn.ah62d4rv4ge80255drq                                | all    |
+| com.github.atom            | dyn.ah62d4rv4ge80g55gq3w0n                             | all    |
+| com.github.atom            | dyn.ah62d4rv4ge80g55sq2                                | all    |
+| com.github.atom            | dyn.ah62d4rv4ge80y2xzrf0gk3pw                          | all    |
+| com.github.atom            | dyn.ah62d4rv4ge81e3dtqq                                | all    |
+| com.github.atom            | dyn.ah62d4rv4ge81e7k                                   | all    |
+| com.github.atom            | dyn.ah62d4rv4ge81g25xsq                                | all    |
+| com.github.atom            | dyn.ah62d4rv4ge81g2pxsq                                | all    |
+| com.github.atom            | net.daringfireball.markdown                            | editor |
+| com.github.atom            | public.assembly-source                                 | editor |
+| com.github.atom            | public.c-header                                        | editor |
+| com.github.atom            | public.c-plus-plus-source                              | editor |
+| com.github.atom            | public.c-source                                        | editor |
+| com.github.atom            | public.csh-script                                      | editor |
+| com.github.atom            | public.json                                            | editor |
+| com.github.atom            | public.lex-source                                      | editor |
+| com.github.atom            | public.log                                             | editor |
+| com.github.atom            | public.mig-source                                      | editor |
+| com.github.atom            | public.nasm-assembly-source                            | editor |
+| com.github.atom            | public.objective-c-plus-plus-source                    | editor |
+| com.github.atom            | public.objective-c-source                              | editor |
+| com.github.atom            | public.patch-file                                      | editor |
+| com.github.atom            | public.perl-script                                     | editor |
+| com.github.atom            | public.php-script                                      | editor |
+| com.github.atom            | public.plain-text                                      | editor |
+| com.github.atom            | public.precompiled-c-header                            | editor |
+| com.github.atom            | public.precompiled-c-plus-plus-header                  | editor |
+| com.github.atom            | public.python-script                                   | editor |
+| com.github.atom            | public.ruby-script                                     | editor |
+| com.github.atom            | public.script                                          | editor |
+| com.github.atom            | public.shell-script                                    | editor |
+| com.github.atom            | public.source-code                                     | editor |
+| com.github.atom            | public.text                                            | editor |
+| com.github.atom            | public.utf16-external-plain-text                       | editor |
+| com.github.atom            | public.utf16-plain-text                                | editor |
+| com.github.atom            | public.utf8-plain-text                                 | editor |
+| com.github.atom            | public.xml                                             | editor |
+| com.kodlian.Icon-Slate     | com.apple.icns                                         | all    |
+| com.kodlian.Icon-Slate     | com.microsoft.ico                                      | all    |
+| com.microsoft.Word         | public.rtf                                             | all    |
+| com.panayotis.jubler       | dyn.ah62d4rv4ge81g6xy                                  | all    |
+| com.sketchup.SketchUp.2017 | com.sketchup.skp                                       | all    |
+| com.VortexApps.NZBVortex3  | dyn.ah62d4rv4ge8068xc                                  | all    |
+| com.vmware.fusion          | com.microsoft.windows-executable                       | all    |
+| cx.c3.theunarchiver        | com.alcohol-soft.mdf-image                             | all    |
+| cx.c3.theunarchiver        | com.allume.stuffit-archive                             | all    |
+| cx.c3.theunarchiver        | com.altools.alz-archive                                | all    |
+| cx.c3.theunarchiver        | com.amiga.adf-archive                                  | all    |
+| cx.c3.theunarchiver        | com.amiga.adz-archive                                  | all    |
+| cx.c3.theunarchiver        | com.apple.applesingle-archive                          | all    |
+| cx.c3.theunarchiver        | com.apple.binhex-archive                               | all    |
+| cx.c3.theunarchiver        | com.apple.bom-compressed-cpio                          | all    |
+| cx.c3.theunarchiver        | com.apple.itunes.ipa                                   | all    |
+| cx.c3.theunarchiver        | com.apple.macbinary-archive                            | all    |
+| cx.c3.theunarchiver        | com.apple.self-extracting-archive                      | all    |
+| cx.c3.theunarchiver        | com.apple.xar-archive                                  | all    |
+| cx.c3.theunarchiver        | com.apple.xip-archive                                  | all    |
+| cx.c3.theunarchiver        | com.cyclos.cpt-archive                                 | all    |
+| cx.c3.theunarchiver        | com.microsoft.cab-archive                              | all    |
+| cx.c3.theunarchiver        | com.microsoft.msi-installer                            | all    |
+| cx.c3.theunarchiver        | com.nero.nrg-image                                     | all    |
+| cx.c3.theunarchiver        | com.network172.pit-archive                             | all    |
+| cx.c3.theunarchiver        | com.nowsoftware.now-archive                            | all    |
+| cx.c3.theunarchiver        | com.nscripter.nsa-archive                              | all    |
+| cx.c3.theunarchiver        | com.padus.cdi-image                                    | all    |
+| cx.c3.theunarchiver        | com.pkware.zip-archive                                 | all    |
+| cx.c3.theunarchiver        | com.rarlab.rar-archive                                 | all    |
+| cx.c3.theunarchiver        | com.redhat.rpm-archive                                 | all    |
+| cx.c3.theunarchiver        | com.stuffit.archive.sit                                | all    |
+| cx.c3.theunarchiver        | com.stuffit.archive.sitx                               | all    |
+| cx.c3.theunarchiver        | com.sun.java-archive                                   | all    |
+| cx.c3.theunarchiver        | com.symantec.dd-archive                                | all    |
+| cx.c3.theunarchiver        | com.winace.ace-archive                                 | all    |
+| cx.c3.theunarchiver        | com.winzip.zipx-archive                                | all    |
+| cx.c3.theunarchiver        | cx.c3.arc-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.arj-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.dcs-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.dms-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.ha-archive                                       | all    |
+| cx.c3.theunarchiver        | cx.c3.lbr-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.lha-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.lhf-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.lzx-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.packdev-archive                                  | all    |
+| cx.c3.theunarchiver        | cx.c3.pax-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.pma-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.pp-archive                                       | all    |
+| cx.c3.theunarchiver        | cx.c3.xmash-archive                                    | all    |
+| cx.c3.theunarchiver        | cx.c3.zoo-archive                                      | all    |
+| cx.c3.theunarchiver        | cx.c3.zoom-archive                                     | all    |
+| cx.c3.theunarchiver        | org.7-zip.7-zip-archive                                | all    |
+| cx.c3.theunarchiver        | org.archive.warc-archive                               | all    |
+| cx.c3.theunarchiver        | org.debian.deb-archive                                 | all    |
+| cx.c3.theunarchiver        | org.gnu.gnu-tar-archive                                | all    |
+| cx.c3.theunarchiver        | org.gnu.gnu-zip-archive                                | all    |
+| cx.c3.theunarchiver        | org.gnu.gnu-zip-tar-archive                            | all    |
+| cx.c3.theunarchiver        | org.tukaani.lzma-archive                               | all    |
+| cx.c3.theunarchiver        | org.tukaani.xz-archive                                 | all    |
+| cx.c3.theunarchiver        | public.bzip2-archive                                   | all    |
+| cx.c3.theunarchiver        | public.cpio-archive                                    | all    |
+| cx.c3.theunarchiver        | public.tar-archive                                     | all    |
+| cx.c3.theunarchiver        | public.tar-bzip2-archive                               | all    |
+| cx.c3.theunarchiver        | public.z-archive                                       | all    |
+| cx.c3.theunarchiver        | public.zip-archive                                     | all    |
+| cx.c3.theunarchiver        | public.zip-archive.first-part                          | all    |
+| org.gnu.Emacs              | dyn.ah62d4rv4ge8086xh                                  | all    |
+| org.inkscape.Inkscape      | public.svg-image                                       | editor |
+| org.videolan.vlc           | com.apple.m4v-video                                    | all    |
+| org.videolan.vlc           | com.microsoft.windows-media-wmv                        | all    |
+| org.videolan.vlc           | org.videolan.3gp                                       | all    |
+| org.videolan.vlc           | org.videolan.aac                                       | all    |
+| org.videolan.vlc           | org.videolan.ac3                                       | all    |
+| org.videolan.vlc           | org.videolan.aiff                                      | all    |
+| org.videolan.vlc           | org.videolan.amr                                       | all    |
+| org.videolan.vlc           | org.videolan.aob                                       | all    |
+| org.videolan.vlc           | org.videolan.ape                                       | all    |
+| org.videolan.vlc           | org.videolan.asf                                       | all    |
+| org.videolan.vlc           | org.videolan.avi                                       | all    |
+| org.videolan.vlc           | org.videolan.axa                                       | all    |
+| org.videolan.vlc           | org.videolan.axv                                       | all    |
+| org.videolan.vlc           | org.videolan.divx                                      | all    |
+| org.videolan.vlc           | org.videolan.dts                                       | all    |
+| org.videolan.vlc           | org.videolan.dv                                        | all    |
+| org.videolan.vlc           | org.videolan.flac                                      | all    |
+| org.videolan.vlc           | org.videolan.flash                                     | all    |
+| org.videolan.vlc           | org.videolan.gxf                                       | all    |
+| org.videolan.vlc           | org.videolan.it                                        | all    |
+| org.videolan.vlc           | org.videolan.mid                                       | all    |
+| org.videolan.vlc           | org.videolan.mka                                       | all    |
+| org.videolan.vlc           | org.videolan.mkv                                       | all    |
+| org.videolan.vlc           | org.videolan.mlp                                       | all    |
+| org.videolan.vlc           | org.videolan.mod                                       | all    |
+| org.videolan.vlc           | org.videolan.mpc                                       | all    |
+| org.videolan.vlc           | org.videolan.mpeg-audio                                | all    |
+| org.videolan.vlc           | org.videolan.mpeg-stream                               | all    |
+| org.videolan.vlc           | org.videolan.mpeg-video                                | all    |
+| org.videolan.vlc           | org.videolan.mxf                                       | all    |
+| org.videolan.vlc           | org.videolan.nsv                                       | all    |
+| org.videolan.vlc           | org.videolan.nuv                                       | all    |
+| org.videolan.vlc           | org.videolan.ogg-audio                                 | all    |
+| org.videolan.vlc           | org.videolan.ogg-video                                 | all    |
+| org.videolan.vlc           | org.videolan.oma                                       | all    |
+| org.videolan.vlc           | org.videolan.opus                                      | all    |
+| org.videolan.vlc           | org.videolan.quicktime                                 | all    |
+| org.videolan.vlc           | org.videolan.realmedia                                 | all    |
+| org.videolan.vlc           | org.videolan.rec                                       | all    |
+| org.videolan.vlc           | org.videolan.rmi                                       | all    |
+| org.videolan.vlc           | org.videolan.s3m                                       | all    |
+| org.videolan.vlc           | org.videolan.spx                                       | all    |
+| org.videolan.vlc           | org.videolan.tod                                       | all    |
+| org.videolan.vlc           | org.videolan.tta                                       | all    |
+| org.videolan.vlc           | org.videolan.vob                                       | all    |
+| org.videolan.vlc           | org.videolan.voc                                       | all    |
+| org.videolan.vlc           | org.videolan.vqf                                       | all    |
+| org.videolan.vlc           | org.videolan.vro                                       | all    |
+| org.videolan.vlc           | org.videolan.wav                                       | all    |
+| org.videolan.vlc           | org.videolan.webm                                      | all    |
+| org.videolan.vlc           | org.videolan.wma                                       | all    |
+| org.videolan.vlc           | org.videolan.wmv                                       | all    |
+| org.videolan.vlc           | org.videolan.wtv                                       | all    |
+| org.videolan.vlc           | org.videolan.wv                                        | all    |
+| org.videolan.vlc           | org.videolan.xa                                        | all    |
+| org.videolan.vlc           | org.videolan.xesc                                      | all    |
+| org.videolan.vlc           | org.videolan.xm                                        | all    |
+| org.videolan.vlc           | public.ac3-audio                                       | all    |
+| org.videolan.vlc           | public.audiovisual-content                             | all    |
+| org.videolan.vlc           | public.avi                                             | all    |
+| org.videolan.vlc           | public.movie                                           | all    |
+| org.videolan.vlc           | public.mpeg                                            | all    |
+| org.videolan.vlc           | public.mpeg-2-video                                    | all    |
+| org.videolan.vlc           | public.mpeg-4                                          | all    |
+|----------------------------+--------------------------------------------------------+--------|
 
 *** Customize Emacs
 #+begin_src sh
