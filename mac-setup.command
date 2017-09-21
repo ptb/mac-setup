@@ -2172,7 +2172,7 @@ EOF
     (top . 22)
     (left . 1201)
     (height . 50)
-    (width . 121)
+    (width . 120)
     (vertical-scroll-bars . right))
   initial-frame-alist (copy-alist default-frame-alist)
 
@@ -2280,7 +2280,7 @@ EOF
 
 (global-set-key (kbd "s-t") 'make-frame)
 (global-set-key (kbd "s-n") 'ptb/new-untitled-buffer)
-(global-set-key (kbd "s-w") 'ptb/kill-this-buffer)
+(global-set-key (kbd "s-w") 'ptb/kill-current-buffer)
 (global-set-key (kbd "s-{") 'ptb/previous-buffer)
 (global-set-key (kbd "s-}") 'ptb/next-buffer)
 EOF
