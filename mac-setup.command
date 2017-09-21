@@ -425,7 +425,8 @@ ptb/custom/nginx-full'
 install_brewfile_brew_pkgs () {
   printf "%s\n" "${_pkgs}" | \
   while IFS="$(printf '\t')" read pkg; do
-    printf 'brew "%s", args: [ "force-bottle" ]\n' "${pkg}" >> "${BREWFILE}"
+    # printf 'brew "%s", args: [ "force-bottle" ]\n' "${pkg}" >> "${BREWFILE}"
+    printf 'brew "%s"\n' "${pkg}" >> "${BREWFILE}"
   done
   printf "\n" >> "${BREWFILE}"
 }
