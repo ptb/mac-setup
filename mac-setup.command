@@ -1787,6 +1787,8 @@ sf () {
   SetFile -P -d "$1 12:00:00" -m "$1 12:00:00" $argv[2,$]
 }
 
+ssh-add -A & &> /dev/null
+
 #-- zsh-syntax-highlighting ------------------------------------
 
 . "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -3160,7 +3162,18 @@ custom_sonarr () {
 # Customize SSH
 
 custom_ssh () {
-  true
+  if ! test -d "${HOME}/.ssh"; then
+    mkdir -m go= "${HOME}/.ssh"
+    e="$(ask 'New SSH Key: Email Address?' 'OK' '')"
+    ssh-keygen -t ed25519 -a 100 -C "$e"
+    cat << EOF > "${HOME}/.ssh/config"
+Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+EOF
+    pbcopy < "${HOME}/.ssh/id_ed25519.pub"
+    open "https://github.com/settings/keys"
+  fi
 }
 
 # Customize System Preferences
