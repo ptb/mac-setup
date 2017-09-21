@@ -2589,8 +2589,8 @@ _finder='com.apple.finder	ShowHardDrivesOnDesktop	-bool	false
 com.apple.finder	ShowExternalHardDrivesOnDesktop	-bool	false	
 com.apple.finder	ShowRemovableMediaOnDesktop	-bool	true	
 com.apple.finder	ShowMountedServersOnDesktop	-bool	true	
-com.apple.finder	NewWindowTarget	-string	PfHm	
-com.apple.finder	NewWindowTargetPath	-string	file://${HOME}/	
+com.apple.finder	NewWindowTarget	-string	PfLo	
+com.apple.finder	NewWindowTargetPath	-string	file://${HOME}/Dropbox/	
 -globalDomain	AppleShowAllExtensions	-bool	true	
 com.apple.finder	FXEnableExtensionChangeWarning	-bool	false	
 com.apple.finder	FXEnableRemoveFromICloudDriveWarning	-bool	true	
@@ -3755,21 +3755,25 @@ personalize_pacifist () {
 
 # Personalize PCalc 3
 
-_pcalc3_crypt='U2FsdGVkX1/NPl1hsPpWd//QM6hiEyHJ0hZ6ffW4O8FO1A+3wzSnFUp+8RsXbO6L
-FYPUCE+n43TVINwteasxgCYsPw1UdtGvEPJUNanNAfUlCGKtcOsL2s3Hb63Fh2zk
-UXpqxnare62awmEQAE1C93yoMSl60JtAUtW3zf+odggSf/uKO/pIzIotZMUu0OMr
-9B4epj2MhW262G3PjwL4xnT0iGp7rO3JYp5Aclb3jToY6Aq7nQPnLyGH9ePAO+Qm
-hoWS2t5MbyIB+kSBo+SLua6TFdBQEChcK5o14vWDUefoVnuCS4mmv+C1v64c1KII
-NMIQkl6ZaW6fcsH8OP4t7o/D5kZYxRq4wSSLo+14H5CbD9Jtw7GMt1YKCGViZzIk
-/Tom0m+9Xq1oIJe6tbp2fYmVdBLRxwVqiaG0eI4jRqV9CprNwWKdVqS+Qczkie1+
-i8Fkb2Ncu5bd2jrxCYoMOmQXrPs3SDIOZmY2PdWfRa5cI/YWMc6VjI5j21UKHUO/
-a8mjo7kxe6vZkL1RaDfBS104+AdBNXtTJDh2O8D4Onw4z9ty7OJ0kJluORnX9i67
-+G3QTwgebAKPWDx83ETdmoRumYvCxq5l1hBlM4mo8DjxpWMBy6y70Qdi1etortko
-IfPvyJ3lF1jLa+9AqgEaM6iB7enB6ut08K81lFI4XnmZmzYUSitgO6kjUzz2E8z9
-rpMV0FAQKFwrmjXi9YNR53b5axJuT6PWPss37GkZqyyhV3pRqLRIokvWhlgMGWGZ
-1ugfh7YUlizd5e61OxtVFL0hDwESlO9WFP8roMHsdzAMpQZJiPSmIEK5RaYocdzi
-pP3KCzSedsLSOZ8LdgpEIEPukVFZPLlHhkcvS0h5MR3mJ67+fiKQj1ShikZ12Yyh
-P79NGJD1qp/V8m/RcggRuvSKpR5KAocwsk0e5QLqyNZ1prO7j0YW81ZUTM3o3Uc1'
+_pcalc3_crypt='U2FsdGVkX1+j54XVyGcpSm/+sDyrrLvt1XqzSIlDSwvLwh8geuJzNPVKOfRHWZK1
+bRHEQIavsXUXmCR92vV+JtlV5Un2g29R5hvC0GDieCGghzt41Y5BypUEHP8dzWIB
+QqNrlqPQ+Wx61AQPVhiIu0y4rocctHx36vArgfuiVlvfYE29APOIJa+0nk3rJ5dB
+HsSxwDsaAQAl+psbtzfvixxtCaRa0RrgzGr0Nx1RVZNDgEbTM/mWNQH3TlFE6Vo3
+jsZIzuUYJwb526KMk8ADC2aKNqh4fufTuWI7nCG+8RXI+t331Ge4KLXjOKsPNdwi
+UQ58r8HS7O2WqOe8Bmqw+/pBlhjLMEsqzsxSmi+KtYzHH5T5s0hOx2DK9fX65pbv
+z1t6035CgWuu+U5FezyjaBQX5XZisv51R0pmLh0akNyYKssRn8KQgeaRDmOztHwz
+Zqfi5MjUUYNPAyYFfY3EUHjzLfnwXKbQz5LNh3LpGq36nsm/NlkgAS4uOsQQuBA7
+vj729zsRh36+psJUhA63+JiQbx5uMVjVq3pXXU0c/I/uWYwDwRNtzPUvfQIUJfZv
+Jjy9pxDOY+ybPdkmkcY+cUbPIExYCkRZkWbeqKCGIijXsJKXA6d5E/snYPa5/ckC
+zWz2E4RXmOjb3FpL3SL3TTdcpCulVRY47e9kP+P0GHADHOe3YoGEJAdwa0IWzKgC
+Zoo2qHh+59O5YjucIb7xFcHZkXvuVzJ5J1iLL/91GsS8oPCp6fci66knv2bpJyAe
+aPk31wCBIlOcIC8Y1JSyLUwZWL6CSu2OUOoqjNB2FgK50Xp/4Y0MkypLBCrq3upa
+K/jINp0AvPdrQB927lgB6BXkcKfGsRiPySepZ8pYwy1UeN1j58yemjcAtOoKiAYH
+tVjRjCyW3FspyFr0RDcxiZD+mJSG/5dxujUqpW7oGsfBtDCF1krfccVYDu3KJ1GF
+CVflh0fAO5em/3RnEyaarbscbV29bjl3cbnUejC2Y1Ofh5WrIrk8dlDNllsJNAdN
+Zuu6zS4sKFuooMDdzPaVf+YoYgZaOjMhIMTNt5ExsihZOMAr4W4KfGzx02fJHxmC
+w462hd1SC+7pjJFTjMjEWnBjUfxi6OiZFPnpgYi9H9iijFKSBu1Z4QNJj3y6V1sK
+xyWmE3/p5Aov6qPy+e7SUe84TF4oVyPQVugtdUxmeVI='
 
 personalize_pcalc3 () {
   personalize "${_pcalc3_crypt}"
