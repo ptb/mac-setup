@@ -748,7 +748,7 @@ install_brewfile_cask_pkgs () {
 |--------------------------------------------------+---------------------------------------------------------------|
 
 *** Add App Store Packages to Brewfile
-#+begin_src sh :var _mas=_mas[3:-2,0:1]
+#+begin_src sh :var _mas=_mas[3:-3,0:1]
 
 install_brewfile_mas_apps () {
   open "/Applications/App Store.app"
@@ -780,13 +780,13 @@ install_brewfile_mas_apps () {
 | HardwareGrowler            |  475260933 | https://itunes.apple.com/app/id475260933  |
 | I Love Stars               |  402642760 | https://itunes.apple.com/app/id402642760  |
 | Icon Slate                 |  439697913 | https://itunes.apple.com/app/id439697913  |
-| macOS High Sierra          | 1209167288 | https://itunes.apple.com/app/id1209167288 |
 | Justnotes                  |  511230166 | https://itunes.apple.com/app/id511230166  |
 | Keynote                    |  409183694 | https://itunes.apple.com/app/id409183694  |
 | Metanota Pro               |  515250764 | https://itunes.apple.com/app/id515250764  |
 | Numbers                    |  409203825 | https://itunes.apple.com/app/id409203825  |
 | Pages                      |  409201541 | https://itunes.apple.com/app/id409201541  |
 | WiFi Explorer              |  494803304 | https://itunes.apple.com/app/id494803304  |
+| macOS High Sierra          | 1209167288 | https://itunes.apple.com/app/id1209167288 |
 |----------------------------+------------+-------------------------------------------|
 
 *** Link System Utilities to Applications

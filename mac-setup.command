@@ -557,7 +557,6 @@ Growl	467939042
 HardwareGrowler	475260933
 I Love Stars	402642760
 Icon Slate	439697913
-macOS High Sierra	1209167288
 Justnotes	511230166
 Keynote	409183694
 Metanota Pro	515250764
