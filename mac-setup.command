@@ -2914,9 +2914,25 @@ net.elasticthreads.nv	NoteAttributesVisible	-array-add	Tags
 net.elasticthreads.nv	TableIsReverseSorted	-bool	true	
 net.elasticthreads.nv	TableSortColumn	-string	Date Modified	
 net.elasticthreads.nv	TableColumnsHaveBodyPreview	-bool	true	'
+_nvalt_launchagent='net.elasticthreads.nv	KeepAlive	-bool	true	
+net.elasticthreads.nv	Label	-string	net.elasticthreads.nv	
+net.elasticthreads.nv	ProcessType	-string	Interactive	
+net.elasticthreads.nv	Program	-string	/Applications/nvALT.app/Contents/MacOS/nvALT	
+net.elasticthreads.nv	RunAtLoad	-bool	true	'
 
 custom_nvalt () {
   config_defaults "${_nvalt}"
+
+  la="${HOME}/Library/LaunchAgents/net.elasticthreads.nv"
+
+  test -d "$(dirname $la)" || \
+    mkdir -p "$(dirname $la)"
+  launchctl unload "${la}.plist" 2> /dev/null
+  rm -f "${la}.plist"
+
+  config_defaults "$_nvalt_launchagent"
+  plutil -convert xml1 "${la}.plist"
+  launchctl load "${la}.plist" 2> /dev/null
 }
 
 # Customize NZBGet
