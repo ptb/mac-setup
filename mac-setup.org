@@ -161,6 +161,22 @@ EOF
     end run
 #+end_src
 
+*** Define Function =ask2=
+#+begin_src sh
+ask2 () {
+  osascript - "$1" "$2" "$3" "$4" "$5" "$6" << EOF 2> /dev/null
+<<ask2.applescript>>
+EOF
+}
+#+end_src
+
+**** =ask2.applescript=
+#+begin_src applescript :noweb-ref ask2.applescript
+on run { _text, _title, _cancel, _action, _default, _hidden }
+  tell app "System Events" to return text returned of (display dialog _text with title _title buttons { _cancel, _action } cancel button _cancel default button _action default answer _default hidden answer _hidden)
+end run
+#+end_src
+
 *** Define Function =p=
 #+begin_src sh
 p () {
@@ -3045,13 +3061,84 @@ custom_finder () {
 |----------------------------------------------------------------+------------------+--------------------------------------+---------+-------------------------+------|
 
 *** Customize getmail
-#+begin_src sh
+#+begin_src sh :var _getmail_ini=_getmail_ini[3:-2,0:2] _getmail_plist=_getmail_plist[3:-2,0:3]
 custom_getmail () {
-  if ! test -d "${HOME}/.getmail"; then
-    true
-  fi
+  test -d "${HOME}/.getmail" || \
+    mkdir -m go= "${HOME}/.getmail"
+
+  while true; do
+    e=$(ask2 "To configure getmail, enter your email address." "Configure Getmail" "No More Addresses" "Create Configuration" "$(whoami)@$(hostname -f | cut -d. -f2-)" "false")
+    test -n "$e" || break
+
+    security find-internet-password -a "$e" -D "getmail password" > /dev/null || \
+    p=$(ask2 "Enter your password for $e." "Configure Getmail" "Cancel" "Set Password" "" "true") && \
+    security add-internet-password -a "$e" -s "imap.gmail.com" -r "imap" \
+      -l "$e" -D "getmail password" -P 993 -w "$p"
+
+    if which crudini > /dev/null; then
+      gm="${HOME}/.getmail/${e}"
+      printf "%s\n" "${_getmail_ini}" | \
+      while IFS="$(printf '\t')" read section key value; do
+        crudini --set "$gm" "$section" "$key" "$value"
+      done
+      crudini --set "$gm" "destination" "arguments" "('-c','/usr/local/etc/dovecot/dovecot.conf','-d','$(whoami)')"
+      crudini --set "$gm" "destination" "path" "$(find '/usr/local/Cellar/dovecot' -name 'dovecot-lda' -print -quit)"
+      crudini --set "$gm" "retriever" "username" "$e"
+    fi
+
+    la="${HOME}/Library/LaunchAgents/ca.pyropus.getmail.${e}"
+
+    test -d "$(dirname $la)" || \
+      mkdir -p "$(dirname $la)"
+    launchctl unload "${la}.plist" 2> /dev/null
+    rm -f "${la}.plist"
+
+    config_plist "$_getmail_plist" "${la}.plist"
+    config_defaults "$(printf "${la}\tLabel\t-string\tca.pyropus.getmail.${e}\t")"
+    config_defaults "$(printf "${la}\tProgramArguments\t-array-add\t${e}\t")"
+    config_defaults "$(printf "${la}\tWorkingDirectory\t-string\t${HOME}/.getmail\t")"
+
+    plutil -convert xml1 "${la}.plist"
+    launchctl load "${la}.plist" 2> /dev/null
+  done
 }
 #+end_src
+
+**** _getmail_ini
+#+name: _getmail_ini
+|-------------+----------------+------------------------|
+| Section     | Key            | Value                  |
+|-------------+----------------+------------------------|
+| destination | ignore_stderr  | true                   |
+| destination | type           | MDA_external           |
+| options     | delete         | true                   |
+| options     | delivered_to   | false                  |
+| options     | read_all       | false                  |
+| options     | received       | false                  |
+| options     | verbose        | 0                      |
+| retriever   | mailboxes      | ("[Gmail]/All Mail",)  |
+| retriever   | move_on_delete | "[Gmail]/Trash"        |
+| retriever   | port           | 993                    |
+| retriever   | server         | imap.gmail.com         |
+| retriever   | type           | SimpleIMAPSSLRetriever |
+|-------------+----------------+------------------------|
+
+**** _getmail_plist
+#+name: _getmail_plist
+|---------+---------------------+---------+------------------------|
+| Command | Entry               | Type    | Value                  |
+|---------+---------------------+---------+------------------------|
+| add     | :KeepAlive          | bool    | true                   |
+| add     | :ProcessType        | string  | Background             |
+| add     | :ProgramArguments   | array   |                        |
+| add     | :ProgramArguments:0 | string  | /usr/local/bin/getmail |
+| add     | :ProgramArguments:1 | string  | --idle                 |
+| add     | :ProgramArguments:2 | string  | [Gmail]/All Mail       |
+| add     | :ProgramArguments:3 | string  | --rcfile               |
+| add     | :RunAtLoad          | bool    | true                   |
+| add     | :StandardOutPath    | string  | getmail.log            |
+| add     | :StandardErrorPath  | string  | getmail.err            |
+|---------+---------------------+---------+------------------------|
 
 *** Customize Git
 #+begin_src sh
