@@ -2774,21 +2774,27 @@ custom_finder () {
 *** Customize getmail
 #+begin_src sh
 custom_getmail () {
-  true
+  if ! test -d "${HOME}/.getmail"; then
+    true
+  fi
 }
 #+end_src
 
 *** Customize Git
 #+begin_src sh
 custom_git () {
-  true
+  if ! test -e "${HOME}/.gitconfig"; then
+    true
+  fi
 }
 #+end_src
 
 *** Customize GnuPG
 #+begin_src sh
 custom_gnupg () {
-  true
+  if ! test -d "${HOME}/.gnupg"; then
+    true
+  fi
 }
 #+end_src
 

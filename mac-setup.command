@@ -2353,19 +2353,25 @@ custom_finder () {
 # Customize getmail
 
 custom_getmail () {
-  true
+  if ! test -d "${HOME}/.getmail"; then
+    true
+  fi
 }
 
 # Customize Git
 
 custom_git () {
-  true
+  if ! test -e "${HOME}/.gitconfig"; then
+    true
+  fi
 }
 
 # Customize GnuPG
 
 custom_gnupg () {
-  true
+  if ! test -d "${HOME}/.gnupg"; then
+    true
+  fi
 }
 
 # Customize iStat Menus
