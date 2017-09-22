@@ -802,6 +802,7 @@ install_brewfile_mas_apps () {
 | Numbers                    |  409203825 | https://itunes.apple.com/app/id409203825  |
 | Pages                      |  409201541 | https://itunes.apple.com/app/id409201541  |
 | WiFi Explorer              |  494803304 | https://itunes.apple.com/app/id494803304  |
+| Xcode                      |  497799835 | https://itunes.apple.com/app/id497799835  |
 | macOS High Sierra          | 1209167288 | https://itunes.apple.com/app/id1209167288 |
 |----------------------------+------------+-------------------------------------------|
 

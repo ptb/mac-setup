@@ -572,7 +572,8 @@ Keynote	409183694
 Metanota Pro	515250764
 Numbers	409203825
 Pages	409201541
-WiFi Explorer	494803304'
+WiFi Explorer	494803304
+Xcode	497799835'
 
 install_brewfile_mas_apps () {
   open "/Applications/App Store.app"
