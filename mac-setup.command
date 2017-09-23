@@ -754,12 +754,35 @@ config_defaults () {
 
 # Define Function =config_plist=
 
+T="$(printf '\t')"
+
 config_plist () {
-  printf "%s\n" "${1}" | \
-  while IFS="$(printf '\t')" read command entry type value; do
-    ${4} /usr/libexec/PlistBuddy "${2}" \
-      -c "${command} '${3}${entry}' ${type} '${value}'" 2> /dev/null
+  printf "%s\n" "$1" | \
+  while IFS="$T" read command entry type value; do
+    case "$value" in
+      (*\$*)
+        $4 /usr/libexec/PlistBuddy "$2" \
+          -c "$command '${3}${entry}' $type '$(eval echo \"$value\")'" 2> /dev/null ;;
+      (*)
+        $4 /usr/libexec/PlistBuddy "$2" \
+          -c "$command '${3}${entry}' $type '$value'" 2> /dev/null ;;
+    esac
   done
+}
+
+# Define Function =config_launchd=
+
+config_launchd () {
+  test -d "$(dirname $1)" || \
+    $3 mkdir -p "$(dirname $1)"
+
+  test -f "$1" && \
+    $3 launchctl unload "$1" && \
+    $3 rm -f "$1"
+
+  $3 config_plist "$2" "$1" && \
+    $3 plutil -convert xml1 "$1" && \
+    $3 launchctl load "$1"
 }
 
 # Mark Applications Requiring Administrator Account
