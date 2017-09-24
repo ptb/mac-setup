@@ -31,7 +31,7 @@ EOF
 ask2 () {
   osascript - "$1" "$2" "$3" "$4" "$5" "$6" << EOF 2> /dev/null
 on run { _text, _title, _cancel, _action, _default, _hidden }
-  tell app "System Events" to return text returned of (display dialog _text with title _title buttons { _cancel, _action } cancel button _cancel default button _action default answer _default hidden answer _hidden)
+  tell app "Terminal" to return text returned of (display dialog _text with title _title buttons { _cancel, _action } cancel button _cancel default button _action default answer _default hidden answer _hidden)
 end run
 EOF
 }
@@ -113,9 +113,11 @@ init_no_sleep () {
 # Set Hostname from DNS
 
 init_hostname () {
-  sudo systemsetup -setcomputername \
-    "$(ruby -e "print '$(hostname -s)'.capitalize")" > /dev/null
-  sudo systemsetup -setlocalsubnetname "$(hostname -s)" > /dev/null
+  a=$(ask2 "Set Computer Name and Hostname" "Set Hostname" "Cancel" "Set Hostname" $(ruby -e "print '$(hostname -s)'.capitalize") "false")
+  if test -n $a; then
+    sudo scutil --set ComputerName $(ruby -e "print '$a'.capitalize")
+    sudo scutil --set HostName $(ruby -e "print '$a'.downcase")
+  fi
 }
 
 # Set Permissions on Install Destinations
@@ -612,16 +614,12 @@ install_links () {
 
 install_node_sw () {
   if which nodenv > /dev/null; then
-    NODENV_ROOT="/usr/local/node"
+    NODENV_ROOT="/usr/local/node" && export NODENV_ROOT
 
     sudo mkdir -p "$NODENV_ROOT"
     sudo chown -R "$(whoami):admin" "$NODENV_ROOT"
 
     p "Installing Node.js Software"
-    git clone https://github.com/nodenv/node-build-update-defs.git \
-      "$(nodenv root)"/plugins/node-build-update-defs
-    nodenv update-version-defs > /dev/null
-
     nodenv install --skip-existing 8.5.0
     nodenv global 8.5.0
     rehash
@@ -637,7 +635,7 @@ ${NODENV_ROOT}/shims
 
 install_perl_sw () {
   if which plenv > /dev/null; then
-    PLENV_ROOT="/usr/local/perl"
+    PLENV_ROOT="/usr/local/perl" && export PLENV_ROOT
 
     sudo mkdir -p "$PLENV_ROOT"
     sudo chown -R "$(whoami):admin" "$PLENV_ROOT"
@@ -660,18 +658,19 @@ install_python_sw () {
   if which pyenv > /dev/null; then
     CFLAGS="-I$(brew --prefix openssl)/include" && export CFLAGS
     LDFLAGS="-L$(brew --prefix openssl)/lib" && export LDFLAGS
-    PYENV_ROOT="/usr/local/python"
+    PYENV_ROOT="/usr/local/python" && export PYENV_ROOT
 
     sudo mkdir -p "$PYENV_ROOT"
     sudo chown -R "$(whoami):admin" "$PYENV_ROOT"
 
     p "Installing Python 2 Software"
     pyenv install --skip-existing 2.7.13
-    pyenv global 2.7.13
-    rehash
 
     p "Installing Python 3 Software"
     pyenv install --skip-existing 3.6.2
+
+    pyenv global 2.7.13
+    rehash
 
     pip install --upgrade "pip" "setuptools"
 
@@ -693,7 +692,7 @@ ${PYENV_ROOT}/shims
 
 install_ruby_sw () {
   if which rbenv > /dev/null; then
-    RBENV_ROOT="/usr/local/ruby"
+    RBENV_ROOT="/usr/local/ruby" && export RBENV_ROOT
 
     sudo mkdir -p "$RBENV_ROOT"
     sudo chown -R "$(whoami):admin" "$RBENV_ROOT"
