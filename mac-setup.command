@@ -469,6 +469,7 @@ alfred
 arduino
 atom
 bbedit
+betterzip
 bitbar
 caffeine
 carbon-copy-cloner

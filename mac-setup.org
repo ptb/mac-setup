@@ -683,6 +683,7 @@ install_brewfile_cask_pkgs () {
 | arduino                                          | https://www.arduino.cc/                                       |
 | atom                                             | https://atom.io/                                              |
 | bbedit                                           | https://www.barebones.com/products/bbedit/                    |
+| betterzip                                        | https://macitbetter.com/                                      |
 | bitbar                                           | https://getbitbar.com/                                        |
 | caffeine                                         | http://lightheadsw.com/caffeine/                              |
 | carbon-copy-cloner                               | https://bombich.com/                                          |
