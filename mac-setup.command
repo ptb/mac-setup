@@ -394,7 +394,6 @@ plenv
 pyenv
 rbenv
 rsync
-screenresolution
 selenium-server-standalone
 shellcheck
 sqlite

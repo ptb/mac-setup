@@ -606,7 +606,6 @@ install_brewfile_brew_pkgs () {
 | pyenv                        | https://github.com/pyenv/pyenv                            |
 | rbenv                        | https://github.com/rbenv/rbenv                            |
 | rsync                        | https://rsync.samba.org/                                  |
-| screenresolution             | https://github.com/jhford/screenresolution                |
 | selenium-server-standalone   | http://www.seleniumhq.org/                                |
 | shellcheck                   | https://github.com/koalaman/shellcheck                    |
 | sqlite                       | https://sqlite.org                                        |
