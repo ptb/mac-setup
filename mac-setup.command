@@ -3270,6 +3270,7 @@ custom_sysprefs () {
   custom_siri
   custom_clock
   custom_a11y
+  custom_other
 }
 
 # Customize General
