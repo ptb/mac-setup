@@ -3946,6 +3946,7 @@ custom_dockapps () {
 | Safari             |
 | Messages           |
 | Emacs              |
+| BBEdit             |
 | Atom               |
 | Utilities/Terminal |
 | iTerm              |

@@ -3357,6 +3357,7 @@ Mail
 Safari
 Messages
 Emacs
+BBEdit
 Atom
 Utilities/Terminal
 iTerm
