@@ -47,7 +47,7 @@ p () {
 run () {
   osascript - "${1}" "${2}" "${3}" << EOF 2> /dev/null
     on run { _title, _cancel, _action }
-      tell app "System Events" to return button returned of (display dialog _title with title _title buttons { _cancel, _action } cancel button 1 default button 2 giving up after 5)
+      tell app "Terminal" to return button returned of (display dialog _title with title _title buttons { _cancel, _action } cancel button 1 default button 2 giving up after 5)
     end run
 EOF
 }
@@ -3510,6 +3510,40 @@ custom_a11y () {
         "com.apple.speech.synthesis.voice.allison.premium" = 1;
       }'
   fi
+}
+
+# Customize Other Prefs
+
+_other_prefs='Security & Privacy	General	com.apple.preference.security	General	/System/Library/PreferencePanes/Security.prefPane/Contents/Resources/FileVault.icns
+Security & Privacy	FileVault	com.apple.preference.security	FDE	/System/Library/PreferencePanes/Security.prefPane/Contents/Resources/FileVault.icns
+Security & Privacy	Accessibility	com.apple.preference.security	Privacy_Accessibility	/System/Library/PreferencePanes/Security.prefPane/Contents/Resources/FileVault.icns
+Displays	Display	com.apple.preference.displays	displaysDisplayTab	/System/Library/PreferencePanes/Displays.prefPane/Contents/Resources/Displays.icns
+Keyboard	Modifer Keys	com.apple.preference.keyboard	keyboardTab_ModifierKeys	/System/Library/PreferencePanes/Keyboard.prefPane/Contents/Resources/Keyboard.icns
+Keyboard	Text	com.apple.preference.keyboard	Text	/System/Library/PreferencePanes/Keyboard.prefPane/Contents/Resources/Keyboard.icns
+Keyboard	Shortcuts	com.apple.preference.keyboard	shortcutsTab	/System/Library/PreferencePanes/Keyboard.prefPane/Contents/Resources/Keyboard.icns
+Keyboard	Dictation	com.apple.preference.keyboard	Dictation	/System/Library/PreferencePanes/Keyboard.prefPane/Contents/Resources/Keyboard.icns
+Printers & Scanners	Main	com.apple.preference.printfax	print	/System/Library/PreferencePanes/PrintAndScan.prefPane/Contents/Resources/PrintScanPref.icns
+Internet Accounts	Main	com.apple.preferences.internetaccounts	InternetAccounts	/System/Library/PreferencePanes/iCloudPref.prefPane/Contents/Resources/iCloud.icns
+Network	Wi-Fi	com.apple.preference.network	Wi-Fi	/System/Library/PreferencePanes/Network.prefPane/Contents/Resources/Network.icns
+Users & Groups	Login Options	com.apple.preferences.users	loginOptionsPref	/System/Library/PreferencePanes/Accounts.prefPane/Contents/Resources/AccountsPref.icns
+Time Machine	Main	com.apple.prefs.backup	main	/System/Library/PreferencePanes/TimeMachine.prefPane/Contents/Resources/TimeMachine.icns'
+custom_other () {
+  T=$(printf '\t')
+  printf "%s\n" "$_other_prefs" | \
+  while IFS="$T" read pane anchor paneid anchorid icon; do
+    osascript - "$pane" "$anchor" "$paneid" "$anchorid" "$icon" << EOF 2> /dev/null
+  on run { _pane, _anchor, _paneid, _anchorid, _icon }
+    tell app "System Events"
+      display dialog "Open the " & _anchor & " pane of " & _pane & " preferences." buttons { "Open " & _pane } default button 1 with icon POSIX file _icon
+    end tell
+    tell app "System Preferences"
+      if not running then run
+      reveal anchor _anchorid of pane id _paneid
+      activate
+    end tell
+  end run
+EOF
+  done
 }
 
 # Customize Terminal
