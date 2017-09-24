@@ -481,6 +481,7 @@ firefox
 github-desktop
 gitup
 google-chrome
+hammerspoon
 handbrake
 hermes
 imageoptim
@@ -780,7 +781,7 @@ config_launchd () {
     $3 launchctl unload "$1" && \
     $3 rm -f "$1"
 
-  $3 config_plist "$2" "$1" && \
+  config_plist "$2" "$1" "$4" "$3" && \
     $3 plutil -convert xml1 "$1" && \
     $3 launchctl load "$1"
 }
@@ -3007,25 +3008,15 @@ net.elasticthreads.nv	NoteAttributesVisible	-array-add	Tags
 net.elasticthreads.nv	TableIsReverseSorted	-bool	true	
 net.elasticthreads.nv	TableSortColumn	-string	Date Modified	
 net.elasticthreads.nv	TableColumnsHaveBodyPreview	-bool	true	'
-_nvalt_launchagent='net.elasticthreads.nv	KeepAlive	-bool	true	
-net.elasticthreads.nv	Label	-string	net.elasticthreads.nv	
-net.elasticthreads.nv	ProcessType	-string	Interactive	
-net.elasticthreads.nv	Program	-string	/Applications/nvALT.app/Contents/MacOS/nvALT	
-net.elasticthreads.nv	RunAtLoad	-bool	true	'
+_nvalt_launchd='add	:KeepAlive	bool	true
+add	:Label	string	net.elasticthreads.nv
+add	:ProcessType	string	Interactive
+add	:Program	string	/Applications/nvALT.app/Contents/MacOS/nvALT
+add	:RunAtLoad	bool	true'
 
 custom_nvalt () {
-  config_defaults "${_nvalt}"
-
-  la="${HOME}/Library/LaunchAgents/net.elasticthreads.nv"
-
-  test -d "$(dirname $la)" || \
-    mkdir -p "$(dirname $la)"
-  launchctl unload "${la}.plist" 2> /dev/null
-  rm -f "${la}.plist"
-
-  config_defaults "$_nvalt_launchagent"
-  plutil -convert xml1 "${la}.plist"
-  launchctl load "${la}.plist" 2> /dev/null
+  config_defaults "$_nvalt"
+  config_launchd "${HOME}/Library/LaunchAgents/net.elasticthreads.nv.plist" "$_nvalt_launchd"
 }
 
 # Customize NZBGet
@@ -3199,35 +3190,17 @@ EOF
 
 _sonarr='Advanced Settings	Shown
 Rename Episodes	Yes
-Replace Illegal Characters	Yes
 Standard Episode Format	{Series Title} - s{season:00}e{episode:00} - {Episode Title}
 Daily Episode Format	{Series Title} - {Air-Date} - {Episode Title}
 Anime Episode Format	{Series Title} - s{season:00}e{episode:00} - {Episode Title}
-Series Folder Format	{Series Title}
-Season Folder Format	Season {season}
 Multi-Episode Style	Scene
 Create empty series folders	Yes
-Skip Free Space Check	No
-Use Hardlinks instead of Copy	Yes
-Import Extra Files	No
 Ignore Deleted Episodes	Yes
-Download Propers	Yes
-Analyse video files	Yes
 Change File Date	UTC Air Date
 Set Permissions	Yes
-File chmod mask	644
-Folder chmod mask	755
 Download Clients	NZBGet
 NZBGet: Name	NZBGet
-NZBGet: Enable	Yes
-NZBGet: Host	localhost
-NZBGet: Port	6789
-NZBGet: Username	[blank]
-NZBGet: Password	[blank]
 NZBGet: Category	Sonarr
-Completed: Enable	Yes
-Completed: Remove	No
-Failed: Redownload	Yes
 Failed: Remove	No
 Drone Factory Interval	0
 Connect: Custom Script	
@@ -3237,7 +3210,6 @@ postSonarr: On Download	Yes
 postSonarr: On Upgrade	Yes
 postSonarr: On Rename	No
 postSonarr: Path	${HOME}/.config/mp4_automator/postSonarr.py
-Start-Up: Enable SSL	No
 Start-Up: Open browser on start	No
 Security: Authentication	Basic (Browser popup)'
 
