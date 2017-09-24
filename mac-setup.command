@@ -101,6 +101,11 @@ EOF
   sudo tee -a "/etc/zshenv" > /dev/null
   . "/etc/zshenv"
 
+  if test -d "${CACHES}/upd"; then
+    sudo chown -R "$(whoami)" "/Library/Updates"
+    rsync -a --delay-updates \
+      "${CACHES}/upd/" "/Library/Updates/"
+  fi
 }
 
 # Set Defaults for Sleep
