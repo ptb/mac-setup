@@ -367,66 +367,70 @@ init_updates () {
 sudo lsof -c softwareupdated -F -r 2 | sed '/^n\//!d;/com.apple.SoftwareUpdate/!d;s/^n//'
 sudo lsof -c storedownloadd -F -r 2 | sed '/^n\//!d;/com.apple.appstore/!d;s/^n//'
 #+end_example
-#+begin_src sh :var _mas_save_plist=_mas_save_plist[3:-2,0:3]
+#+begin_src sh :var _maskeep_launchd=_maskeep_launchd[3:-2,0:3]
 
-init_mas_save () {
+init_maskeep () {
   sudo softwareupdate --reset-ignored > /dev/null
 
-  cat << EOF > "/usr/local/bin/mas_save"
-<<mas_save.sh>>
+  cat << EOF > "/usr/local/bin/maskeep"
+<<maskeep.sh>>
 EOF
 
-  chmod a+x "/usr/local/bin/mas_save"
+  chmod a+x "/usr/local/bin/maskeep"
   rehash
 
-  la="/Library/LaunchDaemons/com.github.ptb.mas_save"
-  as="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore"
-  su="$(sudo find "/private/var/folders" -name "com.apple.SoftwareUpdate" -type d -user _softwareupdate 2> /dev/null)"
-
-  sudo mkdir -p "$(dirname ${la})"
-  sudo launchctl unload "${la}.plist" 2> /dev/null
-  sudo rm -f "${la}.plist"
-  config_defaults "$(printf '%s\t%s\t%s\t%s\t' ${la} 'WatchPaths' '-array-add' ${as})" "sudo"
-  config_defaults "$(printf '%s\t%s\t%s\t%s\t' ${la} 'WatchPaths' '-array-add' ${su})" "sudo"
-  config_plist "${_mas_save_plist}" "${la}.plist" "" "sudo"
-  sudo plutil -convert xml1 "${la}.plist"
-  sudo launchctl load "${la}.plist" 2> /dev/null
+  config_launchd "/Library/LaunchDaemons/com.github.ptb.maskeep.plist" "$_maskeep_launchd" "sudo" ""
 }
 #+end_src
 
-**** _mas_save_plist
-#+name: _mas_save_plist
-|---------+------------+--------+-------------------------|
-| Command | Entry      | Type   | Value                   |
-|---------+------------+--------+-------------------------|
-| add     | :KeepAlive | bool   | false                   |
-| add     | :Label     | string | com.github.ptb.mas_save |
-| add     | :Program   | string | /usr/local/bin/mas_save |
-| add     | :RunAtLoad | bool   | true                    |
-| add     | :UserName  | string | root                    |
-|---------+------------+--------+-------------------------|
+**** _maskeep_launchd
+#+name: _maskeep_launchd
+|---------+--------------------+--------+-----------------------------------------------------------------------------------------------------------------|
+| Command | Entry              | Type   | Value                                                                                                           |
+|---------+--------------------+--------+-----------------------------------------------------------------------------------------------------------------|
+| add     | :KeepAlive         | bool   | false                                                                                                           |
+| add     | :Label             | string | com.github.ptb.maskeep                                                                                         |
+| add     | :ProcessType       | string | Background                                                                                                      |
+| add     | :Program           | string | /usr/local/bin/maskeep                                                                                          |
+| add     | :RunAtLoad         | bool   | true                                                                                                            |
+| add     | :StandardErrorPath | string | /dev/stderr                                                                                                     |
+| add     | :StandardOutPath   | string | /dev/stdout                                                                                                     |
+| add     | :UserName          | string | root                                                                                                            |
+| add     | :WatchPaths        | array  |                                                                                                                 |
+| add     | :WatchPaths:0      | string | $(sudo find '/private/var/folders' -name 'com.apple.SoftwareUpdate' -type d -user _softwareupdate -print -quit 2> /dev/null) |
+| add     | :WatchPaths:1      | string | $(sudo -u \\#501 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore                       |
+| add     | :WatchPaths:2      | string | $(sudo -u \\#502 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore                      |
+| add     | :WatchPaths:3      | string | $(sudo -u \\#503 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore                       |
+| add     | :WatchPaths:4      | string | /Library/Updates                                                                                                |
+|---------+--------------------+--------+-----------------------------------------------------------------------------------------------------------------|
 
-**** =/usr/local/bin/mas_save=
-#+begin_src sh :noweb-ref mas_save.sh :tangle no
+**** =/usr/local/bin/maskeep=
+#+begin_src sh :noweb-ref maskeep.sh :tangle no
 #!/bin/sh
 
 asdir="/Library/Caches/storedownloadd"
-as="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore"
+as1="\$(sudo -u \\#501 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+as2="\$(sudo -u \\#502 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+as3="\$(sudo -u \\#503 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+upd="/Library/Updates"
 sudir="/Library/Caches/softwareupdated"
-su="\$(sudo find "/private/var/folders" -name "com.apple.SoftwareUpdate" -type d -user _softwareupdate 2> /dev/null)"
+su="\$(sudo find '/private/var/folders' -name 'com.apple.SoftwareUpdate' -type d -user _softwareupdate 2> /dev/null)"
 
 for i in 1 2 3 4 5; do
-  mkdir -m a=rwxt -p "\${asdir}"
-  find "\${as}" -iname "[0-9]*" -type d -print | \\
-  while read a; do
-    b="\${asdir}/\$(basename \$a)"
-    mkdir -p "\${b}"
-    find "\${a}" -type f -print | \\
-    while read c; do
-      d="\$(basename \$c)"
-      test -e "\${b}/\${d}" || \\
-        ln "\${c}" "\${b}/\${d}" && \\
-        chmod 666 "\${b}/\${d}"
+  mkdir -m a=rwxt -p "\$asdir"
+  for as in "\$as1" "\$as2" "\$as3" "\$upd"; do
+    test -d "\$as" && \
+    find "\${as}" -type d -print | \\
+    while read a; do
+      b="\${asdir}/\$(basename \$a)"
+      mkdir -p "\${b}"
+      find "\${a}" -type f -print | \\
+      while read c; do
+        d="\$(basename \$c)"
+        test -e "\${b}/\${d}" || \\
+          ln "\${c}" "\${b}/\${d}" && \\
+          chmod 666 "\${b}/\${d}"
+      done
     done
   done
 
@@ -441,6 +445,8 @@ for i in 1 2 3 4 5; do
 
   sleep 1
 done
+
+exit 0
 #+end_src
 
 ** Install
@@ -600,6 +606,7 @@ install_brewfile_brew_pkgs () {
 | pyenv                        | https://github.com/pyenv/pyenv                            |
 | rbenv                        | https://github.com/rbenv/rbenv                            |
 | rsync                        | https://rsync.samba.org/                                  |
+| screenresolution             | https://github.com/jhford/screenresolution                |
 | selenium-server-standalone   | http://www.seleniumhq.org/                                |
 | shellcheck                   | https://github.com/koalaman/shellcheck                    |
 | sqlite                       | https://sqlite.org                                        |
@@ -2081,10 +2088,10 @@ setopt \
   no_autocontinue \
   autoresume \
   no_BGNICE \
-  no_CHECKJOBS \
+  CHECKJOBS \
   no_HUP \
   longlistjobs \
-  no_monitor \
+  MONITOR \
   NOTIFY \
   NO_posixjobs
 

@@ -199,35 +199,50 @@ init_updates () {
 # sudo lsof -c storedownloadd -F -r 2 | sed '/^n\//!d;/com.apple.appstore/!d;s/^n//'
 # #+end_example
 
-_mas_save_plist='add	:KeepAlive	bool	false
-add	:Label	string	com.github.ptb.mas_save
-add	:Program	string	/usr/local/bin/mas_save
+_maskeep_launchd='add	:KeepAlive	bool	false
+add	:Label	string	com.github.ptb.maskeep
+add	:ProcessType	string	Background
+add	:Program	string	/usr/local/bin/maskeep
 add	:RunAtLoad	bool	true
-add	:UserName	string	root'
+add	:StandardErrorPath	string	/dev/stderr
+add	:StandardOutPath	string	/dev/stdout
+add	:UserName	string	root
+add	:WatchPaths	array	
+add	:WatchPaths:0	string	$(sudo find '"'"'/private/var/folders'"'"' -name '"'"'com.apple.SoftwareUpdate'"'"' -type d -user _softwareupdate -print -quit 2> /dev/null)
+add	:WatchPaths:1	string	$(sudo -u \\#501 -- sh -c '"'"'getconf DARWIN_USER_CACHE_DIR'"'"' 2> /dev/null)com.apple.appstore
+add	:WatchPaths:2	string	$(sudo -u \\#502 -- sh -c '"'"'getconf DARWIN_USER_CACHE_DIR'"'"' 2> /dev/null)com.apple.appstore
+add	:WatchPaths:3	string	$(sudo -u \\#503 -- sh -c '"'"'getconf DARWIN_USER_CACHE_DIR'"'"' 2> /dev/null)com.apple.appstore
+add	:WatchPaths:4	string	/Library/Updates'
 
-init_mas_save () {
+init_maskeep () {
   sudo softwareupdate --reset-ignored > /dev/null
 
-  cat << EOF > "/usr/local/bin/mas_save"
+  cat << EOF > "/usr/local/bin/maskeep"
 #!/bin/sh
 
 asdir="/Library/Caches/storedownloadd"
-as="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore"
+as1="\$(sudo -u \\#501 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+as2="\$(sudo -u \\#502 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+as3="\$(sudo -u \\#503 -- sh -c 'getconf DARWIN_USER_CACHE_DIR' 2> /dev/null)com.apple.appstore"
+upd="/Library/Updates"
 sudir="/Library/Caches/softwareupdated"
-su="\$(sudo find "/private/var/folders" -name "com.apple.SoftwareUpdate" -type d -user _softwareupdate 2> /dev/null)"
+su="\$(sudo find '/private/var/folders' -name 'com.apple.SoftwareUpdate' -type d -user _softwareupdate 2> /dev/null)"
 
 for i in 1 2 3 4 5; do
-  mkdir -m a=rwxt -p "\${asdir}"
-  find "\${as}" -iname "[0-9]*" -type d -print | \\
-  while read a; do
-    b="\${asdir}/\$(basename \$a)"
-    mkdir -p "\${b}"
-    find "\${a}" -type f -print | \\
-    while read c; do
-      d="\$(basename \$c)"
-      test -e "\${b}/\${d}" || \\
-        ln "\${c}" "\${b}/\${d}" && \\
-        chmod 666 "\${b}/\${d}"
+  mkdir -m a=rwxt -p "\$asdir"
+  for as in "\$as1" "\$as2" "\$as3" "\$upd"; do
+    test -d "\$as" && \
+    find "\${as}" -type d -print | \\
+    while read a; do
+      b="\${asdir}/\$(basename \$a)"
+      mkdir -p "\${b}"
+      find "\${a}" -type f -print | \\
+      while read c; do
+        d="\$(basename \$c)"
+        test -e "\${b}/\${d}" || \\
+          ln "\${c}" "\${b}/\${d}" && \\
+          chmod 666 "\${b}/\${d}"
+      done
     done
   done
 
@@ -242,23 +257,14 @@ for i in 1 2 3 4 5; do
 
   sleep 1
 done
+
+exit 0
 EOF
 
-  chmod a+x "/usr/local/bin/mas_save"
+  chmod a+x "/usr/local/bin/maskeep"
   rehash
 
-  la="/Library/LaunchDaemons/com.github.ptb.mas_save"
-  as="$(getconf DARWIN_USER_CACHE_DIR)com.apple.appstore"
-  su="$(sudo find "/private/var/folders" -name "com.apple.SoftwareUpdate" -type d -user _softwareupdate 2> /dev/null)"
-
-  sudo mkdir -p "$(dirname ${la})"
-  sudo launchctl unload "${la}.plist" 2> /dev/null
-  sudo rm -f "${la}.plist"
-  config_defaults "$(printf '%s\t%s\t%s\t%s\t' ${la} 'WatchPaths' '-array-add' ${as})" "sudo"
-  config_defaults "$(printf '%s\t%s\t%s\t%s\t' ${la} 'WatchPaths' '-array-add' ${su})" "sudo"
-  config_plist "${_mas_save_plist}" "${la}.plist" "" "sudo"
-  sudo plutil -convert xml1 "${la}.plist"
-  sudo launchctl load "${la}.plist" 2> /dev/null
+  config_launchd "/Library/LaunchDaemons/com.github.ptb.maskeep.plist" "$_maskeep_launchd" "sudo" ""
 }
 
 # Define Function =install=
@@ -388,6 +394,7 @@ plenv
 pyenv
 rbenv
 rsync
+screenresolution
 selenium-server-standalone
 shellcheck
 sqlite
@@ -1718,10 +1725,10 @@ setopt \
   no_autocontinue \
   autoresume \
   no_BGNICE \
-  no_CHECKJOBS \
+  CHECKJOBS \
   no_HUP \
   longlistjobs \
-  no_monitor \
+  MONITOR \
   NOTIFY \
   NO_posixjobs
 
