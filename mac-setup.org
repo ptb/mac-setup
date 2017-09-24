@@ -469,15 +469,22 @@ install_macos_sw () {
   install_brewfile_cask_args
   install_brewfile_cask_pkgs
   install_brewfile_mas_apps
-  install_links
 
-  x="$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)"
-  if test -n "${x}"; then
-    sudo xcode-select -s "${x}"
+  x=$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)
+  if test -n "$x"; then
+    sudo xcode-select -s "$x"
     sudo xcodebuild -license accept
   fi
 
   brew bundle --file="${BREWFILE}"
+
+  x=$(find '/Applications' -maxdepth 1 -regex '.*/Xcode[^ ]*.app' -print -quit)
+  if test -n "$x"; then
+    sudo xcode-select -s "$x"
+    sudo xcodebuild -license accept
+  fi
+
+  install_links
   sudo xattr -rd "com.apple.quarantine" "/Applications" > /dev/null 2>&1
   sudo chmod -R go=u-w "/Applications" > /dev/null 2>&1
 }
