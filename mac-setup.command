@@ -72,6 +72,13 @@ if test "${1}" = 0; then
   printf "\n$(which init)\n"
 fi
 
+# Define Function =init_paths=
+
+init_paths () {
+  test -x "/usr/libexec/path_helper" && \
+    eval $(/usr/libexec/path_helper -s)
+}
+
 # Eliminate Prompts for Password
 
 init_sudo () {
@@ -628,7 +635,7 @@ install_links () {
   done
 }
 
-# Install Node Software with =nodenv=
+# Install Node.js with =nodenv=
 
 install_node_sw () {
   if which nodenv > /dev/null; then
@@ -637,19 +644,21 @@ install_node_sw () {
     sudo mkdir -p "$NODENV_ROOT"
     sudo chown -R "$(whoami):admin" "$NODENV_ROOT"
 
-    p "Installing Node.js Software"
+    p "Installing Node.js with nodenv"
     nodenv install --skip-existing 8.5.0
     nodenv global 8.5.0
-    rehash
 
     grep -q "${NODENV_ROOT}" "/etc/paths" || \
     sudo sed -i "" -e "1i\\
 ${NODENV_ROOT}/shims
 " "/etc/paths"
+
+    init_paths
+    rehash
   fi
 }
 
-# Install Perl Software with =plenv=
+# Install Perl 5 with =plenv=
 
 install_perl_sw () {
   if which plenv > /dev/null; then
@@ -658,19 +667,21 @@ install_perl_sw () {
     sudo mkdir -p "$PLENV_ROOT"
     sudo chown -R "$(whoami):admin" "$PLENV_ROOT"
 
-    p "Installing Perl 5 Software"
+    p "Installing Perl 5 with plenv"
     plenv install 5.26.0 > /dev/null 2>&1
     plenv global 5.26.0
-    rehash
 
     grep -q "${PLENV_ROOT}" "/etc/paths" || \
     sudo sed -i "" -e "1i\\
 ${PLENV_ROOT}/shims
 " "/etc/paths"
+
+    init_paths
+    rehash
   fi
 }
 
-# Install Python Software with =pyenv=
+# Install Python with =pyenv=
 
 install_python_sw () {
   if which pyenv > /dev/null; then
@@ -681,13 +692,18 @@ install_python_sw () {
     sudo mkdir -p "$PYENV_ROOT"
     sudo chown -R "$(whoami):admin" "$PYENV_ROOT"
 
-    p "Installing Python 2 Software"
+    p "Installing Python 2 with pyenv"
     pyenv install --skip-existing 2.7.13
-
-    p "Installing Python 3 Software"
+    p "Installing Python 3 with pyenv"
     pyenv install --skip-existing 3.6.2
-
     pyenv global 2.7.13
+
+    grep -q "${PYENV_ROOT}" "/etc/paths" || \
+    sudo sed -i "" -e "1i\\
+${PYENV_ROOT}/shims
+" "/etc/paths"
+
+    init_paths
     rehash
 
     pip install --upgrade "pip" "setuptools"
@@ -698,15 +714,10 @@ install_python_sw () {
 
     # Reference: https://github.com/pixelb/crudini
     pip install --upgrade "crudini"
-
-    grep -q "${PYENV_ROOT}" "/etc/paths" || \
-    sudo sed -i "" -e "1i\\
-${PYENV_ROOT}/shims
-" "/etc/paths"
   fi
 }
 
-# Install Ruby Software with =rbenv=
+# Install Ruby with =rbenv=
 
 install_ruby_sw () {
   if which rbenv > /dev/null; then
@@ -715,9 +726,16 @@ install_ruby_sw () {
     sudo mkdir -p "$RBENV_ROOT"
     sudo chown -R "$(whoami):admin" "$RBENV_ROOT"
 
-    p "Installing Ruby Software"
+    p "Installing Ruby with rbenv"
     rbenv install --skip-existing 2.4.2
     rbenv global 2.4.2
+
+    grep -q "${RBENV_ROOT}" "/etc/paths" || \
+    sudo sed -i "" -e "1i\\
+${RBENV_ROOT}/shims
+" "/etc/paths"
+
+    init_paths
     rehash
 
     printf "%s\n" \
@@ -731,11 +749,6 @@ install_ruby_sw () {
     gem update
 
     gem install bundler
-
-    grep -q "${RBENV_ROOT}" "/etc/paths" || \
-    sudo sed -i "" -e "1i\\
-${RBENV_ROOT}/shims
-" "/etc/paths"
   fi
 }
 
@@ -2003,9 +2016,9 @@ custom () {
 custom_githome () {
   git -C "${HOME}" init
 
-  test -f "${CACHES}/Dropbox/.zshenv" && \
+  test -f "${CACHES}/dbx/.zshenv" && \
     mkdir -p "${ZDOTDIR:-$HOME}" && \
-    cp "${CACHES}/Dropbox/.zshenv" "${ZDOTDIR:-$HOME}" && \
+    cp "${CACHES}/dbx/.zshenv" "${ZDOTDIR:-$HOME}" && \
     . "${ZDOTDIR:-$HOME}/.zshenv"
 
   a=$(ask "Existing Git Home Repository Path or URL" "Add Remote" "")
