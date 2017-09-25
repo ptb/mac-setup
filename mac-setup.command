@@ -60,12 +60,11 @@ init () {
   init_no_sleep
   init_hostname
   init_perms
-  init_devtools
-  init_xcode
+  init_maskeep
   init_updates
-  init_mas_save
 
-  which install
+  config_new_account
+  config_rm_sudoers
 }
 
 if test "${1}" = 0; then
@@ -386,7 +385,6 @@ git-lfs
 gnu-sed
 gnupg
 gpac
-handbrake
 httpie
 hub
 ievms
@@ -589,7 +587,6 @@ install_brewfile_cask_pkgs () {
 
 _mas='1Password	443987910
 Affinity Photo	824183456
-autoping	632347870
 Coffitivity	659901392
 Duplicate Photos Fixer Pro	963642514
 Growl	467939042
@@ -768,9 +765,7 @@ config () {
   config_openssl
   config_sysprefs
   config_zsh
-  config_new_account
   config_guest
-  config_rm_sudoers
 
   which custom
 }
@@ -792,7 +787,7 @@ config_plist () {
   printf "%s\n" "$1" | \
   while IFS="$T" read command entry type value; do
     case "$value" in
-      (*\$*)
+      (\$*)
         $4 /usr/libexec/PlistBuddy "$2" \
           -c "$command '${3}${entry}' $type '$(eval echo \"$value\")'" 2> /dev/null ;;
       (*)
@@ -1568,7 +1563,7 @@ config_zsh () {
       sudo chsh -s $(which zsh) ;;
   esac
 
-  sudo tee /etc/zshenv << 'EOF' > /dev/null
+  sudo tee -a /etc/zshenv << 'EOF' > /dev/null
 #-- Exports ----------------------------------------------------
 
 export \
