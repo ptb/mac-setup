@@ -73,7 +73,7 @@ custom && personalize_all
 
 *** Features
 
-- *macOS High Sierra:* Tested with macOS High Sierra 10.13 beta 9 (17A360a).
+- *macOS High Sierra:* Tested with macOS High Sierra 10.13 (17A365).
 - *Completely Automated:* Homebrew, Cask, and =mas-cli= install everything.
 - *Latest Versions:* Includes Node, Perl, Python, and Ruby separate from macOS.
 - *Customized Terminal:* Colors and fonts decyphered into editable preferences.
@@ -2212,7 +2212,7 @@ sf () {
   SetFile -P -d "$1 12:00:00" -m "$1 12:00:00" $argv[2,$]
 }
 
-ssh-add -A &
+ssh-add -A 2> /dev/null
 
 #-- zsh-syntax-highlighting ------------------------------------
 

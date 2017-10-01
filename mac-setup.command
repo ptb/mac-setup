@@ -1848,7 +1848,7 @@ sf () {
   SetFile -P -d "$1 12:00:00" -m "$1 12:00:00" $argv[2,$]
 }
 
-ssh-add -A &
+ssh-add -A 2> /dev/null
 
 #-- zsh-syntax-highlighting ------------------------------------
 
