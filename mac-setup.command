@@ -406,6 +406,7 @@ rbenv
 rsync
 selenium-server-standalone
 shellcheck
+sleepwatcher
 sqlite
 stow
 syncthing
@@ -1919,7 +1920,7 @@ prompt_ptb_precmd () {
   fi
 
   test -n "$(git rev-parse --git-dir 2> /dev/null)" && \
-  RPROMPT="%F{000}$(git rev-parse --abbrev-ref HEAD)%f" && \
+  RPROMPT="%F{000}$(git rev-parse --abbrev-ref HEAD 2> /dev/null)%f" && \
   export RPROMPT
 }
 
