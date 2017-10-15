@@ -635,6 +635,16 @@ install_links () {
 
 # Install Node.js with =nodenv=
 
+_npm='eslint
+eslint-config-cleanjs
+eslint-plugin-better
+eslint-plugin-fp
+eslint-plugin-import
+eslint-plugin-json
+eslint-plugin-promise
+eslint-plugin-standard
+sort-json'
+
 install_node_sw () {
   if which nodenv > /dev/null; then
     NODENV_ROOT="/usr/local/node" && export NODENV_ROOT
@@ -654,6 +664,15 @@ ${NODENV_ROOT}/shims
     init_paths
     rehash
   fi
+
+  T=$(printf '\t')
+
+  printf "%s\n" "$_npm" | \
+  while IFS="$T" read pkg; do
+    yarn global add "$pkg"
+  done
+
+  rehash
 }
 
 # Install Perl 5 with =plenv=
