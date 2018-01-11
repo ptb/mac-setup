@@ -643,6 +643,7 @@ eslint-plugin-import
 eslint-plugin-json
 eslint-plugin-promise
 eslint-plugin-standard
+gatsby
 json
 sort-json'
 
@@ -654,8 +655,12 @@ install_node_sw () {
     sudo chown -R "$(whoami):admin" "$NODENV_ROOT"
 
     p "Installing Node.js with nodenv"
-    nodenv install --skip-existing 8.5.0
-    nodenv global 8.5.0
+    git clone https://github.com/nodenv/node-build-update-defs.git \
+      "$(nodenv root)"/plugins/node-build-update-defs
+    nodenv update-version-defs > /dev/null
+
+    nodenv install --skip-existing 8.7.0
+    nodenv global 8.7.0
 
     grep -q "${NODENV_ROOT}" "/etc/paths" || \
     sudo sed -i "" -e "1i\\
@@ -670,7 +675,7 @@ ${NODENV_ROOT}/shims
 
   printf "%s\n" "$_npm" | \
   while IFS="$T" read pkg; do
-    yarn global add "$pkg"
+    npm install --global "$pkg"
   done
 
   rehash
