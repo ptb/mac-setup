@@ -2917,7 +2917,7 @@ com.manytricks.Moom	Mouse Controls Auto-Activate Window	-bool	true
 com.manytricks.Moom	Snap	-bool	false	
 com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0, 0.5}, {0.375, 0.5}}"; }	
 com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0, 0}, {0.375, 0.5}}"; }	
-com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0, 0}, {0.25, 0.33333}}"; }	
+com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0, 0}, {0.375, 1}}"; }	
 com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0.125, 0}, {0.25, 0.33333}}"; }	
 com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0.375, 0.33333}, {0.3125, 0.66666}}"; }	
 com.manytricks.Moom	Custom Controls	-array-add	{ Action = 19; "Relative Frame" = "{{0.375, 0}, {0.3125, 0.33333}}"; }	
